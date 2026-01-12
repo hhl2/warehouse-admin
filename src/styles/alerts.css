@@ -1,0 +1,94 @@
+.sbgl {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 5px;
+    justify-content: center;
+
+}
+
+.sbgl .sbgl_box {
+    width: 45%;
+    position: relative;
+    margin: 15px 0px;
+    display: flex;
+    justify-content: center;
+}
+
+.sbgl .sbgl_box img {
+    width: 240px;
+    height: 100px;
+}
+
+.sbgl .sbgl_box .sbgl_box_title {
+    position: absolute;
+    top: 24px;
+    left: 112px;
+    color: #fff;
+    font-size: 15px;
+}
+
+.sbgl .sbgl_box .sbgl_box_text {
+    position: absolute;
+    top: 55px;
+    left: 110px;
+    font-size: 30px;
+    background: linear-gradient(to bottom, #FFFFFF, #FDD26C);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: bold;
+}
+
+.gjtj {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 5px 0px 18px 0px;
+}
+
+.gjtj .sbgl_box {
+    width: 50%;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gjtj .sbgl_box img {
+    width: 145px;
+    height: 95px;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gjtj .sbgl_box .sbgl_box_title {
+    font-family: SimHei;
+    font-weight: 400;
+    font-size: 18px;
+    color: #FFFFFF;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+.gjtj .sbgl_box .sbgl_box_text {
+
+    background: linear-gradient(to bottom, #FFFFFF, #FDD26C);
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: baseline;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: bold;
+    font-size: 36px;
+}

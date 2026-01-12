@@ -1,0 +1,7 @@
+{
+    "apiBaseURL": "",
+    "pixelStreaming": {
+        "ss": "ws://192.168.31.147:88",
+        "websocketURL": "ws://192.168.31.147:88"
+    }
+}

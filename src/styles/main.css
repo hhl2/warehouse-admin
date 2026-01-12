@@ -1,0 +1,408 @@
+@import '@/styles/inspection.css';
+@import '@/styles/alerts.css';
+
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body,
+html {
+    width: 100%;
+    overflow-x: hidden;
+
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+
+}
+
+.testmians.panel-collapsed {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.left.panel-collapsed {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.right.panel-collapsed {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.left {
+    width: 475px;
+    height: calc(100vh - 135px);
+    min-height: auto;
+    position: absolute;
+    z-index: 31;
+    background: url('@/assets/左框.png') no-repeat 0 0;
+    background-size: 100% 100%;
+    left: 15px;
+    top: 80px;
+    padding: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 transparent;
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+    transform: translateX(0);
+    /* transform: translateX(-100%); */
+}
+
+/* Webkit 浏览器滚动条样式 */
+.left::-webkit-scrollbar {
+    width: 8px;
+}
+
+.left::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.left::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.left::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 兼容老版本 Webkit */
+.left::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+.left:hover::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+}
+
+.left::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.right {
+    width: 475px;
+    height: calc(100vh - 135px);
+    min-height: auto;
+    position: absolute;
+    z-index: 31;
+    background: url('@/assets/右框.png') no-repeat right top;
+    background-size: 100% 100%;
+    right: 15px;
+    top: 80px;
+    padding: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 transparent;
+    transition: all 0.3s ease-in-out;
+    transform: translateX(0);
+}
+
+/* Webkit 浏览器滚动条样式 */
+.right::-webkit-scrollbar {
+    width: 8px;
+}
+
+.right::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.right::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.right::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 兼容老版本 Webkit */
+.right::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+.right:hover::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+}
+
+.right::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
+.testmians {
+    margin: 0 auto;
+}
+
+.testmian {
+    padding: 20px 15px;
+    background: url('@/assets/框中间.png') no-repeat 0 0;
+    background-size: 100% 100%;
+    width: 870px;
+    height: 340px;
+    position: fixed;
+    left: 50%;
+    bottom: 80px;
+    transform: translateX(-50%);
+    z-index: 999;
+}
+
+
+.title {
+    font-style: italic;
+    letter-spacing: 3px;
+    position: relative;
+    margin: 10px 10px 0px 20px;
+    display: inline-block;
+    font-style: italic;
+}
+
+.title img {
+    width: 100%;
+    height: 37px;
+}
+
+.title_txet {
+    position: absolute;
+    font-size: 22px;
+    top: 2px;
+    left: 30px;
+    font-family: Adobe Heiti Std;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+/* 现代浏览器会应用这个渐变 */
+.title_txet {
+    background: linear-gradient(0deg, #6CB0FD 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+
+.el-table thead tr {
+    background: #095DBE;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    font-size: 16px;
+    color: #04E9E9;
+}
+
+.el-table tr {
+    font-size: 15px;
+}
+
+.el-table__body {
+    -webkit-border-vertical-spacing: 5px;
+}
+
+.el-table .cell {
+    padding: 0px 0px;
+    text-align: center;
+}
+
+.el-table .el-table__cell {
+    padding: 5px 0px !important;
+    box-sizing: border-box !important;
+    outline: none !important;
+    margin-left: -1px;
+}
+
+.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    /* 滑块样式 */
+    background: #18A7DE;
+    border-radius: 5px;
+}
+
+.el-table {
+    --el-table-bg-color: transparent !important;
+    --el-table-tr-bg-color: transparent !important;
+    --el-table-row-hover-bg-color: transparent !important;
+    --el-table-border: none;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    table-layout: fixed !important;
+    width: 100% !important;
+}
+
+/* 去除表格顶部外边框 */
+.el-table::before {
+    width: 0 !important;
+}
+
+.el-table--border:after {
+    width: 0 !important;
+}
+
+.el-table__inner-wrapper:before {
+    height: 0 !important;
+}
+
+.el-table__inner-wrapper::after {
+    height: 0 !important;
+}
+
+/* .el-table__border-left-patch {
+    background: transparent !important;
+} */
+
+.el-table th.el-table__cell {
+    background-color: transparent !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+}
+
+.el-table--border .el-table__cell {
+    border: none !important;
+}
+
+.el-table tbody>tr:nth-child(odd) {
+    background-color: rgba(9, 93, 190, 0.6);
+
+}
+
+.el-table tbody>tr:nth-child(even) {
+    background-color: rgba(9, 93, 190, 0.6);
+
+}
+
+.el-table tbody>tr td {
+    background-color: transparent;
+    font-family: SimHei;
+    font-weight: 400;
+    font-size: 14px;
+    color: #F8F8F8;
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+}
+
+
+.el-input__wrapper {
+    height: 30px;
+    background-color: #476B9A;
+    box-shadow: 0 0 0 1px #409eff inset;
+    width: 110px !important;
+}
+
+.el-input__icon {
+    color: #18A7DE;
+}
+
+.el-input__inner {
+    color: #333;
+    font-size: 16px !important;
+}
+
+
+.el-select__placeholder {
+    color: #FBFBFB;
+}
+
+.el-select__wrapper {
+    background-color: #476B9A;
+    box-shadow: 0 0 0 1px #409eff inset;
+    height: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* 红色警告样式 */
+.risk-level-1 {
+    color: #ff0000;
+}
+
+/* 橙色提示样式 */
+.risk-level-2 {
+    color: #ffc000;
+}
+
+/* 黄色提示样式 */
+.risk-level-3 {
+    color: #ffff00;
+}
+
+/* 蓝色常规样式 */
+.risk-level-4 {
+    color: #00b0f0;
+}
+
+/* status-badge 样式，与表格字体保持一致 */
+.status-badge {
+    font-family: SimHei;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+/* 告警等级颜色样式 */
+.status-normal {
+    font-family: SimHei;
+    font-weight: 400;
+    font-size: 14px;
+    color: #8AFC67;
+    background-color: transparent;
+}
+
+.status-important {
+    font-family: SimHei;
+    font-weight: 400;
+    font-size: 14px;
+
+    color: #E9333D;
+    background-color: transparent;
+}
+
+.status-urgent {
+    font-family: SimHei;
+    font-weight: 400;
+    font-size: 14px;
+    color: #FCDA1E;
+    background-color: transparent;
+}
+
+.right_number {
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #76CBFB;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px;
+    height: 130px;
+    margin-right: 10px;
+}
+
+#connection {
+    display: none !important
+}
+
+#controls {
+    display: none !important
+}
