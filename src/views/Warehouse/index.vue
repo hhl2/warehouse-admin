@@ -258,7 +258,7 @@
 
 .menu_box_ul .menu_box_li .menu_box_text {
     position: absolute;
-    top: 10px;
+    top: 9px;
     left: 50%;
     transform: translate(-50%);
     font-family: Microsoft YaHei;
@@ -287,7 +287,7 @@
 
 .menu_boxs {
     position: fixed;
-    top: 27px;
+    top: 30px;
     z-index: 999;
     width: 100%;
     background-size: 100% 100%;
@@ -322,7 +322,7 @@
 
 .menu_box_texts {
     position: absolute;
-    top: 13px;
+    top: 15px;
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: YouSheBiaoTiHei;
