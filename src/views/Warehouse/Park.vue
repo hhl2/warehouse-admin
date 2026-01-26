@@ -42,7 +42,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                            }}</div>
+                                }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -68,7 +68,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                            }}</div>
+                                }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -180,7 +180,21 @@
 import { ref, reactive, onMounted, onUnmounted, inject } from 'vue';
 import * as echarts from 'echarts';
 import { useRouter, useRoute } from 'vue-router'
-import { get_road_rank } from '@/api/user'
+import { queryYardWarehouseRate } from '@/api/user'
+
+
+
+
+
+const getYardWarehouseRates = () => {
+    queryYardWarehouseRate().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
 
 
 // 接收从 index 传入的面板状态

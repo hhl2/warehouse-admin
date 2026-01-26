@@ -188,6 +188,20 @@
 
 <script setup>
 
+import {
+    queryWarehouseThroughputStatistic,
+    queryTurnoverInfo,
+    queryAvgDisDeclineRateInfo,
+    queryProductionInfo,
+    querySafeDistributionInfo,
+    queryInventoryRateInfo
+
+} from "@/api/user";
+
+
+
+
+
 // 接收从 index 传入的面板状态
 const props = defineProps({
     isPanelVisible: {
@@ -201,6 +215,10 @@ import * as echarts from 'echarts';
 const trendChartRef = ref(null);
 
 let trendChart = null;
+
+
+
+
 
 // 初始化趋势图表
 const initTrendChart = () => {
@@ -324,6 +342,76 @@ const handleResize = () => {
     }
 
 };
+
+
+//仓库呆滞率
+const queryInventoryRateInfos = () => {
+    queryInventoryRateInfo().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+
+//安全库存预警
+
+const querySafeDistributionInfos = () => {
+    querySafeDistributionInfo().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+
+
+
+
+//生产效率
+const queryProductionInfos = () => {
+    queryProductionInfo().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+//平均库存下降率
+const queryAvgDisDeclineRateInfos = () => {
+    queryAvgDisDeclineRateInfo().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+//库存周转率统计
+const queryTurnoverInfos = () => {
+    queryTurnoverInfo().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+
+//仓库吞吐量统计
+const queryWarehouseThroughputStatistics = () => {
+    queryWarehouseThroughputStatistic().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+
 
 onMounted(() => {
     initTrendChart();

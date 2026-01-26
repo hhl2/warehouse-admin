@@ -3,5 +3,11 @@
     "pixelStreaming": {
         "ss": "ws://192.168.31.147:88",
         "websocketURL": "ws://192.168.31.147:88"
+    },
+    "globalParams": {
+        "bureauCode": "0318",
+        "provinceCode": "03",
+        "warehouseCode": "031864T",
+        "warehouseId": "03180000020822"
     }
 }

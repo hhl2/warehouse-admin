@@ -77,7 +77,10 @@ export default {
             MatchViewportRes: true,
             HoveringMouse: true,
             OfferToReceive: true,
-            WaitForStream: true
+            WaitForStream: true,
+            AutoPlayVideo: true,        // 自动播放视频
+            AutoConnect: true,           // 自动连接
+            StartVideoMuted: true        // 静音启动以符合浏览器自动播放策略
           }
         })
 

@@ -1,5 +1,116 @@
 import request from '@/utils/request';
 
+
+
+//获取库存照片接口
+export const queryDistributionPicture = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryDistributionPicture',
+    method: 'post',
+    data
+  });
+
+
+// /api/qydigital-park-service/queryLargeWarehouse/queryDistributionPicture
+
+//实时库存数据接口
+export const queryDistributionInfoPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryDistributionInfoPagination',
+    method: 'post',
+    data
+  });
+
+//仓库呆滞率
+export const queryInventoryRateInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryInventoryRateInfo',
+    method: 'post',
+    data
+  });
+
+
+
+
+//安全库存预警
+
+export const querySafeDistributionInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/querySafeDistributionInfo',
+    method: 'post',
+    data
+  });
+
+
+
+//生产效率
+export const queryProductionInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryProductionInfo',
+    method: 'post',
+    data
+  });
+
+
+
+//平均库存下降率
+export const queryAvgDisDeclineRateInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryAvgDisDeclineRateInfo',
+    method: 'post',
+    data
+  });
+
+// 
+
+//库存周转率统计
+
+export const queryTurnoverInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryTurnoverInfo',
+    method: 'post',
+    data
+  });
+
+// 
+
+
+
+//仓库吞吐量统计
+
+
+export const queryWarehouseThroughputStatistic = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryWarehouseThroughputStatistic',
+    method: 'post',
+    data
+  });
+
+
+
+
+//堆场作业详情
+export const queryYardWarehouseInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryYardWarehouseInfo',
+    method: 'post',
+    data
+  });
+
+//堆场指标
+export const queryYardWarehouseRate = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryYardWarehouseRate',
+    method: 'post',
+    data
+  });
+
+
+
+
+
+
+
 // 获取检测工位-工位信息
 export const queryDetectStationInfo = (data) =>
   request({

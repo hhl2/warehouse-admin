@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 // 从 config.json 加载配置
 let configLoaded = false;
 let apiBaseURL = '/'; // 默认值
+let globalParams = {}; // 全局参数
 
 // 异步加载配置
 export const loadConfig = async () => {
@@ -14,14 +15,15 @@ export const loadConfig = async () => {
     const response = await fetch('/config.json');
     const config = await response.json();
     apiBaseURL = config.apiBaseURL || '/';
+    globalParams = config.globalParams || {};
     configLoaded = true;
-    console.log('✅ API 地址已从 config.json 加载:', apiBaseURL);
+    console.log('✅ 配置已从 config.json 加载:', { apiBaseURL, globalParams });
 
     // 更新所有 axios 实例的 baseURL
     serviceWithToken.defaults.baseURL = apiBaseURL;
     serviceWithoutToken.defaults.baseURL = apiBaseURL;
 
-    return apiBaseURL;
+    return { apiBaseURL, globalParams };
   } catch (error) {
     console.warn('⚠️ 加载 config.json 失败，使用默认配置:', error);
     configLoaded = true;
@@ -165,6 +167,20 @@ serviceWithToken.interceptors.request.use(
     //   }
     // }
 
+    // ========== 注入全局参数 ==========
+    if (globalParams && Object.keys(globalParams).length > 0) {
+      if (config.method?.toLowerCase() === 'get' || config.method?.toLowerCase() === 'delete') {
+        config.params = { ...globalParams, ...config.params };
+      } else {
+        // 如果是 POST/PUT 且没有 data，初始化为一个对象
+        if (!config.data) config.data = {};
+        // 只有当 data 是对象时才进行合并
+        if (typeof config.data === 'object' && !(config.data instanceof FormData)) {
+          config.data = { ...globalParams, ...config.data };
+        }
+      }
+    }
+
     return config;
   },
   error => {
@@ -250,6 +266,24 @@ serviceWithToken.interceptors.response.use(
 
 // ==================== 不需要Token的实例 ====================
 const serviceWithoutToken = axios.create(baseConfig);
+
+// 请求拦截器 - 无Token (同样注入全局参数)
+serviceWithoutToken.interceptors.request.use(
+  (config) => {
+    if (globalParams && Object.keys(globalParams).length > 0) {
+      if (config.method?.toLowerCase() === 'get' || config.method?.toLowerCase() === 'delete') {
+        config.params = { ...globalParams, ...config.params };
+      } else {
+        if (!config.data) config.data = {};
+        if (typeof config.data === 'object' && !(config.data instanceof FormData)) {
+          config.data = { ...globalParams, ...config.data };
+        }
+      }
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
 
 // 不需要Token的响应拦截器（只返回数据）
 serviceWithoutToken.interceptors.response.use(

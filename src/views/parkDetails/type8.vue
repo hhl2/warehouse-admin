@@ -18,9 +18,17 @@
 
             <div class="hwbox">
                 <div class="hwbox_list">
-                    <template v-for="value in hwbox">
+                    <!-- <template v-for="value in hwbox">
                         <div class="hwbox_tip" v-if="value.tip == 1"></div>
                         <div class="hwbox_tip2" v-if="value.tip == 2"></div>
+
+                    </template> -->
+
+
+                    <template v-for="value in hwboxs">
+                        <div class="hwbox_tip2" v-if="value.isUsed == 1"></div>
+                        <div class="hwbox_tip" v-else></div>
+
 
                     </template>
 
@@ -145,6 +153,10 @@
 </style>
 
 <script setup>
+import {
+    queryYardWarehouseInfo,
+
+} from "@/api/user";
 // 接收从 index 传入的面板状态
 const props = defineProps({
     isPanelVisible: {
@@ -154,6 +166,45 @@ const props = defineProps({
 
 })
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
+
+
+
+
+
+const queryYardWarehouseInfos = () => {
+    queryYardWarehouseInfo().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+
+
+
+const hwboxs = ref([{
+    "warehouseId": "51B52B0938154D9B83021E75E10A7D58",
+    "warehouseName": "1层2列",
+    "warehouseCode": "031864T64T003001001002",
+    "warehouseFullName": "清远检储配专用仓库/闲置库房/堆场区/01/1层2列",
+    "isUsed": 1
+},
+{
+    "warehouseId": "640f57e42a1d44e4abe0d58b4935b426",
+    "warehouseName": "A11",
+    "warehouseCode": "031864T64V64R0101",
+    "warehouseFullName": "清远检储配专用仓库/报废库房/601出货区/0101/A11",
+    "isUsed": 1
+},
+{
+    "warehouseId": "6C63F961516A444193DB7CBC4AC3ED9C",
+    "warehouseName": "1层3列",
+    "warehouseCode": "031864T64T003001001003",
+    "warehouseFullName": "清远检储配专用仓库/闲置库房/堆场区/01/1层3列",
+    "isUsed": 1
+},])
+
 
 
 const hwbox = ref([

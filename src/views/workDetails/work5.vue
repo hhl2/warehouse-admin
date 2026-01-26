@@ -192,6 +192,13 @@
 </style>
 
 <script setup>
+import {
+    queryDistributionInfoPagination,
+    queryDistributionPicture
+
+
+} from "@/api/user";
+
 
 // 接收从 index 传入的面板状态
 const props = defineProps({
@@ -226,6 +233,30 @@ const handleClickOutside = (event) => {
     }
 };
 
+
+//实时库存数据接口
+
+const queryDistributionPictures = () => {
+    queryDistributionPicture().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
+
+//实时库存数据接口
+
+const queryDistributionInfoPaginations = () => {
+    queryDistributionInfoPagination().then(res => {
+
+        if (res?.data?.code == 200) {
+
+        }
+        console.log(res)
+    })
+}
 
 
 const statusClassMap = reactive({
@@ -360,6 +391,8 @@ const data1 = ref([{
 // 生命周期
 onMounted(() => {
     document.addEventListener("click", handleClickOutside);
+    queryDistributionInfoPaginations();
+    queryDistributionPictures();
 
 });
 
