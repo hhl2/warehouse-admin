@@ -24,9 +24,9 @@
             </div>
             <div class="changleft">
                 <el-table class="my-spacing-table" ref="tableRef" :data="data" @row-click="handleRowClick">
-                    <el-table-column prop="name" label="设备名称" show-overflow-tooltip />
+                    <el-table-column prop="name1" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="countNums2" label="设备类型" />
-                    <el-table-column prop="countNums3" label="检测点位置" show-overflow-tooltip />
+                    <el-table-column prop="name" label="检测点位置" show-overflow-tooltip />
                     <el-table-column prop="countNams6" label="状态" width="50">
                         <template #default="scope">
                             <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
@@ -82,17 +82,12 @@
 
         <div class="changleft2">
             <el-table class="my-spacing-table2" ref="tableRef" :data="data2" @row-click="handleRowClick">
-                <el-table-column prop="name" label="设备名称" show-overflow-tooltip />
+                <el-table-column prop="name1" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="countNums2" label="设备类型" />
                 <el-table-column prop="name" label="检测点位置" show-overflow-tooltip />
                 <el-table-column prop="countNams6" label="状态" width="50">
                     <template #default="scope">
-                        <!-- <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
-                            {{ scope.row.countNums6 === '在线' ? '在线' : '离线' }}
-                        </span> -->
-
-                                    <span class='status-normal' >在线
-                           
+                        <span class='status-normal'>在线
                         </span>
                     </template>
                 </el-table-column>
@@ -520,7 +515,7 @@ const easyPlayerInstance = ref(null);
 const currentCamera = ref({
     id: 'cam001',
     name: '变压器检测工位摄像头',
-    videoUrl: '', 
+    videoUrl: '',
     location: '变压器流水线检测工位',
     status: 'online'
 });
@@ -808,11 +803,11 @@ const statusClassMaps = reactive({
     '3': 'status-normal'
 })
 
-var data = [
+const data = ref([
     {
-        name: "摄像头#1",
+        name1: "摄像头#1",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -823,9 +818,9 @@ var data = [
 
     },
     {
-        name: "摄像头#2",
+        name1: "摄像头#2",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -837,9 +832,9 @@ var data = [
     },
 
     {
-        name: "摄像头#3",
+        name1: "摄像头#3",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -851,9 +846,9 @@ var data = [
     },
 
     {
-        name: "摄像头#4",
+        name1: "摄像头#4",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -865,9 +860,9 @@ var data = [
     },
 
     {
-        name: "摄像头#5",
+        name1: "摄像头#5",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -879,9 +874,9 @@ var data = [
     },
 
     {
-        name: "摄像头#6",
+        name1: "摄像头#6",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -893,9 +888,9 @@ var data = [
     },
 
     {
-        name: "摄像头#7",
+        name1: "摄像头#7",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -907,9 +902,9 @@ var data = [
     },
 
     {
-        name: "摄像头#8",
+        name1: "摄像头#8",
         countNums2: "安防监控",
-        countNums3: "室内1号检测点",
+        name: "室内1号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -923,13 +918,13 @@ var data = [
 
 
 
-];
+]);
 
-var data2 = [
+const data2 = ref([
     {
-        name: "摄像头#1",
+        name1: "摄像头#1",
         countNums2: "安防监控",
-        countNums3: "大厅1号监控点",
+        name: "大厅1号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -940,9 +935,9 @@ var data2 = [
 
     },
     {
-        name: "摄像头#2",
+        name1: "摄像头#2",
         countNums2: "安防监控",
-        countNums3: "大厅2号监控点",
+        name: "大厅2号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -954,9 +949,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#3",
+        name1: "摄像头#3",
         countNums2: "安防监控",
-        countNums3: "大厅3号监控点",
+        name: "大厅3号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -968,9 +963,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#4",
+        name1: "摄像头#4",
         countNums2: "安防监控",
-        countNums3: "大厅4号监控点",
+        name: "大厅4号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -981,9 +976,9 @@ var data2 = [
 
     },
     {
-        name: "摄像头#5",
+        name1: "摄像头#5",
         countNums2: "安防监控",
-        countNums3: "大厅5号监控点",
+        name: "大厅5号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -995,9 +990,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#6",
+        name1: "摄像头#6",
         countNums2: "安防监控",
-        countNums3: "大厅6号监控点",
+        name: "大厅6号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1009,9 +1004,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#7",
+        name1: "摄像头#7",
         countNums2: "安防监控",
-        countNums3: "室内7号检测点",
+        name: "室内7号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1023,9 +1018,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#8",
+        name1: "摄像头#8",
         countNums2: "安防监控",
-        countNums3: "室内8号检测点",
+        name: "室内8号检测点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1036,9 +1031,9 @@ var data2 = [
 
     },
     {
-        name: "摄像头#7",
+        name1: "摄像头#7",
         countNums2: "",
-        countNums3: "",
+        name: "",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "",
@@ -1049,9 +1044,9 @@ var data2 = [
 
     },
     {
-        name: "摄像头#7",
+        name1: "摄像头#7",
         countNums2: "",
-        countNums3: "",
+        name: "",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "",
@@ -1063,9 +1058,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#7",
+        name1: "摄像头#7",
         countNums2: "",
-        countNums3: "",
+        name: "",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "",
@@ -1076,9 +1071,9 @@ var data2 = [
 
     },
     {
-        name: "摄像头#1",
+        name1: "摄像头#1",
         countNums2: "安防监控",
-        countNums3: "大厅1号监控点",
+        name: "大厅1号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1089,9 +1084,9 @@ var data2 = [
 
     },
     {
-        name: "摄像头#2",
+        name1: "摄像头#2",
         countNums2: "安防监控",
-        countNums3: "大厅2号监控点",
+        name: "大厅2号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1103,9 +1098,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#3",
+        name1: "摄像头#3",
         countNums2: "安防监控",
-        countNums3: "大厅3号监控点",
+        name: "大厅3号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1117,9 +1112,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#4",
+        name1: "摄像头#4",
         countNums2: "安防监控",
-        countNums3: "大厅4号监控点",
+        name: "大厅4号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1130,9 +1125,9 @@ var data2 = [
 
     },
     {
-        name: "摄像头#5",
+        name1: "摄像头#5",
         countNums2: "安防监控",
-        countNums3: "大厅5号监控点",
+        name: "大厅5号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1144,9 +1139,9 @@ var data2 = [
     },
 
     {
-        name: "摄像头#6",
+        name1: "摄像头#6",
         countNums2: "安防监控",
-        countNums3: "大厅6号监控点",
+        name: "大厅6号监控点",
         countNums4: "65°C",
         countNums5: "2025-04-12 10:24:15",
         countNums6: "在线",
@@ -1160,7 +1155,7 @@ var data2 = [
 
 
 
-];
+]);
 
 
 const fetchData2 = async () => {
@@ -1174,11 +1169,22 @@ const fetchData2 = async () => {
             }
         });
         if (res.code === '0') {
-             // 根据返回结构赋值
-             if (res.data && res.data.list) {
-                 data2.value = res.data.list;
-                //  data.value = res.data.list;
-             }
+            // 根据返回结构赋值
+            if (res.data && res.data.list) {
+                const mappedList = res.data.list.map((item, index) => ({
+                    id: item.id,
+                    name: item.name, // 对应检测点位置
+                    name1: `摄像头#${index + 1}`, // 对应设备名称
+                    countNums2: '安防设备', // 对应设备类型
+                    countNums6: '在线',
+                    countNams6: '在线', // 对应 prop="countNams6"
+                    countNums5: '', // 告警时间
+                    countNums7: '', // 告警等级
+                    countNums8: ''  // 告警信息
+                }));
+                data2.value = mappedList;
+                data.value = mappedList;
+            }
         }
     } catch (err) {
         console.error('获取data2数据失败', err);

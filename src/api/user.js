@@ -1,5 +1,11 @@
 import request from '@/utils/request';
-
+//作业指标概况
+export const queryWarehouseStatusPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryWarehouseStatusPagination',
+    method: 'post',
+    data
+  });
 
 
 //获取库存照片接口

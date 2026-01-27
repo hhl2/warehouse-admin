@@ -53,8 +53,10 @@
 
             <div class="ckleft">
                 <div class="ckleft_label">
-                    <div class="ckleft_title">仓库作业总量</div>
-                    <div class="ckleft_title ckleftwz"> 已完成仓库作业总量</div>
+                    <div class="ckleft_title" :class="{ 'active_title': activeWorkType === 1 }"
+                        @click="activeWorkType = 1">仓库作业总量</div>
+                    <div class="ckleft_title ckleftwz" :class="{ 'active_title': activeWorkType === 2 }"
+                        @click="activeWorkType = 2"> 已完成仓库作业总量</div>
                 </div>
 
                 <div class="allBoxs">
@@ -62,13 +64,16 @@
                         <div>
                             <div class="echartp changechart" ref="warehouseChartRef"></div>
                             <div class="chart_sum">
-                                <div class="chart_snumber changeSize">{{ warehouseData.completionRate }}</div>
+                                <div class="chart_snumber changeSize" v-if="activeWorkType === 1">{{
+                                    warehouseData.AB12 }}</div>
+                                <div class="chart_snumber changeSize" v-if="activeWorkType === 2">{{
+                                    warehouseData.AB11 }}</div>
                             </div>
                         </div>
-                        <div class="allBoxs_left_text">仓库作业总量</div>
+                        <div class="allBoxs_left_text">{{ activeWorkType === 1 ? '仓库作业总量' : '仓库作业总量' }}</div>
                     </div>
 
-                    <div class="ck_number">
+                    <div class="ck_number" v-if="activeWorkType === 1">
                         <div class="jcard_ckbox">
                             <div class="jcard_box">
                                 <div class="jcard__unit">入库作业</div>
@@ -82,12 +87,36 @@
 
                         <div class="jcard_ckbox">
                             <div class="jcard_box">
-                                <div class="jcard__unit">入库作业</div>
+                                <div class="jcard__unit">移库作业</div>
                                 <div class="jcard__number">{{ warehouseData.inboundCompleted }}%</div>
                             </div>
                             <div class="jcard_box">
-                                <div class="jcard__unit">出库作业</div>
+                                <div class="jcard__unit">盘库作业</div>
                                 <div class="jcard__number">{{ warehouseData.outboundCompleted }}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ck_number" v-if="activeWorkType === 2">
+                        <div class="jcard_ckbox">
+                            <div class="jcard_box">
+                                <div class="jcard__unit">入库作业</div>
+                                <div class="jcard__number">{{ warehouseData.inboundRate1 }}%</div>
+                            </div>
+                            <div class="jcard_box">
+                                <div class="jcard__unit">出库作业</div>
+                                <div class="jcard__number">{{ warehouseData.outboundRate1 }}%</div>
+                            </div>
+                        </div>
+
+                        <div class="jcard_ckbox">
+                            <div class="jcard_box">
+                                <div class="jcard__unit">移库作业</div>
+                                <div class="jcard__number">{{ warehouseData.inboundCompleted1 }}%</div>
+                            </div>
+                            <div class="jcard_box">
+                                <div class="jcard__unit">盘库作业</div>
+                                <div class="jcard__number">{{ warehouseData.outboundCompleted1 }}%</div>
                             </div>
                         </div>
                     </div>
@@ -181,6 +210,54 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import * as echarts from 'echarts';
+import {
+    queryWarehouseStatusPagination,
+
+} from "@/api/user";
+
+
+const queryWarehouseStatusPaginations = () => {
+    queryWarehouseStatusPagination({ timeType: filterParams.period }).then(res => {
+        if (res && res.code == 0 && res.data) {
+            overviewData.safetyBriefings = res.data.E10 || 0;
+            overviewData.workPermits = res.data.AB01 || 0;
+
+            // 映射仓库作业数据
+            warehouseData.AB12 = res.data.AB12 || 0;
+            warehouseData.AB11 = res.data.AB11 || 0;
+
+            if (res.data.warehouse_job_code) {
+                const running = res.data.warehouse_job_code.running || [];
+                const completed = res.data.warehouse_job_code.completed || [];
+
+                running.forEach(item => {
+                    if (item.code === 'AB03') warehouseData.inboundRate = item.rate;
+                    if (item.code === 'AB04') warehouseData.outboundRate = item.rate;
+                    if (item.code === 'AB05') warehouseData.inboundCompleted = item.rate;
+                    if (item.code === 'AB06') warehouseData.outboundCompleted = item.rate;
+                });
+
+                completed.forEach(item => {
+                    if (item.code === 'AB07') warehouseData.inboundRate1 = item.rate;
+                    if (item.code === 'AB08') warehouseData.outboundRate1 = item.rate;
+                    if (item.code === 'AB09') warehouseData.inboundCompleted1 = item.rate;
+                    if (item.code === 'AB10') warehouseData.outboundCompleted1 = item.rate;
+                });
+            }
+
+            // 动态图表数据：日期 x 轴和对应的作业量
+            const xAxisData = res.data.date || [];
+            const seriesData = res.data.warehouse_job_quantity_code || [];
+            // 只有当有真实数据时才传入，否则 initTrendChart 内部会使用兜底默认值
+            initTrendChart(xAxisData, seriesData);
+        } else {
+            initTrendChart(); // 接口返回异常时显示默认图表
+        }
+    }).catch(err => {
+        console.error('获取仓库状态数据失败:', err);
+        initTrendChart(); // 接口连不通时显示默认图表
+    });
+}
 
 // 接收从 index 传入的面板状态
 const props = defineProps({
@@ -197,14 +274,7 @@ import jcrw from '@/assets/jcrw.png';
 import njcrw from '@/assets/njcrw.png';
 import gjrw from '@/assets/gjrw.png';
 import ngjrw from '@/assets/ngjrw.png';
-// import exportIcon from '@/assets/导出.png';
-// import callIcon from '@/assets/叫号.png';
-// import skipIcon from '@/assets/过号.png';
-// import syncReservationIcon from '@/assets/同步预约单.png';
-// import confirmIcon from '@/assets/确认放行.png';
-// import syncRecordIcon from '@/assets/同步签到记录.png';
-// import signInIcon from '@/assets/签到.png';
-// import leaveIcon from '@/assets/离园.png';
+
 
 // 图表引用
 const trendChartRef = ref(null);
@@ -215,10 +285,11 @@ let warehouseChart = null;
 // 响应式数据
 const activeTab = ref(1);
 const activeAlertTab = ref(1);
+const activeWorkType = ref(1);
 
 // 筛选参数
 const filterParams = reactive({
-    period: '',
+    period: 1,
     date: ''
 });
 
@@ -231,9 +302,9 @@ const alertFilterParams = reactive({
 
 // 数据选项
 const periodOptions = [
-    { value: 'day', label: '按天统计' },
-    { value: 'month', label: '按月统计' },
-    { value: 'year', label: '按年统计' }
+    { value: 1, label: '按月统计' },
+    { value: 2, label: '按季统计' },
+    { value: 3, label: '按年统计' }
 ];
 
 const businessTypeOptions = [
@@ -277,11 +348,16 @@ const overviewData = reactive({
 });
 
 const warehouseData = reactive({
-    completionRate: 0,
+    AB12: 0,
+    AB11: 0,
     inboundRate: 0,
     outboundRate: 0,
     inboundCompleted: 0,
-    outboundCompleted: 0
+    outboundCompleted: 0,
+    inboundRate1: 0,
+    outboundRate1: 0,
+    inboundCompleted1: 0,
+    outboundCompleted1: 0
 });
 
 const tableData = reactive([]);
@@ -295,11 +371,16 @@ const initData = () => {
     });
 
     Object.assign(warehouseData, {
-        completionRate: 85,
+        AB12: 65,
+        AB11: 75,
         inboundRate: 45,
         outboundRate: 40,
         inboundCompleted: 90,
-        outboundCompleted: 80
+        outboundCompleted: 80,
+        inboundRate1: 46,
+        outboundRate1: 41,
+        inboundCompleted1: 91,
+        outboundCompleted1: 81
     });
 
     // 表格数据
@@ -320,10 +401,12 @@ const generateTableData = () => {
 };
 
 // 初始化趋势图表
-const initTrendChart = () => {
+const initTrendChart = (xAxisData = [], seriesData = []) => {
     if (!trendChartRef.value) return;
 
-    trendChart = echarts.init(trendChartRef.value);
+    if (!trendChart) {
+        trendChart = echarts.init(trendChartRef.value);
+    }
 
     const option = {
         textStyle: {
@@ -341,7 +424,7 @@ const initTrendChart = () => {
         },
         xAxis: {
             type: 'category',
-            data: ['2025-04-06', '2025-04-07', '2025-04-08', '2025-04-09', '2025-04-10', '2025-04-11'],
+            data: xAxisData.length > 0 ? xAxisData : ['2025-04-06', '2025-04-07', '2025-04-08', '2025-04-09', '2025-04-10', '2025-04-11'],
             axisLine: {
                 lineStyle: {
                     color: '#244D7B'
@@ -380,7 +463,7 @@ const initTrendChart = () => {
         },
         series: [
             {
-                data: [120, 132, 101, 134, 90, 230],
+                data: seriesData.length > 0 ? seriesData : [120, 132, 101, 134, 90, 230],
                 type: 'line',
                 lineStyle: {
                     color: '#06A7E5'
@@ -511,7 +594,7 @@ const loadAlertTabData = (tabId) => {
 const loadData = () => {
     // 加载主要数据
     initData();
-    initTrendChart();
+    queryWarehouseStatusPaginations();
     initWarehouseChart();
 };
 
@@ -533,7 +616,7 @@ const handleResize = () => {
 // 生命周期
 onMounted(() => {
     initData();
-    initTrendChart();
+    queryWarehouseStatusPaginations();
     initWarehouseChart();
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
@@ -558,12 +641,20 @@ onUnmounted(() => {
     width: 120px !important;
 }
 
+::v-deep(.el-select--small .el-input__wrapper),
+::v-deep(.el-select--small .el-select__wrapper),
+::v-deep(.el-date-editor--small.el-input__wrapper),
+::v-deep(.el-input--small .el-input__wrapper) {
+    height: 24px !important;
+    line-height: 24px !important;
+}
+
 ::v-deep(.el-select--small) {
     width: 115px;
 }
 
 ::v-deep(.el-date-editor.el-input,
-    .el-date-editor.el-input__wrapper) {
+    ::v-deep(.el-date-editor.el-input__wrapper)) {
     width: 115px;
 }
 
@@ -621,9 +712,12 @@ onUnmounted(() => {
     font-size: 16px;
     color: #FFFFFF;
     line-height: 23px;
-    background: linear-gradient(0deg, #92CBFF 0%, #FAFAFB 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+}
+
+.ckleft .active_title {
+    color: #4BDBFE;
+    -webkit-text-fill-color: #4BDBFE;
 }
 
 .ckleft .ckleftwz {
