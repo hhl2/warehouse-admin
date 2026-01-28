@@ -180,7 +180,51 @@
 import { ref, reactive, onMounted, onUnmounted, inject } from 'vue';
 import * as echarts from 'echarts';
 import { useRouter, useRoute } from 'vue-router'
-import { queryYardWarehouseRate } from '@/api/user'
+import { queryYardWarehouseRate,queryEnergyNumCount,queryAlarmCurrent } from '@/api/user'
+onMounted(() => {
+    // 初始化数据
+    fetchData();
+
+    // 初始化图表
+    initChart();
+    initChart1();
+    initChart2();
+    initChart3();
+    initChart4();
+    initChart5();
+
+    // queryAlarmCurrents();
+    queryEnergyNumCounts();
+
+    // 开始自动刷新（可选）
+    // startAutoRefresh();
+
+    // //全市道路排名
+    // get_road_rank().then(res => {
+    //     console.log('全市道路排名:', res)
+
+    // }).catch(err => {
+    //     console.error('获取全市道路排名失败1:', err)
+    // });
+
+    window.addEventListener('resize', handleResize);
+    document.addEventListener('fullscreenchange', handleResize);
+    document.addEventListener('webkitfullscreenchange', handleResize);
+});
+
+const queryAlarmCurrents=()=>{
+
+  const aa=    queryAlarmCurrent({"pageSize":100,"pageNo":1})
+
+}
+
+const queryEnergyNumCounts=()=>{
+   const ac=  queryEnergyNumCount({"queryDate":"2026"})
+queryEnergyNumCount
+}
+
+
+
 
 
 
@@ -943,33 +987,6 @@ const ue5click = (type) => {
     callParentMethod({ "code": 1, "type": "btn", "data": { "id": type } });
 }
 
-onMounted(() => {
-    // 初始化数据
-    fetchData();
-
-    // 初始化图表
-    initChart();
-    initChart1();
-    initChart2();
-    initChart3();
-    initChart4();
-    initChart5();
-
-    // 开始自动刷新（可选）
-    // startAutoRefresh();
-
-    // //全市道路排名
-    // get_road_rank().then(res => {
-    //     console.log('全市道路排名:', res)
-
-    // }).catch(err => {
-    //     console.error('获取全市道路排名失败1:', err)
-    // });
-
-    window.addEventListener('resize', handleResize);
-    document.addEventListener('fullscreenchange', handleResize);
-    document.addEventListener('webkitfullscreenchange', handleResize);
-});
 
 onUnmounted(() => {
 

@@ -1,4 +1,27 @@
 import request from '@/utils/request';
+
+export const queryAlarmCurrent = (data) => {
+  request({
+    url: '/api/qydigital-park-service/syncWcs/queryAlarmCurrent',
+    method: 'post',
+    data
+  });
+}
+
+
+// /api/qydigital - park - service / syncWcs / queryAlarmCurrent
+
+export const queryEnergyNumCount = (data) =>
+  request({
+    url: '/api/mm/qydigital-park-service/qyQueryDevicelnfo/queryEnergyNumCount',
+    method: 'post',
+    data
+  });
+
+
+
+
+
 //作业指标概况
 export const queryWarehouseStatusPagination = (data) =>
   request({

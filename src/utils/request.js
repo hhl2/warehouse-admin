@@ -110,12 +110,24 @@ const handleRequestError = (error, config) => {
     case 500:
     case 502:
     case 503:
-      ElMessage.error('服务器繁忙，请稍后重试');
+      // 详细的500错误日志
+      console.error('================== 500 Internal Server Error ==================');
+      console.error('❌ URL:', config?.url);
+      console.error('❌ Method:', config?.method);
+      console.error('❌ Request Data:', config?.data);
+      console.error('❌ Request Params:', config?.params);
+      console.error('❌ Status Code:', status);
+      console.error('❌ Response Data:', data);
+      console.error('❌ Full Error:', error);
+      console.error('❌ Error Stack:', error?.stack);
+      console.error('==============================================================');
+
+      ElMessage.error(`服务器错误 ${status}: ${data?.message || '请稍后重试'}`);
       return {
         code: status,
-        message: '服务器繁忙，请稍后重试',
+        message: data?.message || '服务器繁忙，请稍后重试',
         success: false,
-        data: null
+        data: data
       };
     default:
       ElMessage.error(data?.message || '网络请求失败');
@@ -259,8 +271,8 @@ serviceWithToken.interceptors.response.use(
     //   }
     // }
 
-    // 其他错误，返回友好的错误信息
-    // return handleRequestError(error, originalRequest);
+    // 其他错误,返回友好的错误信息
+    return handleRequestError(error, originalRequest);
   }
 );
 

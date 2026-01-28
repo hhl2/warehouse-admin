@@ -168,7 +168,10 @@ const props = defineProps({
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
 
 
+onMounted(()=>{
+    queryYardWarehouseInfos();
 
+})
 
 
 const queryYardWarehouseInfos = () => {
