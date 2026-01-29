@@ -413,6 +413,7 @@ import { reactive, ref, inject, watch, onMounted, onUnmounted, onBeforeUnmount, 
 import defaultImg from '@/assets/try/work5.png'
 
 const showMenus = ref(false);
+const input3 = ref("");
 const menuRef = ref(null);
 const ueResponseData = inject('ueResponseData')
 watch(ueResponseData, async (newVal, oldVal) => {
@@ -621,10 +622,10 @@ const queryDistributionPictures = (id) => {
     queryDistributionPicture({
         id: id || '48B574059A8F4A859D9352DB5A3628DB'
     }).then(res => {
-        console.log(res)
+        console.log('queryDistributionPicture 接口返回:', res)
 
-        if (res?.data?.code == 200) {
-            lstPicture.value = res?.data?.data?.lstPicture
+        if (res?.code == 200) {
+            lstPicture.value = res?.data?.lstPicture
         }
 
     })
@@ -633,9 +634,12 @@ const queryDistributionPictures = (id) => {
 //实时库存数据接口
 
 const queryDistributionInfoPaginations = () => {
+
     queryDistributionInfoPagination().then(res => {
-        if (res?.data?.code == 200) {
-            const list = res?.data?.data?.list
+
+        // 因为 request.js 拦截器已经返回了 response.data，所以这里直接判断 res.code
+        if (res?.code == 200) {
+            const list = res?.data?.list || []
             workdata.value = list.map(item => {
                 return {
                     ...item,
@@ -646,6 +650,7 @@ const queryDistributionInfoPaginations = () => {
                 queryDistributionPictures(list[0].id)
             }
         } else {
+            console.warn('实时库存接口返回状态非 200:', res);
             workdata.value = workdata.value.map(item => {
                 return {
                     ...item,
@@ -654,6 +659,8 @@ const queryDistributionInfoPaginations = () => {
             })
         }
 
+    }).catch(err => {
+        console.error('实时库存接口调用失败:', err);
     })
 }
 
@@ -870,12 +877,13 @@ const data1 = ref([
     { id: 'dafe004a0d264b18ac12564fefc9dcd6', name1: "摄像头#7", countNums2: "球机", name: "ADD", countNums6: "在线" },
     { id: 'b9877ba9b8d94041a8a448eb178d8163', name1: "摄像头#8", countNums2: "球机", name: "ADD", countNums6: "在线" }
 ]);
-
+// /api/mm/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination
 const fetchData2 = async () => {
     try {
         const res = await request({
-            url: 'api/qydigital-park-service/videoMonitoringPoint/queryDataListByPage', // 请在此处填入接口地址
+            url: '/api/qydigital-park-service/videoMonitoringPoint/queryDataListByPage', // 添加了开头的斜杠
             method: 'post',
+            skipGlobalParams: true,
             data: {
                 pageSize: 25,
                 pageNo: 1

@@ -3,13 +3,20 @@ import axios from 'axios';
 // token相关配置
 const TOKEN_CONFIG = {
     tokenUrl: '/api/jadp/auth/session/thirdSystem',
-    // tokenKey: 'access-token',
+    tokenKey: 'access-token',
     authInfo: {
-        account: "qyznjcpt@qy.gd.csg.cn",
-        password: "36AAE1DFB66C734AAC7C9C658B96358F",
-        authCode: "78BDDBD09D9B41809F3803DEF16E47CF",
+        // account: "qyznjcpt@qy.gd.csg.cn",
+        // password: "36AAE1DFB66C734AAC7C9C658B96358F",
+        // authCode: "78BDDBD09D9B41809F3803DEF16E47CF",
+        // provinceCode: "03",
+        // bureauCode: "0306",
+
+        account: "zhihui@qy.csg",
+        password: "0F41F9FF9C8ECAC97465A8340C45F083",
+        authCode: "A928DD9A7E0E4FD3B5D96CD49202207E",
         provinceCode: "03",
-        bureauCode: "0306",
+        bureauCode: "0318"
+
     }
 };
 
@@ -38,7 +45,7 @@ export const getToken = async () => {
  */
 export const getStoredToken = () => {
     return localStorage.getItem(TOKEN_CONFIG.tokenKey);
-//  return   localStorage.setItem('access_token', response.data.token);
+    //  return   localStorage.setItem('access_token', response.data.token);
 
 };
 
@@ -48,7 +55,7 @@ export const getStoredToken = () => {
 export const clearToken = () => {
     localStorage.removeItem(TOKEN_CONFIG.tokenKey);
     // return  localStorage.removeItem('access_token');
-        
+
 };
 
 /**

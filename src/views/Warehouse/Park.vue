@@ -180,47 +180,61 @@
 import { ref, reactive, onMounted, onUnmounted, inject } from 'vue';
 import * as echarts from 'echarts';
 import { useRouter, useRoute } from 'vue-router'
-import { queryYardWarehouseRate,queryEnergyNumCount,queryAlarmCurrent } from '@/api/user'
-onMounted(() => {
-    // 初始化数据
-    fetchData();
+import { queryYardWarehouseRate, queryEnergyNumCount, queryAlarmCurrent, queryMonitoringCount, queryEnvironmentCount, querySecurityAlarmCount } from '@/api/user'
 
-    // 初始化图表
-    initChart();
-    initChart1();
-    initChart2();
-    initChart3();
-    initChart4();
-    initChart5();
 
-    // queryAlarmCurrents();
-    queryEnergyNumCounts();
+const queryAlarmCurrents = () => {
 
-    // 开始自动刷新（可选）
-    // startAutoRefresh();
-
-    // //全市道路排名
-    // get_road_rank().then(res => {
-    //     console.log('全市道路排名:', res)
-
-    // }).catch(err => {
-    //     console.error('获取全市道路排名失败1:', err)
-    // });
-
-    window.addEventListener('resize', handleResize);
-    document.addEventListener('fullscreenchange', handleResize);
-    document.addEventListener('webkitfullscreenchange', handleResize);
-});
-
-const queryAlarmCurrents=()=>{
-
-  const aa=    queryAlarmCurrent({"pageSize":100,"pageNo":1})
+    const aa = queryAlarmCurrent({ "pageSize": 100, "pageNo": 1 })
 
 }
 
-const queryEnergyNumCounts=()=>{
-   const ac=  queryEnergyNumCount({"queryDate":"2026"})
-queryEnergyNumCount
+//告警管理
+const querySecurityAlarmCounts = () => {
+    const res = querySecurityAlarmCount({})
+    if (res?.data?.code == 200) {
+        //alramTotal：告警数量，oneLevelNum：紧急告警数量，towLevelNum：重要告警数量，threeLevelNum：一般告警数量
+        alertData.total = res.data.data.alramTotal;
+        alertData.items[0].value = res.data.data.oneLevelNum;
+        alertData.items[1].value = res.data.data.towLevelNum;
+        alertData.items[2].value = res.data.data.threeLevelNum;
+
+    }
+
+}
+
+
+//消防监测
+const queryEnvironmentCounts = () => {
+    const res = queryEnvironmentCount({})
+    if (res?.data?.code == 200) {
+        securityData.total = res.data.data.total;
+        securityData.items[0].value = res.data.data.onNum;
+        securityData.items[1].value = res.data.data.offNum;
+        //total：总数，onNum：在线数量，offNum：离线数量
+
+    }
+
+}
+
+
+//安防监测
+const queryMonitoringCounts = () => {
+    const res = queryMonitoringCount({})
+    if (res?.data?.code == 200) {
+        securityData.total = res.data.data.total;
+        securityData.items[0].value = res.data.data.onNum;
+        securityData.items[1].value = res.data.data.offNum;
+        //total：总数，onNum：在线数量，offNum：离线数量
+
+    }
+
+}
+
+//能源监测
+const queryEnergyNumCounts = () => {
+    const res = queryEnergyNumCount({ "queryDate": "2026" })
+
 }
 
 
@@ -987,7 +1001,34 @@ const ue5click = (type) => {
     callParentMethod({ "code": 1, "type": "btn", "data": { "id": type } });
 }
 
+onMounted(() => {
+    // 初始化数据
+    fetchData();
 
+    // 初始化图表
+    initChart();
+    initChart1();
+    initChart2();
+    initChart3();
+    initChart4();
+    initChart5();
+
+    // queryAlarmCurrents();
+    // queryEnergyNumCounts();
+
+    // queryEnergyNumCounts();
+
+    // queryMonitoringCounts()//安防监测
+
+    querySecurityAlarmCounts()//告警管理
+    // getYardWarehouseRates();//堆场
+    // queryEnvironmentCounts();//消防监测
+
+
+    window.addEventListener('resize', handleResize);
+    document.addEventListener('fullscreenchange', handleResize);
+    document.addEventListener('webkitfullscreenchange', handleResize);
+});
 onUnmounted(() => {
 
 

@@ -6,496 +6,262 @@
         </div>
 
         <div class="sblf">
-
             <el-input v-model="input3" style="width: 203px" placeholder="请输入设备名称" :prefix-icon="Search" />
-
             <div class="sblf_search">
                 <div class="sblf_search_box" @click="handleAlertSearch">查询</div>
                 <div class="sblf_search_box" @click="handleAlertReset">重置</div>
             </div>
         </div>
 
-        <div v-for="(value, index) in source" :key="index">
-            <div class="sblf_box">
-                <div class="sblf_box_title">
-                    设备编码：
-                    <span>{{ value.deviceCode }}</span>
-                </div>
-
-                <div class="margin_sb_box">
-                    <div class="sb_box_label">
-                        <span>设备名称</span>
-                        <span>下次检验日期</span>
-                        <span>设备类型</span>
-                        <span>子设备类型</span>
-                    </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.deviceName }}</span>
-                        <span>{{ value.nextInspectionDate }}</span>
-                        <span>{{ value.deviceType }}</span>
-                        <span>{{ value.subDeviceType }}</span>
-                    </div>
-
-                    <div class="sb_box_label">
-                        <span>生产厂家</span>
-                        <span>规格型号</span>
-                        <span>运行状态</span>
-                        <span>领用数量</span>
-                    </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.manufacturer }}</span>
-                        <span>{{ value.modelSpec }}</span>
-                        <span>{{ value.status }}</span>
-                        <span>{{ value.quantity || '' }}</span>
-                    </div>
-
-                </div>
-
-
-            </div>
-
+        <div class="device-table-wrapper">
+            <el-table class="device-custom-table" ref="tableRef" :data="source" highlight-current-row
+                @row-click="handleRowClick">
+                <el-table-column prop="name" label="设备名称" show-overflow-tooltip />
+                <el-table-column prop="code" label="设备编码" show-overflow-tooltip />
+                <el-table-column prop="spec" label="规格型号" show-overflow-tooltip />
+                <el-table-column prop="lastMaintainDate" label="上次维护时间" show-overflow-tooltip />
+                <el-table-column prop="nextMaintainDate" label="下次维护时间" show-overflow-tooltip />
+            </el-table>
         </div>
-
-
     </div>
+
     <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">设备基本信息</div>
         </div>
 
-
         <div class="sbrwright">
             <div class="sbrws_box">
                 <span class="sbrws_label">设备名称</span>
-                <div class="sbrws_text">1号堆垛机</div>
+                <div class="sbrws_text">{{ selectedRow.name }}</div>
+                <span class="sbrws_label">设备代码</span>
+                <div class="sbrws_text">{{ selectedRow.code }}</div>
+            </div>
+            <div class="sbrws_box">
                 <span class="sbrws_label">设备型号</span>
-                <div class="sbrws_text">
-                    SFZRA-5000
-                </div>
+                <div class="sbrws_text">{{ selectedRow.spec }}</div>
+                <span class="sbrws_label">生产日期</span>
+                <div class="sbrws_text">{{ selectedRow.manufactureDate || '2025-01-01' }}</div>
             </div>
             <div class="sbrws_box">
-                <span class="sbrws_label">额定电压</span>
-                <div class="sbrws_text">
-                    22kv
-                </div>
-                <span class="sbrws_label">额定电流</span>
-                <div class="sbrws_text">
-                    25a
-                </div>
+                <span class="sbrws_label">购买日期</span>
+                <div class="sbrws_text">{{ selectedRow.purchaseDate || '2025-01-01' }}</div>
             </div>
             <div class="sbrws_box">
-                <span class="sbrws_label">生产厂家</span>
-                <div class="sbrws_text">
-                    GYCVV有限公司
-                </div>
-
-                <span class="sbrws_label">维护周期</span>
-                <div class="sbrws_text">
-                    6个月
-                </div>
-            </div>
-            <div class="sbrws_box">
-
                 <span class="sbrws_label">上一次维护时间</span>
-                <div class="sbrws_text">
-                    2025-11-21
-                </div>
+                <div class="sbrws_text">{{ selectedRow.lastMaintainDate || '2025-11-21' }}</div>
             </div>
             <div class="sbrws_box">
                 <span class="sbrws_label">下一期维护时间</span>
-                <div class="sbrws_text">
-                    2026-06-01
-                </div>
-
+                <div class="sbrws_text">{{ selectedRow.nextMaintainDate || '2025-11-21' }}</div>
             </div>
         </div>
 
-
-        <div class="sbpic">
-            <img src="@/assets/try/device.png" alt="">
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">设备告警信息</div>
         </div>
 
-        <div class="jcrwx">
-            <div class="jcrwx_box_li" :class="{ active: activeTab === 1 }" @click="switchTab(1)">
-                <img :src="imageMap2[activeTab === 1 ? 'active' : 'default']" alt="">
-                <div class="jcrwx_box_text little_size">告警</div>
-            </div>
+        <div class="device-table-wrapper">
+            <el-table class="device-custom-table" ref="tableRef" :data="source2" highlight-current-row>
+                <el-table-column prop="deviceName" label="报警设备名称" show-overflow-tooltip />
+                <el-table-column prop="title" label="报警标题" show-overflow-tooltip />
+                <el-table-column prop="type_dictText" label="报警类型" show-overflow-tooltip />
+                <el-table-column prop="level_dictText" label="报警级别" show-overflow-tooltip />
+                <el-table-column prop="cause" label="报警原因" show-overflow-tooltip />
 
-            <div class="jcrwx_box_li" :class="{ active: activeTab === 2 }" @click="switchTab(2)">
-                <img :src="imageMap2[activeTab === 2 ? 'active' : 'default']" alt="">
-                <div class="jcrwx_box_text">运行时长</div>
-            </div>
+            </el-table>
         </div>
-
-
-        <div v-show="activeTab === 1" ref="chartRef" class="changechartwidth">
-        </div>
-
-        <div v-show="activeTab === 2" ref="chartRef2" class="changechartwidth"></div>
-
     </div>
 </template>
 
 <script setup>
-// 接收从 index 传入的面板状态
+import { Search } from '@element-plus/icons-vue'
+import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
+import { queryAlarmCurrent, queryManageList } from '@/api/user'
+
 const props = defineProps({
     isPanelVisible: {
         type: Boolean,
         default: true
-    },
-
+    }
 })
-import jcrw from '@/assets/jcrw.png';
-import njcrw from '@/assets/njcrw.png';
-import { Search } from '@element-plus/icons-vue'
-import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
-import * as echarts from 'echarts';
 
-const chartRef = ref(null);
-let chartInstance = null;
+const queryAlarmCurrents = () => {
+    queryAlarmCurrent({ "pageSize": 100, "pageNo": 1 }).then(res => {
+        console.log(res)
+    })
+}
 
-
-const chartRef2 = ref(null);
-let chartInstance2 = null;
-
-
-const initChart2 = () => {
-    if (!chartRef2.value) return;
-
-    chartInstance2 = echarts.init(chartRef2.value);
-
-    const option = {
-        title: {
-            text: '',
-            textStyle: {
-                color: '#85BEFD'
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                label: {
-                    backgroundColor: '#6a7985',
-                    color: '#85BEFD'
-                }
-            },
-            textStyle: {
-                color: '#85BEFD'
-            }
-        },
-        legend: {
-            data: ['水耗'],
-            textStyle: {
-                color: '#85BEFD'
-            }
-        },
-        toolbox: {
-            feature: {
-                // 移除保存图片功能
-            }
-        },
-        grid: {
-            top: '4%',
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-                axisLine: {
-                    lineStyle: {
-                        color: '#85BEFD'
-                    }
-                },
-                axisLabel: {
-                    color: '#85BEFD'
-                }
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value',
-                axisLine: {
-                    show: true,
-                    lineStyle: {
-                        color: '#85BEFD',
-                        type: 'solid'
-                    }
-                },
-                axisLabel: {
-                    color: '#85BEFD'
-                },
-                splitLine: {
-                    lineStyle: {
-                        color: '#4281B6',
-                        type: 'solid',
-                        opacity: 0.5
-                    }
-                }
-            }
-        ],
-        series: [
-            {
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {
-                    color: 'RGBA(124, 109, 69, 0.6)'
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                lineStyle: {
-                    color: '#7E6E42'
-                },
-                itemStyle: {
-                    color: 'rgba(12, 229, 248, 0.6)'
-                },
-                symbol: 'none',
-                data: [120, 132, 101, 134, 190, 230, 210, 120, 132, 101, 134, 90]
-            }
-        ]
-    };
-
-    chartInstance2.setOption(option);
-};
-
-
-
-const initChart1 = () => {
-    if (!chartRef.value) return;
-
-    chartInstance = echarts.init(chartRef.value);
-
-    const option = {
-        title: {
-            text: '',
-            textStyle: {
-                color: '#85BEFD'
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                label: {
-                    backgroundColor: '#6a7985',
-                    color: '#85BEFD'
-                }
-            },
-            textStyle: {
-                color: '#85BEFD'
-            }
-        },
-        legend: {
-            data: ['水耗'],
-            textStyle: {
-                color: '#85BEFD'
-            }
-        },
-        toolbox: {
-            feature: {
-                // 移除保存图片功能
-            }
-        },
-        grid: {
-            top: '4%',
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-                axisLine: {
-                    lineStyle: {
-                        color: '#85BEFD'
-                    }
-                },
-                axisLabel: {
-                    color: '#85BEFD'
-                }
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value',
-                axisLine: {
-                    show: true,
-                    lineStyle: {
-                        color: '#85BEFD',
-                        type: 'solid'
-                    }
-                },
-                axisLabel: {
-                    color: '#85BEFD'
-                },
-                splitLine: {
-                    lineStyle: {
-                        color: '#4281B6',
-                        type: 'solid',
-                        opacity: 0.5
-                    }
-                }
-            }
-        ],
-        series: [
-            {
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {
-                    color: 'RGBA(124, 109, 69, 0.6)'
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                lineStyle: {
-                    color: '#7E6E42'
-                },
-                itemStyle: {
-                    color: 'rgba(12, 229, 248, 0.6)'
-                },
-                symbol: 'none',
-                data: [110, 400, 201, 104, 190, 130, 410, 420, 180, 121, 174, 90]
-            }
-        ]
-    };
-
-    chartInstance.setOption(option);
-};
-// 响应式数据
-const activeTab = ref(1);
-// 图片映射
-const imageMap2 = {
-    active: njcrw,
-    default: jcrw
-};
-
+const queryManageLists = () => {
+    queryManageList({ "pageSize": 100, "pageNo": 1 }).then(res => {
+        console.log(res)
+    })
+}
+const source2 = [
+    {
+        "level_dictText": "错误报警",
+        "cause": "测试原因1111111111111111112",
+        "type_dictText": "硬件报警",
+        "title": "测试标题11111111111112",
+        "deviceName": "四向车002"
+    },
+    {
+        "cause": "儿童退热贴",
+        "title": null,
+        "type_dictText": null,
+        "level_dictText": null,
+        "deviceName": "立体仓库001"
+    },
+    {
+        "cause": "223232",
+        "title": null,
+        "type_dictText": null,
+        "level_dictText": null,
+        "deviceName": "四向车002"
+    }
+]
 const source = [
     {
-        deviceCode: '64BC256336654588523369814CVT3',
-        deviceName: '堆垛机',
-        nextInspectionDate: '2025-11-23',
+        code: '64BC256336654588523369814CVT3',
+        name: '堆垛机',
+        lastMaintainDate: '2025-11-23',
+        nextMaintainDate: '2025-12-23',
         deviceType: '智能设备',
         subDeviceType: '作业设备',
         manufacturer: '某某厂家',
-        modelSpec: 'DZ-001',
+        spec: 'DZ-001',
         status: '在线',
         quantity: ''
     },
     {
-        deviceCode: '74BC256336654588523369814CVT4',
-        deviceName: 'AGV小车',
-        nextInspectionDate: '2025-12-15',
+        code: '74BC256336654588523369814CVT4',
+        name: 'AGV小车',
+        lastMaintainDate: '2025-12-15',
+        nextMaintainDate: '2025-12-23',
         deviceType: '智能设备',
         subDeviceType: '运输设备',
         manufacturer: '智能科技',
-        modelSpec: 'AGV-2023',
+        spec: 'AGV-2023',
         status: '在线',
         quantity: '5'
     },
     {
-        deviceCode: '84BC256336654588523369814CVT5',
-        deviceName: '码垛机器人',
-        nextInspectionDate: '2026-01-10',
+        code: '84BC256336654588523369814CVT5',
+        name: '码垛机器人',
+        lastMaintainDate: '2026-01-10',
+        nextMaintainDate: '2025-12-23',
         deviceType: '智能设备',
         subDeviceType: '作业设备',
         manufacturer: '机器人公司',
-        modelSpec: 'MD-500',
+        spec: 'MD-500',
         status: '离线',
         quantity: '2'
     },
     {
-        deviceCode: '94BC256336654588523369814CVT6',
-        deviceName: '输送带',
-        nextInspectionDate: '2025-10-20',
+        code: '94BC256336654588523369814CVT6',
+        name: '输送带',
+        lastMaintainDate: '2025-10-20',
+        nextMaintainDate: '2025-12-23',
         deviceType: '智能设备',
         subDeviceType: '传输设备',
         manufacturer: '传输设备厂',
-        modelSpec: 'SST-100',
+        spec: 'SST-100',
         status: '在线',
         quantity: ''
     }
 ]
 
-
-// 事件处理函数
-const switchTab = (tabId) => {
-    activeTab.value = tabId;
-    // 切换时重新初始化对应的图表
-    nextTick(() => {
-        if (tabId === 1 && chartRef.value) {
-            initChart1();
-        } else if (tabId === 2 && chartRef2.value) {
-            initChart2();
-        }
-    });
-};
-
-
+// 响应式数据
+const activeTab = ref(1);
+const selectedRow = ref(source[0]);
 const input3 = ref('')
-const handleAlertSearch = () => {
 
-}
-const handleAlertReset = () => {
-
-}
-
-const handleResize = () => {
-    if (chartInstance) {
-        chartInstance.resize();
-    }
-    if (chartInstance2) {
-        chartInstance2.resize();
-    }
-
-
+const handleRowClick = (row) => {
+    selectedRow.value = row;
 };
+
+const handleAlertSearch = () => { }
+const handleAlertReset = () => { }
+
 onMounted(() => {
-
-    initChart1();
-    window.addEventListener('resize', handleResize);
-    document.addEventListener('fullscreenchange', handleResize);
-    document.addEventListener('webkitfullscreenchange', handleResize);
-
+    // 页面逻辑初始化
 });
 
 onUnmounted(() => {
-
-
-    if (chartInstance) {
-        chartInstance.dispose();
-        chartInstance = null;
-    }
-    if (chartInstance2) {
-        chartInstance2.dispose();
-        chartInstance2 = null;
-    }
-    window.removeEventListener('resize', handleResize);
-    document.removeEventListener('fullscreenchange', handleResize);
-    document.removeEventListener('webkitfullscreenchange', handleResize);
-
+    // 清理资源
 })
-
-
 </script>
 
-
 <style scoped>
-.changechartwidth {
-    width: 465px;
-    height: 280px;
+.left {
+    display: flex;
+    flex-direction: column;
+}
 
+.device-table-wrapper {
+    flex: 1;
+    margin: 10px 16px 0px 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.device-custom-table {
+    width: 100%;
+    height: 100%;
+}
+
+/* 针对此页面的表格自定义样式 */
+::v-deep(.device-custom-table.el-table) {
+    background-color: transparent !important;
+}
+
+::v-deep(.device-custom-table .el-table__header-wrapper th) {
+    background-color: rgba(9, 93, 190, 0.9) !important;
+    color: #04E9E9 !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    border-bottom: 2px solid #1C70D7;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* 确保表头内部 cell 也不换行 */
+::v-deep(.device-custom-table .el-table__header-wrapper th .cell) {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+::v-deep(.device-custom-table .el-table__row) {
+    background-color: rgba(9, 93, 190, 0.4) !important;
+    cursor: pointer !important;
+}
+
+::v-deep(.device-custom-table .el-table__row td) {
+    color: #E9FBFF !important;
+    border-bottom: 1px solid rgba(28, 112, 215, 0.3);
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+::v-deep(.device-custom-table .cell) {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    word-break: break-all !important;
+}
+
+::v-deep(.device-custom-table.el-table--enable-row-hover .el-table__body tr:hover > td) {
+    background-color: rgba(28, 112, 215, 0.6) !important;
+}
+
+::v-deep(.device-custom-table .el-table__body tr.current-row > td) {
+    background-color: rgba(28, 112, 215, 0.9) !important;
 }
 
 ::v-deep(.el-input__wrapper) {
@@ -512,48 +278,6 @@ onUnmounted(() => {
     color: #fff;
 }
 
-
-.jcrwx {
-    display: flex;
-    cursor: pointer;
-    margin: 5px 10px;
-}
-
-.jcrwx .jcrwx_box_li {
-    position: relative;
-}
-
-.jcrwx .jcrwx_box_li img {
-    width: 100%;
-    height: 50px;
-}
-
-.jcrwx .jcrwx_box_li .jcrwx_box_text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-40%, -50%);
-    width: 80px;
-    font-size: 18px;
-    color: #C1E6FC;
-}
-
-.little_size {
-    width: 40px !important;
-}
-
-.sbpic {
-    width: 400px;
-    height: 244px;
-    margin: 20px 31px;
-    background-color: burlywood;
-}
-
-.sbpic img {
-    width: 100%;
-    height: 100%;
-}
-
 .sblf {
     margin: 10px 20px;
     display: flex;
@@ -561,16 +285,13 @@ onUnmounted(() => {
 }
 
 .sbrwright {
-
     display: flex;
     flex-direction: column;
     gap: 1px;
-
     border-radius: 5px;
     margin: 20px;
-
+    margin-bottom: 0px;
 }
-
 
 .sbrwright .sbrws_box {
     display: flex;
@@ -579,21 +300,16 @@ onUnmounted(() => {
     font-size: 15px;
     line-height: 1.6;
     background: #095DBE;
-    /* background-color: #1C4A95; */
-    /* background-color: rgba(93, 146, 237, 0.7); */
     padding: 2px 5px;
     margin-bottom: 12px;
 }
 
 .sbrwright .sbrws_label {
-
-    /* color: #54B1FC; */
     color: #04E9E9;
     white-space: nowrap;
     flex-shrink: 0;
     font-weight: 500;
     font-size: 17px;
-
 }
 
 .sbrws_box .sbrws_text {
@@ -610,93 +326,10 @@ onUnmounted(() => {
     margin-left: 5px;
 }
 
-.sblf_box {
-    width: 438px;
-    height: 190px;
-
-    border: 1px solid #1C70D7;
-    border-radius: 5px;
-    margin: 0px 15px;
-    margin-bottom: 16px;
-}
-
-.sblf_box_title {
-    color: #E9FBFF;
-    font-size: 16px;
-    padding: 5px 10px;
-
-
-
-}
-
-.sblf_box_title span {
-    color: #54BAFF;
-
-}
-
-.margin_sb_box {
-    margin: 0px 7px;
-}
-
-.sb_box_label {
-    display: flex;
-    padding: 5px 8px;
-    font-size: 12px;
-    /* background: #274A9D; */
-    background: #095DBE;
-    color: #04E9E9;
-    /* background-color: rgba(93, 146, 237, 0.7); */
-    /* color: #54B1FC; */
-
-    font-size: 16px;
-    justify-content: space-between;
-    margin-bottom: 5px;
-
-}
-
-.sb_box_label span {
-    display: inline-block;
-    width: 110px;
-    text-align: center;
-}
-
-.sb_box_label span:first-child {
-    text-align: left;
-}
-
-
-.sb_box_label2 {
-    display: flex;
-
-    padding: 5px 8px;
-    /* background: #557FA4; */
-    background-color: rgba(9, 93, 190, 0.6);
-    /* background-color: rgba(116, 154, 205, 0.7); */
-    color: #DFF3FA;
-    font-size: 16px;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-.sb_box_label2 span {
-    display: inline-block;
-    width: 100px;
-    text-align: center;
-}
-
-.sb_box_label2 span:first-child {
-    text-align: left;
-}
-
-
-
-
-
 .sblf_search {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     width: 110px;
 }
 

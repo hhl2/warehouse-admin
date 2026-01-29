@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import { getToken, getStoredToken, hasToken, clearToken } from './token'; // 已注释：禁用token获取
+import { getToken, getStoredToken, hasToken, clearToken } from './token'; // 已注释：禁用token获取
 import { ElMessage } from 'element-plus'
 
 // 从 config.json 加载配置
@@ -43,101 +43,18 @@ const baseConfig = {
   // withCredentials: true
 };
 
-// 错误处理函数
+// 错误处理函数 (已根据用户要求注释内容)
 const handleRequestError = (error, config) => {
+  /*
   const { response, code, message } = error;
-
-  // 超时错误
   if (code === 'ECONNABORTED' || message?.includes('timeout')) {
-    console.warn('请求超时:', config?.url);
-    ElMessage.warning('网络请求超时，请检查网络连接或稍后重试');
-    return {
-      code: -1,
-      message: '网络请求超时，请检查网络连接或稍后重试',
-      success: false,
-      data: null
-    };
+    ElMessage.warning('网络请求超时');
   }
-
-  // 网络错误
   if (!response) {
-    console.warn('网络连接错误:', config?.url);
-    ElMessage.warning('网络连接失败，请检查网络设置');
-    return {
-      code: -2,
-      message: '网络连接失败，请检查网络设置',
-      success: false,
-      data: null
-    };
+    ElMessage.error('网络连接失败');
   }
-
-  const { status, data } = response;
-
-  // 根据不同状态码处理
-  switch (status) {
-    case 400:
-      ElMessage.warning(data?.message || '请求参数错误');
-      return {
-        code: 400,
-        message: data?.message || '请求参数错误',
-        success: false,
-        data: null
-      };
-    case 401:
-      ElMessage.warning('登录已过期，请重新登录');
-      return {
-        code: 401,
-        message: '登录已过期，请重新登录',
-        success: false,
-        data: null
-      };
-    case 403:
-      ElMessage.warning('没有权限访问该资源');
-      return {
-        code: 403,
-        message: '没有权限访问该资源',
-        success: false,
-        data: null
-      };
-    case 404:
-      ElMessage.warning('请求的资源不存在');
-      return {
-        code: 404,
-        message: '请求的资源不存在',
-        success: false,
-        data: null
-      };
-    case 500:
-    case 502:
-    case 503:
-      // 详细的500错误日志
-      console.error('================== 500 Internal Server Error ==================');
-      console.error('❌ URL:', config?.url);
-      console.error('❌ Method:', config?.method);
-      console.error('❌ Request Data:', config?.data);
-      console.error('❌ Request Params:', config?.params);
-      console.error('❌ Status Code:', status);
-      console.error('❌ Response Data:', data);
-      console.error('❌ Full Error:', error);
-      console.error('❌ Error Stack:', error?.stack);
-      console.error('==============================================================');
-
-      ElMessage.error(`服务器错误 ${status}: ${data?.message || '请稍后重试'}`);
-      return {
-        code: status,
-        message: data?.message || '服务器繁忙，请稍后重试',
-        success: false,
-        data: data
-      };
-    default:
-      ElMessage.error(data?.message || '网络请求失败');
-      return {
-        code: status || -1,
-        message: data?.message || '网络请求失败',
-        success: false,
-        data: null
-      };
-  }
+  */
+  return Promise.reject(error);
 };
 
 // ==================== 需要Token的实例 ====================
@@ -145,7 +62,8 @@ const serviceWithToken = axios.create(baseConfig);
 
 // Token相关变量
 let isRefreshing = false;
-let retryRequests = [];
+let tokenPromise = null; // 用于存储正在获取 token 的 promise
+let retryRequests = []; // 重试队列
 
 const executeRetryRequests = (token) => {
   retryRequests.forEach(cb => cb(token));
@@ -155,32 +73,42 @@ const executeRetryRequests = (token) => {
 // 请求拦截器 - 带Token
 serviceWithToken.interceptors.request.use(
   async (config) => {
-    // 添加请求时间戳用于调试
     config._requestStartTime = Date.now();
 
-    // ========== 已注释：禁用token获取逻辑 ==========
-    // // 排除token获取接口本身
-    // if (!config.url.includes('/auth/session/thirdSystem')) {
-    //   let token = getStoredToken();
+    // 排除 token 获取接口本身
+    if (!config.url.includes('/auth/session/thirdSystem')) {
+      let token = getStoredToken();
 
-    //   if (!token && !isRefreshing) {
-    //     try {
-    //       console.log('首次获取token...');
-    //       token = await getToken();
-    //     } catch (error) {
-    //       console.error('初始获取token失败:', error);
-    //       // 不reject，继续请求，让后端返回401
-    //     }
-    //   }
+      // 如果没有 token，则发起获取 token 的请求
+      if (!token) {
+        console.log(`[Request] 无Token, 准备获取: ${config.url}`);
+        if (!isRefreshing) {
+          isRefreshing = true;
+          tokenPromise = getToken().then(res => {
+            isRefreshing = false;
+            return res;
+          }).catch(err => {
+            isRefreshing = false;
+            throw err;
+          });
+        }
 
-    //   if (token) {
-    //     config.headers['access-token'] = token;
-    //     console.log('请求携带token:', token.substring(0, 20) + '...');
-    //   }
-    // }
+        try {
+          token = await tokenPromise;
+          console.log('[Request] Token 获取成功，继续业务请求');
+        } catch (err) {
+          console.error('[Request] Token 获取失败，业务请求可能受限');
+        }
+      }
+
+      if (token) {
+        config.headers['access-token'] = token;
+      }
+    }
 
     // ========== 注入全局参数 ==========
-    if (globalParams && Object.keys(globalParams).length > 0) {
+    // 增加 skipGlobalParams 参数，用于按需跳过全局参数注入
+    if (!config.skipGlobalParams && globalParams && Object.keys(globalParams).length > 0) {
       if (config.method?.toLowerCase() === 'get' || config.method?.toLowerCase() === 'delete') {
         config.params = { ...globalParams, ...config.params };
       } else {
@@ -197,23 +125,48 @@ serviceWithToken.interceptors.request.use(
   },
   error => {
     console.error('请求拦截器错误:', error);
-    // 返回友好的错误信息，而不是reject
-    return Promise.resolve({
-      data: {
-        code: -1,
-        message: '请求配置错误',
-        success: false,
-        data: null
-      }
-    });
+    return Promise.reject(error);
   }
 );
 
 // 响应拦截器 - 带Token
 serviceWithToken.interceptors.response.use(
-  (response) => {
+  async (response) => {
     const requestTime = Date.now() - response.config._requestStartTime;
     console.log(`请求成功: ${response.config.url} (${requestTime}ms)`);
+
+    // 如果 HTTP 状态为 200，但业务 code 为 500，且未被标记过重试
+    if (response.data && response.data.code === 500 && !response.config._retry) {
+      console.warn('检测到业务状态码 500，尝试刷新 token...', response.config.url);
+
+      const originalRequest = response.config;
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          retryRequests.push((token) => {
+            originalRequest.headers['access-token'] = token;
+            resolve(serviceWithToken(originalRequest));
+          });
+        });
+      }
+
+      isRefreshing = true;
+      try {
+        console.log('开始刷新token (来自 500)...');
+        const newToken = await getToken();
+        isRefreshing = false;
+
+        executeRetryRequests(newToken);
+        originalRequest.headers['access-token'] = newToken;
+        return serviceWithToken(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        clearToken();
+        console.error('刷新token失败:', refreshError);
+        return response.data; // 如果刷新也失败了，就直接返回 500 吧
+      }
+    }
 
     // 如果后端返回的数据格式正确，直接返回
     if (response.data && typeof response.data === 'object') {
@@ -231,47 +184,45 @@ serviceWithToken.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ========== 已注释：禁用401 token刷新逻辑 ==========
-    // // 401 token 刷新逻辑
-    // if (error.response?.status === 401 &&
-    //   !originalRequest?.url?.includes('/auth/session/thirdSystem') &&
-    //   !originalRequest?._retry) {
+    // 401 token 刷新逻辑
+    if (error.response?.status === 401 &&
+      !originalRequest?.url?.includes('/auth/session/thirdSystem') &&
+      !originalRequest?._retry) {
 
-    //   console.log('检测到401错误，尝试刷新token...');
+      console.log('检测到401错误，尝试刷新token...');
 
-    //   if (isRefreshing) {
-    //     console.log('token刷新中，加入重试队列');
-    //     return new Promise((resolve) => {
-    //       retryRequests.push((token) => {
-    //         originalRequest.headers['access-token'] = token;
-    //         resolve(serviceWithToken(originalRequest));
-    //       });
-    //     });
-    //   }
+      if (isRefreshing) {
+        console.log('token刷新中，加入重试队列');
+        return new Promise((resolve) => {
+          retryRequests.push((token) => {
+            originalRequest.headers['access-token'] = token;
+            resolve(serviceWithToken(originalRequest));
+          });
+        });
+      }
 
-    //   originalRequest._retry = true;
-    //   isRefreshing = true;
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-    //   try {
-    //     console.log('开始刷新token...');
-    //     const newToken = await getToken();
-    //     isRefreshing = false;
+      try {
+        console.log('开始刷新token (来自 401)...');
+        const newToken = await getToken();
+        isRefreshing = false;
 
-    //     console.log('token刷新成功，重试原请求');
-    //     originalRequest.headers['access-token'] = newToken;
-    //     executeRetryRequests(newToken);
+        console.log('token刷新成功，重试原请求');
+        originalRequest.headers['access-token'] = newToken;
+        executeRetryRequests(newToken);
 
-    //     return serviceWithToken(originalRequest);
-    //   } catch (refreshError) {
-    //     isRefreshing = false;
-    //     clearToken();
-    //     console.error('刷新token失败:', refreshError);
-    //     // 返回友好的错误信息，而不是reject
-    //     // return handleRequestError(error, originalRequest);
-    //   }
-    // }
+        return serviceWithToken(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        clearToken();
+        console.error('刷新token失败:', refreshError);
+        return handleRequestError(error, originalRequest);
+      }
+    }
 
-    // 其他错误,返回友好的错误信息
+    // 其他错误, 直接 reject让用户在控制台/网络面板能看到红色错误
     return handleRequestError(error, originalRequest);
   }
 );
@@ -282,7 +233,7 @@ const serviceWithoutToken = axios.create(baseConfig);
 // 请求拦截器 - 无Token (同样注入全局参数)
 serviceWithoutToken.interceptors.request.use(
   (config) => {
-    if (globalParams && Object.keys(globalParams).length > 0) {
+    if (!config.skipGlobalParams && globalParams && Object.keys(globalParams).length > 0) {
       if (config.method?.toLowerCase() === 'get' || config.method?.toLowerCase() === 'delete') {
         config.params = { ...globalParams, ...config.params };
       } else {

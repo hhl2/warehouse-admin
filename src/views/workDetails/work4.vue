@@ -106,7 +106,7 @@
         </div>
 
         <div class="changleft5">
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data1" >
+            <el-table class="my-spacing-table2" ref="tableRef" :data="data1">
                 <el-table-column prop="materialName" label="物资名称" show-overflow-tooltip />
                 <el-table-column prop="actualQty" label="库存数量" />
                 <el-table-column prop="name" label="预警值" show-overflow-tooltip />
@@ -198,7 +198,7 @@ const querySafeDistributionInfos = () => {
     querySafeDistributionInfo({ timeType: timeType1.value }).then(res => {
         if (res?.data?.code == 200) {
 
-        data1.value=res.data.data.list
+            data1.value = res.data.data.list
             // 处理数据
         }
     })
@@ -260,11 +260,11 @@ const queryWarehouseThroughputStatistics = () => {
 
 onMounted(() => {
     // 调用数据接口
-    queryWarehouseThroughputStatistics();
-    queryTurnoverInfos();
-    queryAvgDisDeclineRateInfos();
-    queryProductionInfos();
-    querySafeDistributionInfos();
+    // queryWarehouseThroughputStatistics();
+    // queryTurnoverInfos();
+    // queryAvgDisDeclineRateInfos();
+    // queryProductionInfos();
+    // querySafeDistributionInfos();
     queryInventoryRateInfos();
 })
 

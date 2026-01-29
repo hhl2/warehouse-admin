@@ -262,7 +262,7 @@ const props = defineProps({
 
 import { Search } from '@element-plus/icons-vue'
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
-
+import request from '@/utils/request'
 const showMenus = ref(false);
 const menuRef = ref(null);
 const ueResponseData = inject('ueResponseData')
@@ -277,6 +277,23 @@ watch(ueResponseData, async (newVal, oldVal) => {
 
     }
 })
+
+
+const queryEnvironmentDeviceListPagination = async () => {
+    try {
+        const response = await request({
+            url: '/api/mm/qydigital-park-service/qyQueryDeviceInfo/queryEnvironmentDeviceListPagination',
+            method: 'post',
+            data: {
+                "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
+            },
+            skipGlobalParams: true
+        });
+        console.log(response);
+    } catch (error) {
+        console.error('获取监控点列表失败:', error);
+    }
+}
 
 const handleClickOutside = (event) => {
     // console.log(event, menuRef.value.contains(event.target))
@@ -544,6 +561,7 @@ var data2 = [
 // 生命周期
 onMounted(() => {
     document.addEventListener("click", handleClickOutside);
+    queryEnvironmentDeviceListPagination();
 
 });
 

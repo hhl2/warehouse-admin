@@ -519,6 +519,22 @@ const currentCamera = ref({
     location: '变压器流水线检测工位',
     status: 'online'
 });
+// /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
+const queryMonitoringPointListPagination = async () => {
+    try {
+        const response = await request({
+            url: '/api/mm/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
+            method: 'post',
+            data: {
+                "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
+            },
+            skipGlobalParams: true
+        });
+        console.log(response);
+    } catch (error) {
+        console.error('获取监控点列表失败:', error);
+    }
+}
 
 
 
@@ -1194,7 +1210,8 @@ const fetchData2 = async () => {
 
 // 生命周期
 onMounted(() => {
-    fetchData2();
+    // fetchData2();
+    queryMonitoringPointListPagination();
     document.addEventListener("click", handleClickOutside);
 
 
