@@ -191,7 +191,8 @@ const queryAlarmCurrents = () => {
 
 //告警管理
 const querySecurityAlarmCounts = () => {
-    const res = querySecurityAlarmCount({})
+    // dealState：是否处理（1=已处理，2=未处理）非必填
+    const res = querySecurityAlarmCount({ "dealState": "2" })
     if (res?.data?.code == 200) {
         //alramTotal：告警数量，oneLevelNum：紧急告警数量，towLevelNum：重要告警数量，threeLevelNum：一般告警数量
         alertData.total = res.data.data.alramTotal;
@@ -1014,12 +1015,8 @@ onMounted(() => {
     initChart5();
 
     // queryAlarmCurrents();
-    // queryEnergyNumCounts();
-
-    // queryEnergyNumCounts();
-
+    // queryEnergyNumCounts();//能耗监测
     // queryMonitoringCounts()//安防监测
-
     querySecurityAlarmCounts()//告警管理
     // getYardWarehouseRates();//堆场
     // queryEnvironmentCounts();//消防监测

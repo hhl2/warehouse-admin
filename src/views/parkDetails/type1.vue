@@ -2,7 +2,9 @@
     <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmianx">
             <div class="changewidth">
-                <el-input v-model="deviceName" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-input v-model="deviceName" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                    @keyup.enter="queryParkWeatherListPaginations" />
+                <el-button type="primary" class="search-btn" @click="queryParkWeatherListPaginations">查询</el-button>
             </div>
             <div class="changleft">
                 <el-table class="my-spacing-table" ref="tableRef" :data="deviceData">
@@ -13,24 +15,9 @@
                     <el-table-column prop="watchTime" label="检查时间" show-overflow-tooltip />
                     <el-table-column prop="runStatus" label="状态" width="60">
                     </el-table-column>
-
-                    <el-table-column prop="alarmLevel" label="告警等级">
-                        <!-- <template #default="scope">
-                            <span :class="['status-badge', statusClassMap[scope.row.alarmLevel]]">
-                                {{ scope.row.alarmLevel }}
-                            </span>
-                        </template> -->
-                    </el-table-column>
-
-                    <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip>
-
-                    </el-table-column>
-
-
-
+                    <el-table-column prop="alarmLevel" label="告警等级" show-overflow-tooltip />
+                    <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip />
                 </el-table>
-
-
             </div>
         </div>
     </div>
@@ -39,8 +26,6 @@
         <div class="context_tan">
         </div>
     </div>
-
-
 </template>
 
 <style scoped>
@@ -73,12 +58,27 @@
 
 .changewidth {
     margin: 5px 15px 10px 10px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
 
+.search-btn {
+    height: 32px;
+    background: #476B9A;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
+}
+
+.search-btn:hover {
+    background: rgba(0, 168, 255, 0.4);
+    border-color: #00eaff;
+    color: #fff;
 }
 
 .changleft {
     margin-left: 12px;
-
 }
 
 .context-menu {
@@ -99,6 +99,9 @@
 </style>
 
 <script setup>
+import { Search } from '@element-plus/icons-vue'
+import { ref, onMounted, onUnmounted, inject, watch } from 'vue'
+import { queryParkWeatherListPagination } from '@/api/user'
 
 // 接收从 index 传入的面板状态
 const props = defineProps({
@@ -106,27 +109,112 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
-
 })
 
-import { Search } from '@element-plus/icons-vue'
-import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
-import { queryParkWeatherListPagination } from '@/api/user'
 const showMenus = ref(false);
 const menuRef = ref(null);
 const deviceName = ref('');
 const ueResponseData = inject('ueResponseData')
-watch(ueResponseData, async (newVal, oldVal) => {
+
+watch(ueResponseData, (newVal) => {
     if (newVal) {
         console.log('接收到新数据:', newVal)
-
-        if (newVal?.json.type && newVal?.json.type == 'hjjc') {
+        if (newVal?.json.type === 'hjjc') {
             showMenus.value = true
-
         }
-
     }
 })
+
+const deviceData = ref([
+    {
+        deviceName: "温度传感器#1",
+        deviceType: "环境检测",
+        location: "室内1号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "重要告警",
+        alarmInfo: "1号监测点温度过高",
+        type: 2
+    },
+    {
+        deviceName: "温度传感器#2",
+        deviceType: "环境检测",
+        location: "室内2号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "一般告警",
+        alarmInfo: "2号监测点温度过高",
+        type: 3
+    },
+    {
+        deviceName: "温度传感器#3",
+        deviceType: "环境检测",
+        location: "室内3号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "一般告警",
+        alarmInfo: "3号监测点温度过高",
+        type: 3
+    },
+    {
+        deviceName: "温度传感器#4",
+        deviceType: "环境检测",
+        location: "室内4号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "重要告警",
+        alarmInfo: "4号监测点温度过高",
+        type: 2
+    },
+    {
+        deviceName: "温度传感器#5",
+        deviceType: "环境检测",
+        location: "室内5号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "重要告警",
+        alarmInfo: "5号监测点温度过高",
+        type: 2
+    },
+    {
+        deviceName: "温度传感器#6",
+        deviceType: "环境检测",
+        location: "室内6号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "紧急告警",
+        alarmInfo: "6号监测点温度过高",
+        type: 1
+    },
+    {
+        deviceName: "温度传感器#7",
+        deviceType: "环境检测",
+        location: "室内7号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "重要告警",
+        alarmInfo: "7号监测点温度过高",
+        type: 2
+    },
+    {
+        deviceName: "温度传感器#8",
+        deviceType: "环境检测",
+        location: "室内8号监测点",
+        countNums4: "65°C",
+        watchTime: "2025-04-12 10:24:15",
+        runStatus: "在线",
+        alarmLevel: "重要告警",
+        alarmInfo: "8号监测点温度过高",
+        type: 2
+    },
+]);
 
 const formatDate = (timestamp) => {
     if (!timestamp) return ''
@@ -151,9 +239,7 @@ const queryParkWeatherListPaginations = async () => {
             }
         });
     }
-
 }
-
 
 const handleClickOutside = (event) => {
     if (menuRef.value && menuRef.value.contains(event.target)) {
@@ -161,138 +247,12 @@ const handleClickOutside = (event) => {
     }
 };
 
-
-
-const statusClassMap = reactive({
-    '紧急告警': 'status-urgent',
-    '重要告警': 'status-important',
-    '一般告警': 'status-normal'
-})
-
-const statusClassMaps = reactive({
-    '1': 'status-urgent',
-    '2': 'status-important',
-    '3': 'status-normal'
-})
-
-const deviceData = ref([
-    {
-        deviceName: "温度传感器#1",
-        deviceType: "环境检测",
-        location: "室内1号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "1号监测点温度过高",
-        type: 2
-
-    },
-    {
-        deviceName: "温度传感器#2",
-        deviceType: "环境检测",
-        location: "室内2号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "一般告警",
-        alarmInfo: "2号监测点温度过高",
-        type: 3
-
-    },
-
-    {
-        deviceName: "温度传感器#3",
-        deviceType: "环境检测",
-        location: "室内3号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "一般告警",
-        alarmInfo: "3号监测点温度过高",
-        type: 3
-
-    },
-
-    {
-        deviceName: "温度传感器#4",
-        deviceType: "环境检测",
-        location: "室内4号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "4号监测点温度过高",
-        type: 2
-
-    },
-
-    {
-        deviceName: "温度传感器#5",
-        deviceType: "环境检测",
-        location: "室内5号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "5号监测点温度过高",
-        type: 2
-
-    },
-
-    {
-        deviceName: "温度传感器#6",
-        deviceType: "环境检测",
-        location: "室内6号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "紧急告警",
-        alarmInfo: "6号监测点温度过高",
-        type: 1
-
-    },
-
-    {
-        deviceName: "温度传感器#7",
-        deviceType: "环境检测",
-        location: "室内7号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "7号监测点温度过高",
-        type: 2
-
-    },
-
-    {
-        deviceName: "温度传感器#8",
-        deviceType: "环境检测",
-        location: "室内8号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "8号监测点温度过高",
-        type: 2
-
-    },
-
-
-
-
-]);
-
-// 生命周期
 onMounted(() => {
     document.addEventListener("click", handleClickOutside);
     queryParkWeatherListPaginations()
-
 });
 
 onUnmounted(() => {
     document.removeEventListener("click", handleClickOutside);
 });
-
 </script>
