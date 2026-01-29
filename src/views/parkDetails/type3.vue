@@ -569,6 +569,7 @@ const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', 
         console.log('📹 准备请求视频URL，cameraId:', safeCameraId);
 
         // 调用API获取视频预览URL（使用代理避免跨域）
+        // /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
         const response = await request({
             url: '/api/qydigital-park-service/qyVideoPoint/previewURLs',
             method: 'post',

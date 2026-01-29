@@ -2,26 +2,28 @@
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                    @keyup.enter="queryParkWeatherListPaginations" />
+                <el-button type="primary" class="search-btn" @click="queryParkWeatherListPaginations">查询</el-button>
             </div>
             <div class="changleft">
-                <el-table class="my-spacing-table" ref="tableRef" :data="data">
-                    <el-table-column prop="countNums1" label="设备名称" show-overflow-tooltip />
-                    <el-table-column prop="countNums2" label="设备类型" />
-                    <el-table-column prop="countNums3" label="检测点位置" show-overflow-tooltip />
+                <el-table class="my-spacing-table" ref="tableRef" :data="deviceData">
+                    <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
+                    <el-table-column prop="deviceType" label="设备类型" />
+                    <el-table-column prop="location" label="监测点位置" show-overflow-tooltip />
                     <el-table-column prop="countNums4" label="检测数值" />
-                    <el-table-column prop="countNums5" label="检查时间" show-overflow-tooltip />
-                    <el-table-column prop="countNums6" label="状态" width="60">
+                    <el-table-column prop="watchTime" label="检查时间" show-overflow-tooltip />
+                    <el-table-column prop="runStatus" label="状态" width="60">
                     </el-table-column>
-                    <el-table-column prop="" label="告警等级">
+                    <el-table-column prop="alarmLevel" label="告警等级">
                         <template #default="scope">
-                            <span :class="['status-badge', statusClassMap[scope.row.countNums7]]">
-                                {{ scope.row.countNums7 }}
+                            <span :class="['status-badge', statusClassMap[scope.row.alarmLevel]]">
+                                {{ scope.row.alarmLevel }}
                             </span>
                         </template>
                     </el-table-column>
 
-                    <el-table-column prop="countNums8" label="告警信息" show-overflow-tooltip>
+                    <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip>
 
                     </el-table-column>
 
@@ -113,7 +115,23 @@
 
 .changewidth {
     margin: 5px 15px 10px 10px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
 
+.search-btn {
+    height: 32px;
+    background: #476B9A;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
+}
+
+.search-btn:hover {
+    background: rgba(0, 168, 255, 0.4);
+    border-color: #00eaff;
+    color: #fff;
 }
 
 .changleft {
@@ -149,11 +167,39 @@ const props = defineProps({
 })
 import { Search } from '@element-plus/icons-vue'
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
+import { queryParkWeatherListPagination } from '@/api/user'
 
 const showMenus = ref(false);
 const menuRef = ref(null);
 const input3 = ref('');
+const deviceData = ref([]);
 const ueResponseData = inject('ueResponseData')
+
+const formatDate = (timestamp) => {
+    if (!timestamp) return ''
+    const date = new Date(timestamp)
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, '0')
+    const d = String(date.getDate()).padStart(2, '0')
+    const h = String(date.getHours()).padStart(2, '0')
+    const min = String(date.getMinutes()).padStart(2, '0')
+    const s = String(date.getSeconds()).padStart(2, '0')
+    return `${y}-${m}-${d} ${h}:${min}:${s}`
+}
+
+const queryParkWeatherListPaginations = async () => {
+    const res = await queryParkWeatherListPagination({ "pageNo": 1, "pageSize": 99, "deviceName": input3.value, })
+    if (res?.code == 200) {
+        const list = res.data?.list || [];
+        deviceData.value = list.map(item => {
+            return {
+                ...item,
+                watchTime: formatDate(item.watchTime)
+            }
+        });
+    }
+}
+
 watch(ueResponseData, async (newVal, oldVal) => {
     if (newVal) {
         console.log('接收到新数据:', newVal)
@@ -186,95 +232,11 @@ const statusClassMaps = reactive({
     '3': 'status-normal'
 })
 
-var data = [
-    {
-        countNums1: "电表#1",
-        countNums2: "环境检测",
-        countNums3: "电井1号电表",
-        countNums4: "65kw",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
 
-    },
-    {
-        countNums1: "电表#2",
-        countNums2: "环境检测",
-        countNums3: "电井2号电表",
-        countNums4: "69kw",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "电表#3",
-        countNums2: "环境检测",
-        countNums3: "电井3号电表",
-        countNums4: "85kw",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "一般告警",
-        countNums8: "1号检测点温度过高",
-        type: 2
-
-    },
-
-    {
-        countNums1: "水表#1",
-        countNums2: "环境检测",
-        countNums3: "水泵房1号水表",
-        countNums4: "15t",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "水表#2",
-        countNums2: "环境检测",
-        countNums3: "水泵房1号水表",
-        countNums4: "20t",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "水表#3",
-        countNums2: "环境检测",
-        countNums3: "水泵房1号水表",
-        countNums4: "25t",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-
-
-
-
-
-
-];
 // 生命周期
 onMounted(() => {
     document.addEventListener("click", handleClickOutside);
-
+    queryParkWeatherListPaginations()
 });
 
 onUnmounted(() => {
