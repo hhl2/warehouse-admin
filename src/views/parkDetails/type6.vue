@@ -5,15 +5,15 @@
                 <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
             </div>
             <div class="changleft">
-                <el-table class="my-spacing-table" ref="tableRef" :data="data">
-                    <el-table-column prop="countNums1" label="人员姓名" show-overflow-tooltip />
-                    <el-table-column prop="countNums2" label="车牌号" />
+                <el-table class="my-spacing-table" ref="tableRef" :data="visitordata">
+                    <el-table-column prop="visitor" label="人员姓名" show-overflow-tooltip />
+                    <el-table-column prop="carNumber" label="车牌号" />
                     <el-table-column prop="countNums3" label="作业区域" show-overflow-tooltip />
                     <el-table-column prop="countNums4" label="入园时间" show-overflow-tooltip />
                     <el-table-column prop="countNums5" label="出园时间" show-overflow-tooltip />
-                    <el-table-column prop="countNams6" label="状态" width="50">
+                    <el-table-column prop="sendType" label="状态" width="50">
                         <template #default="scope">
-                            <span :class="[scope.row.countNums6 === '在园' ? 'status-normal' : '.status-important']">
+                            <span :class="[scope.row.sendType === '在园' ? 'status-normal' : '.status-important']">
                                 {{ scope.row.countNums6 === '在园' ? '在园' : '离园' }}
                             </span>
                         </template>
@@ -515,7 +515,22 @@ const isLoadingVideo = ref(false); // 视频加载状态
 // mpegts 播放器相关引用（支持 H.265）
 const videoElementSingle = ref(null);
 
-
+const queryEnvironmentDeviceListPagination = async () => {
+    try {
+        const response = await request({
+            url: '/api/qydigital-park-service/qyQueryPersonInfo/queryWatchPersonInfoPagination',
+            method: 'post',
+            data: {visitor:"",
+                "pageNo": 1, "pageSize": 25,
+            },
+            skipGlobalParams: true
+        });
+        console.log(response);
+        visitordata.value=response.data.data.list
+    } catch (error) {
+        console.error('获取监控点列表失败:', error);
+    }
+}
 const currentCamera = ref({
     id: 'cam001',
     name: '变压器检测工位摄像头',
@@ -698,8 +713,7 @@ const statusClassMaps = reactive({
     '2': 'status-important',
     '3': 'status-normal'
 })
-
-var data = [
+const visitordata =ref( [
     {
         countNums1: "李木林",
         countNums2: "粤A23456W",
@@ -785,7 +799,7 @@ var data = [
 
 
 
-];
+]);
 
 var data2 = [
     {
@@ -960,6 +974,7 @@ var data2 = [
 ];
 // 生命周期
 onMounted(() => {
+    queryEnvironmentDeviceListPagination()
     document.addEventListener("click", handleClickOutside);
 
 });

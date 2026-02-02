@@ -230,8 +230,9 @@ const formatDate = (timestamp) => {
 
 const queryParkWeatherListPaginations = async () => {
     const res = await queryParkWeatherListPagination({ "pageNo": 1, "pageSize": 99, "deviceName": deviceName.value, })
-    if (res?.code == 200) {
+    if (res?.code == 0) {
         const list = res.data?.list || [];
+        console.log(list)
         deviceData.value = list.map(item => {
             return {
                 ...item,

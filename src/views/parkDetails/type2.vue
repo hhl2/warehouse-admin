@@ -167,7 +167,7 @@ const props = defineProps({
 })
 import { Search } from '@element-plus/icons-vue'
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
-import { queryParkWeatherListPagination } from '@/api/user'
+import { queryEnergyDeviceListPagination } from '@/api/user'
 
 const showMenus = ref(false);
 const menuRef = ref(null);
@@ -188,12 +188,18 @@ const formatDate = (timestamp) => {
 }
 
 const queryParkWeatherListPaginations = async () => {
-    const res = await queryParkWeatherListPagination({ "pageNo": 1, "pageSize": 99, "deviceName": input3.value, })
-    if (res?.code == 200) {
+    const res = await queryEnergyDeviceListPagination({ "pageNo": 1, "pageSize": 99, "deviceName": input3.value, })
+    if (res?.code == 0) {
         const list = res.data?.list || [];
+       const tyep={
+            1:"水表",
+            2:"电表"
+        }
         deviceData.value = list.map(item => {
             return {
                 ...item,
+                deviceType:tyep[item.deviceType],
+                
                 watchTime: formatDate(item.watchTime)
             }
         });

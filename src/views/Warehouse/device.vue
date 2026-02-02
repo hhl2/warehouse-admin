@@ -42,19 +42,19 @@
                 <span class="sbrws_label">设备型号</span>
                 <div class="sbrws_text">{{ selectedRow.spec }}</div>
                 <span class="sbrws_label">生产日期</span>
-                <div class="sbrws_text">{{ selectedRow.manufactureDate || '2025-01-01' }}</div>
+                <div class="sbrws_text">{{ selectedRow.manufactureDate || '' }}</div>
             </div>
             <div class="sbrws_box">
                 <span class="sbrws_label">购买日期</span>
-                <div class="sbrws_text">{{ selectedRow.purchaseDate || '2025-01-01' }}</div>
+                <div class="sbrws_text">{{ selectedRow.purchaseDate || '' }}</div>
             </div>
             <div class="sbrws_box">
                 <span class="sbrws_label">上一次维护时间</span>
-                <div class="sbrws_text">{{ selectedRow.lastMaintainDate || '2025-11-21' }}</div>
+                <div class="sbrws_text">{{ selectedRow.lastMaintainDate || '' }}</div>
             </div>
             <div class="sbrws_box">
                 <span class="sbrws_label">下一期维护时间</span>
-                <div class="sbrws_text">{{ selectedRow.nextMaintainDate || '2025-11-21' }}</div>
+                <div class="sbrws_text">{{ selectedRow.nextMaintainDate || '' }}</div>
             </div>
         </div>
 
@@ -97,6 +97,11 @@ const queryAlarmCurrents = () => {
 const queryManageLists = () => {
     queryManageList({ "pageSize": 100, "pageNo": 1 }).then(res => {
         console.log(res)
+        if(res.code==0){
+            console.log(res.data.records)
+            source.value=res.data.records
+
+        }
     })
 }
 const source2 = [
@@ -187,6 +192,9 @@ const handleAlertReset = () => { }
 
 onMounted(() => {
     // 页面逻辑初始化
+    queryAlarmCurrents();
+
+    queryManageLists();
 });
 
 onUnmounted(() => {

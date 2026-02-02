@@ -14,7 +14,7 @@ module.exports = defineConfig({
         changeOrigin: true,
         logLevel: "debug",
         pathRewrite: {
-          '^/api': ''  // 移除 /api 前缀，避免重复
+          '^/api': '/api'  // 移除 /api 前缀，避免重复
         }
 
         // rewrite: path => path.replace(/^\/api/, ''),

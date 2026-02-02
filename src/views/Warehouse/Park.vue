@@ -180,62 +180,144 @@
 import { ref, reactive, onMounted, onUnmounted, inject } from 'vue';
 import * as echarts from 'echarts';
 import { useRouter, useRoute } from 'vue-router'
-import { queryYardWarehouseRate, queryEnergyNumCount, queryAlarmCurrent, queryMonitoringCount, queryEnvironmentCount, querySecurityAlarmCount } from '@/api/user'
-
-
-const queryAlarmCurrents = () => {
-
-    const aa = queryAlarmCurrent({ "pageSize": 100, "pageNo": 1 })
-
+import {queryParkWeatherListPagination, queryYardWarehouseRate, queryEnergyNumCount, queryAlarmCurrent, queryMonitoringCount, queryEnvironmentCount, querySecurityAlarmCount } from '@/api/user'
+//环境监测
+const queryParkWeatherListPaginations = () => {
+    queryParkWeatherListPagination().then((res) => {
+        console.log(res)
+        if (res.code === '0' && res.data?.data?.list?.length > 0) {
+            // 获取第一个设备的数据
+            const firstDevice = res.data.data.list[0];
+            
+            // 定义API字段与environmentData的key映射关系
+            const fieldMapping = {
+                temperature: 'temperature',  // 温度
+                humidity: 'humidity',        // 湿度
+                pmTen: 'pm10',              // PM10
+                pmTwoFive: 'pm25'           // PM2.5
+                // CO2 和 SO2 在API响应中没有对应字段，保持为空
+            };
+            
+            // 遍历environmentData并赋值
+            environmentData.forEach(item => {
+                // 查找映射关系
+                const apiField = Object.keys(fieldMapping).find(key => fieldMapping[key] === item.key);
+                if (apiField && firstDevice[apiField] !== null && firstDevice[apiField] !== undefined) {
+                    item.value = firstDevice[apiField];
+                }
+            });
+        }
+    })
 }
+//能源监测
+const queryEnergyNumCounts = () => {
+    const currentYear = new Date().getFullYear();
+    queryEnergyNumCount({ "queryDate": currentYear.toString() }).then((res) => {
+        if (res.code === '0' && res.data?.data) {
+            // 处理能源数据并填充缺失月份
+            const processedData = processEnergyData(res.data.data);
+            // 更新图表
+            updateEnergyChart(processedData);
+        }
+    })
+}
+// 处理能源数据：填充缺失月份
+const processEnergyData = (dataList) => {
+    // 初始化12个月的数据结构
+    const monthsData = {
+        water: new Array(12).fill(0),  // deviceType 1 = 水耗
+        electricity: new Array(12).fill(0)  // deviceType 2 = 电耗
+    };
+    
+    // 遍历API返回的数据
+    dataList.forEach(item => {
+        if (item.staticMonth && item.readNum) {
+            // 提取月份 (格式: "2025-12" -> 12)
+            const monthMatch = item.staticMonth.match(/-(\d+)$/);
+            if (monthMatch) {
+                const monthIndex = parseInt(monthMatch[1]) - 1; // 转换为0-11的索引
+                const value = parseFloat(item.readNum) || 0;
+                
+                // 根据deviceType分类
+                if (item.deviceType === '1' || item.deviceType === 1) {
+                    monthsData.water[monthIndex] = value;
+                } else if (item.deviceType === '2' || item.deviceType === 2) {
+                    monthsData.electricity[monthIndex] = value;
+                }
+            }
+        }
+    });
+    
+    return monthsData;
+}
+
+// 更新能源图表数据
+const updateEnergyChart = (monthsData) => {
+    if (!chartInstance) return;
+    
+    chartInstance.setOption({
+        series: [
+            {
+                name: '水耗',
+                data: monthsData.water
+            },
+            {
+                name: '电耗',
+                data: monthsData.electricity
+            }
+        ]
+    });
+}
+
+
 
 //告警管理
 const querySecurityAlarmCounts = () => {
     // dealState：是否处理（1=已处理，2=未处理）非必填
-    const res = querySecurityAlarmCount({ "dealState": "2" })
-    if (res?.data?.code == 200) {
-        //alramTotal：告警数量，oneLevelNum：紧急告警数量，towLevelNum：重要告警数量，threeLevelNum：一般告警数量
-        alertData.total = res.data.data.alramTotal;
-        alertData.items[0].value = res.data.data.oneLevelNum;
-        alertData.items[1].value = res.data.data.towLevelNum;
-        alertData.items[2].value = res.data.data.threeLevelNum;
-
-    }
-
+    querySecurityAlarmCount({ "dealState": "2" }).then((res)=>{
+        if (res.code == 0) {
+            //alramTotal：告警数量，oneLevelNum：紧急告警数量，towLevelNum：重要告警数量，threeLevelNum：一般告警数量
+            alertData.total = res.data.alramTotal;
+            alertData.items[0].value = res.data.oneLevelNum;
+            alertData.items[1].value = res.data.towLevelNum;
+            alertData.items[2].value = res.data.threeLevelNum;
+            
+            // 更新图表
+            initChart3();
+        }
+    })
 }
 
 
 //消防监测
 const queryEnvironmentCounts = () => {
-    const res = queryEnvironmentCount({})
-    if (res?.data?.code == 200) {
-        securityData.total = res.data.data.total;
-        securityData.items[0].value = res.data.data.onNum;
-        securityData.items[1].value = res.data.data.offNum;
-        //total：总数，onNum：在线数量，offNum：离线数量
-
-    }
-
+    queryEnvironmentCount({}).then((res)=>{
+        if (res.code == 0) {
+            fireData.total = res.data.data.total;
+            fireData.items[0].value = res.data.data.onNum;
+            fireData.items[1].value = res.data.data.offNum;
+            //total：总数，onNum：在线数量，offNum：离线数量
+            
+            // 更新图表
+            initChart2();
+        }
+    })
 }
 
 
 //安防监测
 const queryMonitoringCounts = () => {
-    const res = queryMonitoringCount({})
-    if (res?.data?.code == 200) {
-        securityData.total = res.data.data.total;
-        securityData.items[0].value = res.data.data.onNum;
-        securityData.items[1].value = res.data.data.offNum;
-        //total：总数，onNum：在线数量，offNum：离线数量
-
-    }
-
-}
-
-//能源监测
-const queryEnergyNumCounts = () => {
-    const res = queryEnergyNumCount({ "queryDate": "2026" })
-
+    queryMonitoringCount({}).then((res)=>{
+        if (res.code == 0) {
+            securityData.total = res.data.data.total;
+            securityData.items[0].value = res.data.data.onNum;
+            securityData.items[1].value = res.data.data.offNum;
+            //total：总数，onNum：在线数量，offNum：离线数量
+            
+            // 更新图表
+            initChart1();
+        }
+    })
 }
 
 
@@ -245,14 +327,37 @@ const queryEnergyNumCounts = () => {
 
 
 
+
+
+//堆场的
 const getYardWarehouseRates = () => {
     queryYardWarehouseRate().then(res => {
-
-        if (res?.data?.code == 200) {
-
+        if (res.code==0) {
+            yardData.percentage = res.data[0].useWarehouseRate;
+            yardData.items[0].value = res.data[0].useWarehouseRate;
+            yardData.items[1].value = res.data[0].useWarehouseCount;
+            yardData.items[2].value = res.data[0].freeWarehouseCount;
+            
+            // 更新图表
+            initChart5();
         }
-        console.log(res)
     })
+}
+
+// 处理图表数据:确保0值也能显示,全0则平分
+const normalizeChartData = (values) => {
+    const numbers = values.map(v => parseFloat(v) || 0);
+    const total = numbers.reduce((sum, val) => sum + val, 0);
+    
+    // 如果所有值都是0,平分图表
+    if (total === 0) {
+        const evenValue = 100 / numbers.length;
+        return numbers.map(() => evenValue);
+    }
+    
+    // 如果有0值,给它们分配一个小比例(总和的1%)
+    const minValue = total * 0.01;
+    return numbers.map(val => val === 0 ? minValue : val);
 }
 
 
@@ -688,20 +793,16 @@ const initChart1 = () => {
                 labelLine: {
                     show: false
                 },
-                data: [
-                    {
-                        value: securityData.items[0].value, name: '',
-                        itemStyle: {
-                            color: '#42FFF9'
-                        }
-                    },
-                    {
-                        value: securityData.items[1].value, name: '',
-                        itemStyle: {
-                            color: '#F0B716'
-                        }
+                data: normalizeChartData([
+                    securityData.items[0].value,
+                    securityData.items[1].value
+                ]).map((value, index) => ({
+                    value,
+                    name: '',
+                    itemStyle: {
+                        color: index === 0 ? '#42FFF9' : '#F0B716'
                     }
-                ]
+                }))
             }
         ]
     };
@@ -747,20 +848,16 @@ const initChart2 = () => {
                 labelLine: {
                     show: false
                 },
-                data: [
-                    {
-                        value: fireData.items[0].value, name: '',
-                        itemStyle: {
-                            color: '#42FFF9'
-                        }
-                    },
-                    {
-                        value: fireData.items[1].value, name: '',
-                        itemStyle: {
-                            color: '#F0B716'
-                        }
+                data: normalizeChartData([
+                    fireData.items[0].value,
+                    fireData.items[1].value
+                ]).map((value, index) => ({
+                    value,
+                    name: '',
+                    itemStyle: {
+                        color: index === 0 ? '#42FFF9' : '#F0B716'
                     }
-                ]
+                }))
             }
         ]
     };
@@ -807,26 +904,17 @@ const initChart3 = () => {
                 labelLine: {
                     show: false
                 },
-                data: [
-                    {
-                        value: alertData.items[0].value, name: '',
-                        itemStyle: {
-                            color: '#42FFF9'
-                        }
-                    },
-                    {
-                        value: alertData.items[1].value, name: '',
-                        itemStyle: {
-                            color: '#F0B716'
-                        }
-                    },
-                    {
-                        value: alertData.items[2].value, name: '',
-                        itemStyle: {
-                            color: '#16B4F0'
-                        }
+                data: normalizeChartData([
+                    alertData.items[0].value,
+                    alertData.items[1].value,
+                    alertData.items[2].value
+                ]).map((value, index) => ({
+                    value,
+                    name: '',
+                    itemStyle: {
+                        color: index === 0 ? '#42FFF9' : index === 1 ? '#F0B716' : '#16B4F0'
                     }
-                ]
+                }))
             }
         ]
     };
@@ -937,26 +1025,17 @@ const initChart5 = () => {
                 labelLine: {
                     show: false
                 },
-                data: [
-                    {
-                        value: yardData.items[0].value, name: '',
-                        itemStyle: {
-                            color: '#42FFF9'
-                        }
-                    },
-                    {
-                        value: yardData.items[1].value, name: '',
-                        itemStyle: {
-                            color: '#F0B716'
-                        }
-                    },
-                    {
-                        value: yardData.items[2].value, name: '',
-                        itemStyle: {
-                            color: '#16B4F0'
-                        }
+                data: normalizeChartData([
+                    yardData.items[0].value,
+                    yardData.items[1].value,
+                    yardData.items[2].value
+                ]).map((value, index) => ({
+                    value,
+                    name: '',
+                    itemStyle: {
+                        color: index === 0 ? '#42FFF9' : index === 1 ? '#F0B716' : '#16B4F0'
                     }
-                ]
+                }))
             }
         ]
     };
@@ -1014,12 +1093,13 @@ onMounted(() => {
     initChart4();
     initChart5();
 
-    // queryAlarmCurrents();
-    // queryEnergyNumCounts();//能耗监测
-    // queryMonitoringCounts()//安防监测
-    querySecurityAlarmCounts()//告警管理
-    // getYardWarehouseRates();//堆场
-    // queryEnvironmentCounts();//消防监测
+
+    queryParkWeatherListPaginations();//环境监测
+    queryEnergyNumCounts();//能耗监测
+    queryMonitoringCounts();//安防监测
+    querySecurityAlarmCounts();//告警管理
+    getYardWarehouseRates();//堆场
+    queryEnvironmentCounts();//消防监测
 
 
     window.addEventListener('resize', handleResize);

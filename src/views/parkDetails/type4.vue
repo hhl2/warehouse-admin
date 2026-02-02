@@ -282,7 +282,7 @@ watch(ueResponseData, async (newVal, oldVal) => {
 const queryEnvironmentDeviceListPagination = async () => {
     try {
         const response = await request({
-            url: '/api/mm/qydigital-park-service/qyQueryDeviceInfo/queryEnvironmentDeviceListPagination',
+            url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryEnvironmentDeviceListPagination',
             method: 'post',
             data: {
                 "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""

@@ -2,11 +2,23 @@ import request from '@/utils/request';
 
 export const queryMonitoringPointListPagination = (data) =>
   request({
-    url: '/api/mm/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
+    url: '/api/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
     method: 'post',
     data,
     skipGlobalParams: true
   });
+//安防警告接口
+export const querySecurityAlarmListPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/qyMonitoringPoint/querySecurityAlarmListPagination',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+
+
 
 
 
@@ -14,25 +26,25 @@ export const queryMonitoringPointListPagination = (data) =>
 // 告警管理
 export const querySecurityAlarmCount = (data) =>
   request({
-    url: '/api/mm/qydigital-park-service/qyQueryDeviceInfo/querySecurityAlarmCount',
+    url: '/api/qydigital-park-service/qyQueryDeviceInfo/querySecurityAlarmCount',
     method: 'post',
     data,
     skipGlobalParams: true
   });
 
 // 环境监测详情接口
-export const queryParkWeatherListPagination = (data) =>
-  request({
-    url: '/api/mm/qydigital-park-service/qyQueryDeviceInfo/queryParkWeatherListPagination',
-    method: 'post',
-    data,
-    skipGlobalParams: true
-  });
+// export const queryParkWeatherListPagination = (data) =>
+//   request({
+//     url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryParkWeatherListPagination',
+//     method: 'post',
+//     data,
+//     skipGlobalParams: true
+//   });
 
 // 消防监测指标接口  建筑设备系统(水浸，火灾)
 export const queryEnvironmentCount = (data) =>
   request({
-    url: '/api/mm/qydigital-park-service/qyMonitoringPoint/queryEnvironmentCount',
+    url: '/api/qydigital-park-service/qyMonitoringPoint/queryEnvironmentCount',
     method: 'post',
     data,
     skipGlobalParams: true
@@ -41,7 +53,7 @@ export const queryEnvironmentCount = (data) =>
 // 安防监测指标接口  摄像头数据
 export const queryMonitoringCount = (data) =>
   request({
-    url: '/api/mm/qydigital-park-service/qyMonitoringPoint/queryMonitoringCount',
+    url: '/api/qydigital-park-service/qyMonitoringPoint/queryMonitoringCount',
     method: 'post',
     data,
     skipGlobalParams: true
@@ -64,15 +76,31 @@ export const queryAlarmCurrent = (data) =>
     data,
     skipGlobalParams: true
   });
-
-// 能源监测
-export const queryEnergyNumCount = (data) =>
+//能源监测详情
+export const queryEnergyDeviceListPagination = (data) =>
   request({
-    url: '/api/mm/qydigital-park-service/qyQueryDeviceInfo/queryEnergyNumCount',
+    url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryEnergyDeviceListPagination',
     method: 'post',
     data,
     skipGlobalParams: true
   });
+
+queryEnergyDeviceListPagination
+
+// 能源监测
+export const queryEnergyNumCount = (data) =>
+  request({
+    url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryEnergyNumCount',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+//环境监测
+export const queryParkWeatherListPagination = (data) => request({
+  url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryParkWeatherListPagination',
+  method: 'post',
+  data
+});
 
 // 作业指标概况
 export const queryWarehouseStatusPagination = (data) =>

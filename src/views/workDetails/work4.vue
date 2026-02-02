@@ -257,14 +257,73 @@ const queryWarehouseThroughputStatistics = () => {
         }
     })
 }
-
+// {
+//     "code": "0",
+//     "msg": "成功",
+//     "isJumpErrPageByBFS": false,
+//     "data": {
+//         "inventoryAmount": 0,
+//         "receiptAndIssueAmount": {
+//             "1": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "2": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "3": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "4": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "5": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "6": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "7": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "8": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "9": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "10": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "11": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             },
+//             "12": {
+//                 "receiptAmount": 0,
+//                 "issueAmount": 0
+//             }
+//         }
+//     },
+//     "successByBFS": true,
+//     "globalUnifyRPFlagByBFS": true
+// }
 onMounted(() => {
     // 调用数据接口
-    // queryWarehouseThroughputStatistics();
-    // queryTurnoverInfos();
-    // queryAvgDisDeclineRateInfos();
-    // queryProductionInfos();
-    // querySafeDistributionInfos();
+    queryWarehouseThroughputStatistics();
+    queryTurnoverInfos();
+    queryAvgDisDeclineRateInfos();
+    queryProductionInfos();
+    querySafeDistributionInfos();
     queryInventoryRateInfos();
 })
 

@@ -415,6 +415,41 @@ const props = defineProps({
 })
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts';
+import request from '@/utils/request'
+
+
+const queryWarnListPagination = async () => {
+    try {
+        const response = await request({
+            url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnListPagination',
+            method: 'post',
+            data: {  "warnCode":"","watchTime":""
+            },
+            skipGlobalParams: true
+        });
+        console.log(response);
+        // visitordata.value=response.data.data.list
+    } catch (error) {
+        console.error('获取监控点列表失败:', error);
+    }
+}
+const queryWarnGroupCount = async () => {
+    try {
+        const response = await request({
+            url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnGroupCount',
+            method: 'post',
+            data: {   "startDate":"2025-01-01 00:00:00",
+   "endDate":"2026-01-30 23:59:59"
+            },
+            skipGlobalParams: true
+        });
+        console.log(response);
+        // visitordata.value=response.data.data.list
+    } catch (error) {
+        console.error('获取监控点列表失败:', error);
+    }
+}
+
 const trendChartRef = ref(null);
 
 const trendChartRef1 = ref(null);
@@ -862,6 +897,8 @@ const handleClickOutside = (event) => {
 };
 // 生命周期
 onMounted(() => {
+    queryWarnListPagination();
+    queryWarnGroupCount();
     initChart2();
     initTrendChart();
     initTrendChart1();

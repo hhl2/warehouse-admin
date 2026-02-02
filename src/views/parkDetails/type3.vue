@@ -519,11 +519,11 @@ const currentCamera = ref({
     location: '变压器流水线检测工位',
     status: 'online'
 });
-// /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
+
 const queryMonitoringPointListPagination = async () => {
     try {
         const response = await request({
-            url: '/api/mm/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
+            url: '/api/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
             method: 'post',
             data: {
                 "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
@@ -535,6 +535,41 @@ const queryMonitoringPointListPagination = async () => {
         console.error('获取监控点列表失败:', error);
     }
 }
+
+
+
+const querySecurityAlarmListPagination
+ = async () => {
+    try {
+        const response = await request({
+            url: '/api/qydigital-park-service/qyMonitoringPoint/querySecurityAlarmListPagination',
+            method: 'post',
+            data: {
+                "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
+            },
+            skipGlobalParams: true
+        });
+        console.log(response);
+    } catch (error) {
+        console.error('获取监控点列表失败:', error);
+    }
+}
+// /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
+// const queryMonitoringPointListPagination = async () => {
+//     try {
+//         const response = await request({
+//             url: '/api/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
+//             method: 'post',
+//             data: {
+//                 "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
+//             },
+//             skipGlobalParams: true
+//         });
+//         console.log(response);
+//     } catch (error) {
+//         console.error('获取监控点列表失败:', error);
+//     }
+// }
 
 
 
@@ -571,11 +606,14 @@ const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', 
         // 调用API获取视频预览URL（使用代理避免跨域）
         // /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
         const response = await request({
-            url: '/api/qydigital-park-service/qyVideoPoint/previewURLs',
+            // url: '/api/qydigital-park-service/qyVideoPoint/previewURLs',
+            url:"qydigital-park-service/qyMonitoringPoint/queryWatchUrl",
+     
             method: 'post',
             data: {
                 cameraIndexCode: safeCameraId
-            }
+            },
+             skipGlobalParams: true
         });
 
         // 检查响应是否成功
@@ -1183,7 +1221,8 @@ const fetchData2 = async () => {
             data: {
                 pageSize: 25,
                 pageNo: 1
-            }
+            },
+             skipGlobalParams: true
         });
         if (res.code === '0') {
             // 根据返回结构赋值
@@ -1211,7 +1250,7 @@ const fetchData2 = async () => {
 
 // 生命周期
 onMounted(() => {
-    // fetchData2();
+    fetchData2();
     queryMonitoringPointListPagination();
     document.addEventListener("click", handleClickOutside);
 
