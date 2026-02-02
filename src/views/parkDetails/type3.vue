@@ -20,31 +20,20 @@
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                    @keyup.enter="fetchData2" />
+                <el-button type="primary" class="search-btn" @click="fetchData2">查询</el-button>
             </div>
             <div class="changleft">
                 <el-table class="my-spacing-table" ref="tableRef" :data="data" @row-click="handleRowClick">
-                    <el-table-column prop="name1" label="设备名称" show-overflow-tooltip />
-                    <el-table-column prop="countNums2" label="设备类型" />
-                    <el-table-column prop="name" label="检测点位置" show-overflow-tooltip />
-                    <el-table-column prop="countNams6" label="状态" width="50">
-                        <template #default="scope">
-                            <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
-                                {{ scope.row.countNums6 === '在线' ? '在线' : '离线' }}
-                            </span>
-                        </template>
+                    <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
+                    <el-table-column prop="cameraType" label="设备类型" />
+                    <el-table-column prop="installLocation" label="检测点位置" show-overflow-tooltip />
+                    <el-table-column prop="online" label="状态" width="50">
                     </el-table-column>
-                    <el-table-column prop="countNums5" label="告警时间" show-overflow-tooltip />
+                    <el-table-column prop="alarmTime" label="监测时间" show-overflow-tooltip />
 
-                    <el-table-column prop="" label="告警等级">
-                        <template #default="scope">
-                            <span :class="['status-badge', statusClassMap[scope.row.countNums7]]">
-                                {{ scope.row.countNums7 }}
-                            </span>
-                        </template>
-                    </el-table-column>
-
-                    <el-table-column prop="countNums8" label="告警信息" show-overflow-tooltip>
+                    <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip>
 
                     </el-table-column>
                     <el-table-column prop="" label="关键应急预案" show-overflow-tooltip>
@@ -76,8 +65,9 @@
 
 
         <div class="inputbox">
-            <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
-            <div class="yylf_search_box">查询</div>
+            <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                @keyup.enter="fetchData2" />
+            <el-button type="primary" class="search-btn" @click="fetchData2">查询</el-button>
         </div>
 
         <div class="changleft2">
@@ -152,6 +142,22 @@
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.3s ease;
+}
+
+.search-btn {
+    height: 32px;
+    background: #10A8FD;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
+    margin-left: 10px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.search-btn:hover {
+    background: rgba(16, 168, 253, 0.8);
+    color: #fff;
 }
 
 .fade-enter-from,
@@ -353,17 +359,17 @@
     margin: 10px 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .yylf_search_box {
-    width: 50px;
     color: #E6F2FF;
     font-family: MicrosoftYaHei-Bold;
     font-weight: bold;
     font-size: 15px;
-    height: 25px;
-    line-height: 25px;
-    width: 45px;
+    height: 32px;
+    line-height: 32px;
+    width: 55px;
     background-color: #10A8FD;
     border-radius: 3px;
     text-align: center;
@@ -452,7 +458,9 @@
 
 .changewidth {
     margin: 5px 15px 10px 10px;
-
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .changleft {
@@ -539,39 +547,22 @@ const queryMonitoringPointListPagination = async () => {
 
 
 const querySecurityAlarmListPagination
- = async () => {
-    try {
-        const response = await request({
-            url: '/api/qydigital-park-service/qyMonitoringPoint/querySecurityAlarmListPagination',
-            method: 'post',
-            data: {
-                "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
-            },
-            skipGlobalParams: true
-        });
-        console.log(response);
-    } catch (error) {
-        console.error('获取监控点列表失败:', error);
+    = async () => {
+        try {
+            const response = await request({
+                url: '/api/qydigital-park-service/qyMonitoringPoint/querySecurityAlarmListPagination',
+                method: 'post',
+                data: {
+                    "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
+                },
+                skipGlobalParams: true
+            });
+            console.log(response);
+        } catch (error) {
+            console.error('获取监控点列表失败:', error);
+        }
     }
-}
 // /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
-// const queryMonitoringPointListPagination = async () => {
-//     try {
-//         const response = await request({
-//             url: '/api/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
-//             method: 'post',
-//             data: {
-//                 "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
-//             },
-//             skipGlobalParams: true
-//         });
-//         console.log(response);
-//     } catch (error) {
-//         console.error('获取监控点列表失败:', error);
-//     }
-// }
-
-
 
 // 通用函数：根据摄像头ID获取视频URL并打开弹窗
 const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', cameraStatus = 'online') => {
@@ -607,13 +598,13 @@ const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', 
         // /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
         const response = await request({
             // url: '/api/qydigital-park-service/qyVideoPoint/previewURLs',
-            url:"qydigital-park-service/qyMonitoringPoint/queryWatchUrl",
-     
+            url: "qydigital-park-service/qyMonitoringPoint/queryWatchUrl",
+
             method: 'post',
             data: {
                 cameraIndexCode: safeCameraId
             },
-             skipGlobalParams: true
+            skipGlobalParams: true
         });
 
         // 检查响应是否成功
@@ -843,376 +834,10 @@ const sorces =
         }
     ]
 
-
-
-
-const statusClassMap = reactive({
-    '紧急告警': 'status-urgent',
-    '重要告警': 'status-important',
-    '一般告警': 'status-normal'
-})
-
-const statusClassMaps = reactive({
-    '1': 'status-urgent',
-    '2': 'status-important',
-    '3': 'status-normal'
-})
-
 const data = ref([
-    {
-        name1: "摄像头#1",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-    {
-        name1: "摄像头#2",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-
-    {
-        name1: "摄像头#3",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "紧急告警",
-        countNums8: "1号检测点温度过高",
-        type: 1,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-
-    {
-        name1: "摄像头#4",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-
-    {
-        name1: "摄像头#5",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-
-    {
-        name1: "摄像头#6",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-
-    {
-        name1: "摄像头#7",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-
-    {
-        name1: "摄像头#8",
-        countNums2: "安防监控",
-        name: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-
-
-
-
 ]);
 
-const data2 = ref([
-    {
-        name1: "摄像头#1",
-        countNums2: "安防监控",
-        name: "大厅1号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-    {
-        name1: "摄像头#2",
-        countNums2: "安防监控",
-        name: "大厅2号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-
-    {
-        name1: "摄像头#3",
-        countNums2: "安防监控",
-        name: "大厅3号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "紧急告警",
-        countNums8: "1号检测人员入侵",
-        type: 1,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-
-    {
-        name1: "摄像头#4",
-        countNums2: "安防监控",
-        name: "大厅4号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-    {
-        name1: "摄像头#5",
-        countNums2: "安防监控",
-        name: "大厅5号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-
-    {
-        name1: "摄像头#6",
-        countNums2: "安防监控",
-        name: "大厅6号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-
-    {
-        name1: "摄像头#7",
-        countNums2: "安防监控",
-        name: "室内7号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-
-    {
-        name1: "摄像头#8",
-        countNums2: "安防监控",
-        name: "室内8号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-    {
-        name1: "摄像头#7",
-        countNums2: "",
-        name: "",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-    {
-        name1: "摄像头#7",
-        countNums2: "",
-        name: "",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-
-    {
-        name1: "摄像头#7",
-        countNums2: "",
-        name: "",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-    {
-        name1: "摄像头#1",
-        countNums2: "安防监控",
-        name: "大厅1号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-    {
-        name1: "摄像头#2",
-        countNums2: "安防监控",
-        name: "大厅2号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-
-    {
-        name1: "摄像头#3",
-        countNums2: "安防监控",
-        name: "大厅3号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "紧急告警",
-        countNums8: "1号检测人员入侵",
-        type: 1,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-
-    {
-        name1: "摄像头#4",
-        countNums2: "安防监控",
-        name: "大厅4号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3,
-        id: 'b9877ba9b8d94041a8a448eb178d8163'
-
-    },
-    {
-        name1: "摄像头#5",
-        countNums2: "安防监控",
-        name: "大厅5号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1,
-        id: 'ee0febb859a541f1bca7515db0e5a41a'
-
-    },
-
-    {
-        name1: "摄像头#6",
-        countNums2: "安防监控",
-        name: "大厅6号监控点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2,
-        id: 'dafe004a0d264b18ac12564fefc9dcd6'
-
-    },
-
-
-
-
-]);
-
-
+//列表查询
 const fetchData2 = async () => {
     try {
         const res = await request({
@@ -1220,9 +845,10 @@ const fetchData2 = async () => {
             method: 'post',
             data: {
                 pageSize: 25,
-                pageNo: 1
+                pageNo: 1,
+                cn: input3.value || ''
             },
-             skipGlobalParams: true
+            skipGlobalParams: true
         });
         if (res.code === '0') {
             // 根据返回结构赋值
@@ -1251,7 +877,7 @@ const fetchData2 = async () => {
 // 生命周期
 onMounted(() => {
     fetchData2();
-    queryMonitoringPointListPagination();
+    // queryMonitoringPointListPagination();
     document.addEventListener("click", handleClickOutside);
 
 

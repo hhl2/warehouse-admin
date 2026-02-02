@@ -59,21 +59,22 @@
 .changewidth {
     margin: 5px 15px 10px 10px;
     display: flex;
-    gap: 5px;
+    gap: 10px;
     align-items: center;
 }
 
 .search-btn {
     height: 32px;
-    background: #476B9A;
+    background: #10A8FD;
     border: none;
     color: #fff;
     padding: 0 15px;
+    border-radius: 3px;
+    font-weight: bold;
 }
 
 .search-btn:hover {
-    background: rgba(0, 168, 255, 0.4);
-    border-color: #00eaff;
+    background: rgba(16, 168, 253, 0.8);
     color: #fff;
 }
 

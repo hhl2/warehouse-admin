@@ -2,7 +2,8 @@
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable />
+                <el-button type="primary" class="search-btn" @click="fetchVisitorData">查询</el-button>
             </div>
             <div class="changleft">
                 <el-table class="my-spacing-table" ref="tableRef" :data="visitordata">
@@ -47,8 +48,8 @@
             </div>
         </div>
         <div class="inputbox">
-            <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
-            <div class="yylf_search_box">查询</div>
+            <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable />
+            <el-button type="primary" class="search-btn" @click="fetchVisitorData">查询</el-button>
         </div>
         <div class="changleft2">
 
@@ -164,23 +165,23 @@
 .inputbox {
     margin: 10px 20px;
     display: flex;
-    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
 }
 
-.yylf_search_box {
-    width: 50px;
-
-    color: #E6F2FF;
-    font-family: MicrosoftYaHei-Bold;
-    font-weight: bold;
-    font-size: 15px;
-    height: 25px;
-    line-height: 25px;
-    width: 45px;
-    background-color: #10A8FD;
+.search-btn {
+    height: 32px;
+    background: #10A8FD;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
     border-radius: 3px;
-    text-align: center;
-    cursor: pointer;
+    font-weight: bold;
+}
+
+.search-btn:hover {
+    background: rgba(16, 168, 253, 0.8);
+    color: #fff;
 }
 
 
@@ -235,7 +236,9 @@
 
 .changewidth {
     margin: 5px 15px 10px 10px;
-
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .changleft {
@@ -520,17 +523,41 @@ const queryEnvironmentDeviceListPagination = async () => {
         const response = await request({
             url: '/api/qydigital-park-service/qyQueryPersonInfo/queryWatchPersonInfoPagination',
             method: 'post',
-            data: {visitor:"",
+            data: {
+                visitor: "",
                 "pageNo": 1, "pageSize": 25,
             },
             skipGlobalParams: true
         });
         console.log(response);
-        visitordata.value=response.data.data.list
+        visitordata.value = response.data.data.list
     } catch (error) {
         console.error('获取监控点列表失败:', error);
     }
 }
+
+const input3 = ref('');
+
+const fetchVisitorData = async () => {
+    try {
+        const response = await request({
+            url: '/api/qydigital-park-service/qyQueryPersonInfo/queryWatchPersonInfoPagination',
+            method: 'post',
+            data: {
+                visitor: input3.value,
+                "pageNo": 1,
+                "pageSize": 25,
+            },
+            skipGlobalParams: true
+        });
+        if (response?.code === '0' && response.data?.data?.list) {
+            visitordata.value = response.data.data.list;
+        }
+    } catch (error) {
+        console.error('获取访客列表失败:', error);
+    }
+};
+
 const currentCamera = ref({
     id: 'cam001',
     name: '变压器检测工位摄像头',
@@ -713,7 +740,7 @@ const statusClassMaps = reactive({
     '2': 'status-important',
     '3': 'status-normal'
 })
-const visitordata =ref( [
+const visitordata = ref([
     {
         countNums1: "李木林",
         countNums2: "粤A23456W",

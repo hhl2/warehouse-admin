@@ -2,45 +2,34 @@
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                    @keyup.enter="fetchDevices" />
+                <el-button type="primary" class="search-btn" @click="fetchDevices">查询</el-button>
             </div>
             <div class="changleft">
 
                 <el-table class="my-spacing-table" ref="tableRef" :data="data">
-                    <el-table-column prop="countNums1" label="设备名称" show-overflow-tooltip />
-                    <el-table-column prop="countNums2" label="设备类型" />
-                    <el-table-column prop="countNums3" label="检测点位置" show-overflow-tooltip />
-
-                    <el-table-column prop="countNams6" label="状态" width="50">
-
-                        <template #default="scope">
-                            <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
-                                {{ scope.row.countNums6 === '在线' ? '在线' : '离线' }}
-                            </span>
-                        </template>
+                    <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
+                    <el-table-column prop="deviceType" label="设备类型" />
+                    <el-table-column prop="location" label="检测点位置" show-overflow-tooltip />
+                    <el-table-column prop="runStatus" label="状态" width="50">
                     </el-table-column>
-                    <el-table-column prop="countNums5" label="告警时间" show-overflow-tooltip />
+                    <el-table-column prop="watchTime" label="告警时间" show-overflow-tooltip />
 
-                    <el-table-column prop="" label="告警等级">
-                        <template #default="scope">
-                            <span :class="['status-badge', statusClassMap[scope.row.countNums7]]">
-                                {{ scope.row.countNums7 }}
-                            </span>
-                        </template>
+                    <el-table-column prop="alarmLevel" label="告警等级">
+
                     </el-table-column>
 
-                    <el-table-column prop="" label="告警信息" show-overflow-tooltip>
-                        <template #default="scope">
-                            <span :class="['status-badge', statusClassMaps[scope.row.type]]">
-                                {{ scope.row.countNums8 }}
-                            </span>
-                        </template>
+                    <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip>
+
                     </el-table-column>
-                    <el-table-column prop="" label="关联应急预案" show-overflow-tooltip>
+
+                    <el-table-column prop="linkageName" label="关联应急预案" show-overflow-tooltip>
                         <template #default="scope">
-                            <img src="" alt="">
+                            <span @click="handleLinkage(scope.row)">{{ scope.row.linkageName }}</span>
 
                         </template>
+
                     </el-table-column>
 
 
@@ -66,25 +55,19 @@
 
 
         <div class="inputbox">
-            <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
-            <div class="yylf_search_box">查询</div>
+            <el-input v-model="input4" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                @keyup.enter="fetchDevices" />
+            <el-button type="primary" class="search-btn" @click="fetchDevices">查询</el-button>
         </div>
 
         <div class="changleft2">
 
 
             <el-table class="my-spacing-table2" ref="tableRef" :data="data2">
-                <el-table-column prop="countNums1" label="设备名称" show-overflow-tooltip />
-                <el-table-column prop="countNums2" label="设备类型" />
-                <el-table-column prop="countNums3" label="检测点位置" show-overflow-tooltip />
-
-                <el-table-column prop="countNams6" label="状态" width="50">
-
-                    <template #default="scope">
-                        <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
-                            {{ scope.row.countNums6 === '在线' ? '在线' : '离线' }}
-                        </span>
-                    </template>
+                <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
+                <el-table-column prop="deviceType" label="设备类型" />
+                <el-table-column prop="location" label="检测点位置" show-overflow-tooltip />
+                <el-table-column prop="runStatus" label="状态" width="50">
                 </el-table-column>
 
             </el-table>
@@ -122,22 +105,23 @@
     margin: 10px 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.yylf_search_box {
-    width: 50px;
-
-    color: #E6F2FF;
-    font-family: MicrosoftYaHei-Bold;
-    font-weight: bold;
-    font-size: 15px;
-    height: 25px;
-    line-height: 25px;
-    width: 45px;
-    background-color: #10A8FD;
+.search-btn {
+    height: 32px;
+    background: #10A8FD;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
+    margin-left: 10px;
     border-radius: 3px;
-    text-align: center;
-    cursor: pointer;
+    font-weight: bold;
+}
+
+.search-btn:hover {
+    background: rgba(16, 168, 253, 0.8);
+    color: #fff;
 }
 
 
@@ -199,7 +183,9 @@
 
 .changewidth {
     margin: 5px 15px 10px 10px;
-
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .changleft {
@@ -248,321 +234,140 @@
 .status-urgent {
     color: #FCDA1E;
 }
+
+/* .search-btn styles moved and unified above */
 </style>
 
 <script setup>
 // 接收从 index 传入的面板状态
 const props = defineProps({
-    isPanelVisible: {
-        type: Boolean,
-        default: true
-    },
+    isPanelVisible: { type: Boolean, default: true }
+});
 
-})
+import { Search } from '@element-plus/icons-vue';
+import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue';
+import request from '@/utils/request';
 
-import { Search } from '@element-plus/icons-vue'
-import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
-import request from '@/utils/request'
+// --- Constants & Mock Data ---
+const ALARM_STATUS_MAP = {
+    '紧急告警': 'status-normal',
+    '重要告警': 'status-important',
+    '一般告警': 'status-urgent'
+};
+
+const MOCK_DATA = [
+    { deviceName: "烟感#1", deviceType: "消防检测", countNums3: "大厅1号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 2 },
+    { deviceName: "烟感#2", deviceType: "消防检测", countNums3: "大厅2号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 1 },
+    { deviceName: "烟感#3", deviceType: "消防检测", countNums3: "大厅3号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "一般告警", countNums8: "烟雾浓度每米>3%", type: 1 }
+];
+
+const MOCK_DATA2 = [
+    { deviceName: "火灾预警器#1", deviceType: "消防检测", countNums3: "大厅4号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "一号区域火灾报警", type: 1 },
+    { deviceName: "声光预警器#1", deviceType: "消防检测", countNums3: "大厅7号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "二号区域警报", type: 1 }
+];
+
+// --- State ---
 const showMenus = ref(false);
 const menuRef = ref(null);
-const ueResponseData = inject('ueResponseData')
-watch(ueResponseData, async (newVal, oldVal) => {
-    if (newVal) {
-        console.log('接收到新数据:', newVal)
-
-        if (newVal?.json.type && newVal?.json.type == 'xfjc') {
-            showMenus.value = true
-
-        }
-
-    }
-})
-
-
-const queryEnvironmentDeviceListPagination = async () => {
+const input3 = ref('');
+const data = ref(MOCK_DATA);
+const data2 = ref(MOCK_DATA2);
+const ueResponseData = inject('ueResponseData');
+const input4 = ref('');
+const statusClassMap = reactive(ALARM_STATUS_MAP);
+const statusClassMaps = reactive({ '1': 'status-urgent', '2': 'status-important', '3': 'status-normal' });
+// /api/qydigital-park-service/qyQueryDeviceInfo/queryLinkageListPagination
+// --- API Functions ---
+const fetchDevices = async () => {
     try {
-        const response = await request({
+        const res = await request({
             url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryEnvironmentDeviceListPagination',
             method: 'post',
             data: {
-                "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
+                pageNo: 1,
+                pageSize: 999,
+                deviceName: input4.value,
+                deviceId: ""
             },
             skipGlobalParams: true
         });
-        console.log(response);
+
+        if (res?.code === '0' && res.data?.list?.length > 0) {
+
+            data2.value = res.data.list;
+
+        }
     } catch (error) {
-        console.error('获取监控点列表失败:', error);
+        console.error('环境设备列表请求失败:', error);
     }
+};
+const fetchDevices2 = async () => {
+    try {
+        const res = await request({
+            url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryEnvironmentMonitorListPagination',
+            method: 'post',
+            data: {
+                pageNo: 1,
+                pageSize: 999,
+                deviceName: input3.value,
+                deviceId: ""
+            },
+            skipGlobalParams: true
+        });
+
+        if (res?.code === '0' && res.data?.list?.length > 0) {
+
+            data.value = res.data.list;
+        }
+    } catch (error) {
+        console.error('环境设备列表请求失败:', error);
+    }
+};
+
+// 参数说明：linkageName：预案名称，linkageCode：预案编码
+// 返回参数说明：linkageCode：预案编号、linkageName：预案名称、linkageCanvas：预案动画
+const fetchDevices3 = async () => {
+    try {
+        const res = await request({
+            url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryLinkageListPagination',
+            method: 'post',
+            data: {
+                "pageNo": 1, "pageSize": 25, "linkageName": "", "linkageCode": ""
+            },
+            skipGlobalParams: true
+        });
+
+        if (res?.code === '0' && res.data?.list?.length > 0) {
+
+        }
+    } catch (error) {
+        console.error('环境设备列表请求失败:', error);
+    }
+};
+
+const handleLinkage = (row) => {
+    console.log(row);
 }
 
+
 const handleClickOutside = (event) => {
-    // console.log(event, menuRef.value.contains(event.target))
     if (menuRef.value && menuRef.value.contains(event.target)) {
         showMenus.value = false;
     }
 };
 
-const sorces =
-    [
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {}
-    ]
+// --- Watchers ---
+watch(ueResponseData, (newVal) => {
+    if (newVal?.json?.type === 'xfjc') {
+        showMenus.value = true;
+    }
+});
 
-
-
-
-const statusClassMap = reactive({
-    '紧急告警': 'status-normal',
-    '重要告警': 'status-important',
-    '一般告警': 'status-urgent'
-})
-
-const statusClassMaps = reactive({
-    '1': 'status-urgent',
-    '2': 'status-important',
-    '3': 'status-normal'
-})
-
-var data = [
-    {
-        countNums1: "烟感#1",
-        countNums2: "消防检测",
-        countNums3: "大厅1号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-    {
-        countNums1: "烟感#2",
-        countNums2: "消防检测",
-        countNums3: "大厅2号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "烟感#3",
-        countNums2: "消防检测",
-        countNums3: "大厅3号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "一般告警",
-        countNums8: "烟雾浓度每米>3%",
-        type: 1
-
-    },
-
-    {
-        countNums1: "火灾预警器#1",
-        countNums2: "消防检测",
-        countNums3: "大厅4号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "一号区域火灾报警",
-        type: 1
-
-    },
-
-    {
-        countNums1: "火灾预警器#2",
-        countNums2: "消防检测",
-        countNums3: "大厅5号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "火灾预警器#3",
-        countNums2: "消防检测",
-        countNums3: "大厅6号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-
-
-
-];
-
-var data2 = [
-    {
-        countNums1: "烟感#1",
-        countNums2: "消防检测",
-        countNums3: "大厅1号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-    {
-        countNums1: "烟感#2",
-        countNums2: "消防检测",
-        countNums3: "大厅2号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "火灾预警器#1",
-        countNums2: "消防检测",
-        countNums3: "大厅4号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "一号区域火灾报警",
-        type: 1
-
-    },
-
-    {
-        countNums1: "火灾预警器#2",
-        countNums2: "消防检测",
-        countNums3: "大厅5号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "火灾预警器#3",
-        countNums2: "消防检测",
-        countNums3: "大厅6号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-    {
-        countNums1: "声光预警器#1",
-        countNums2: "消防检测",
-        countNums3: "大厅7号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "一号区域火灾报警",
-        type: 1
-
-    },
-    {
-        countNums1: "声光预警器#2",
-        countNums2: "消防检测",
-        countNums3: "大厅8号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-    {
-        countNums1: "声光预警器#3",
-        countNums2: "消防检测",
-        countNums3: "大厅9号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    }, {
-        countNums1: "烟感#1",
-        countNums2: "消防检测",
-        countNums3: "大厅1号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-    {
-        countNums1: "烟感#2",
-        countNums2: "消防检测",
-        countNums3: "大厅2号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "火灾预警器#1",
-        countNums2: "消防检测",
-        countNums3: "大厅4号监测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "一号区域火灾报警",
-        type: 1
-
-    },
-
-
-
-
-
-
-
-
-
-
-];
-// 生命周期
+// --- Lifecycle ---
 onMounted(() => {
     document.addEventListener("click", handleClickOutside);
-    queryEnvironmentDeviceListPagination();
-
+    fetchDevices();
+    fetchDevices2();
 });
 
 onUnmounted(() => {

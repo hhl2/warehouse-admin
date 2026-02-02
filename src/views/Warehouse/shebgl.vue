@@ -8,12 +8,10 @@
         </div>
 
         <div class="sblf">
-
-            <el-input v-model="input3" style="width: 203px" placeholder="请输入设备名称" :prefix-icon="Search" />
-
+            <el-input v-model="input3" class="inputwidth" placeholder="请输入设备名称" :prefix-icon="Search" />
             <div class="sblf_search">
-                <div class="sblf_search_box" @click="handleAlertSearch">查询</div>
-                <div class="sblf_search_box" @click="handleAlertReset">重置</div>
+                <el-button type="primary" class="search-btn" @click="handleAlertSearch">查询</el-button>
+                <el-button type="primary" class="search-btn" @click="handleAlertReset">重置</el-button>
             </div>
         </div>
 
@@ -184,7 +182,7 @@
 }
 
 .sblf {
-    margin: 10px 15px;
+    margin: 10px 18px;
     display: flex;
     justify-content: space-between;
 }
@@ -268,23 +266,26 @@
 .sblf_search {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-
-    width: 110px;
+    gap: 8px;
 }
 
-.sblf_search_box {
-    margin-left: 10px;
-    color: #E6F2FF;
-    font-family: MicrosoftYaHei-Bold;
-    font-weight: bold;
-    font-size: 15px;
-    height: 25px;
-    line-height: 25px;
-    width: 45px;
-    background-color: #10A8FD;
+.search-btn {
+    height: 32px;
+    background: #10A8FD;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
     border-radius: 3px;
-    text-align: center;
+    font-weight: bold;
+}
+
+.search-btn:hover {
+    background: rgba(16, 168, 253, 0.8);
+    color: #fff;
+}
+
+.inputwidth {
+    width: 203px;
 }
 
 
@@ -313,26 +314,20 @@
 </style>
 
 <script setup>
-import sb1 from '@/assets/shebei/智能设备.png';
-import sb2 from '@/assets/shebei/特种设备.png';
-
-import sb3 from '@/assets/shebei/安防设备.png';
-
-import sb4 from '@/assets/shebei/巡更设备.png';
-
-import sb5 from '@/assets/shebei/环境设备.png';
-
-import sb6 from '@/assets/shebei/消防设备.png';
-
-import sb7 from '@/assets/shebei/工具设备.png';
-
-import sb8 from '@/assets/shebei/计量设备.png';
-
-
-
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
-const source = [
+import { queryManageList } from '@/api/user'
+
+import sb1 from '@/assets/shebei/智能设备.png';
+import sb2 from '@/assets/shebei/特种设备.png';
+import sb3 from '@/assets/shebei/安防设备.png';
+import sb4 from '@/assets/shebei/巡更设备.png';
+import sb5 from '@/assets/shebei/环境设备.png';
+import sb6 from '@/assets/shebei/消防设备.png';
+import sb7 from '@/assets/shebei/工具设备.png';
+import sb8 from '@/assets/shebei/计量设备.png';
+
+const MOCK_DEVICES = [
     {
         deviceCode: '64BC256336654588523369814CVT3',
         deviceName: '堆垛机',
@@ -377,41 +372,70 @@ const source = [
         status: '在线',
         quantity: ''
     }
-]
+];
+
+const source = ref(MOCK_DEVICES);
+
 // 接收从 index 传入的面板状态
 const props = defineProps({
-    isPanelVisible: {
-        type: Boolean,
-        default: true
-    },
-
-})
-
-const input3 = ref('')
-onMounted(() => {
-
-
-
+    isPanelVisible: { type: Boolean, default: true }
 });
 
-const sorces =
-    [
-        { text: '智能设备', num: "7/34", icon: sb1 },
-        { text: '特种设备', num: "0/2", icon: sb2 },
-        { text: '安防设备', num: "2/15", icon: sb3 },
-        { text: '巡更设备', num: "0/6", icon: sb4 },
-        { text: '环境设备', num: "0/21", icon: sb5 },
-        { text: '消防设备', num: "0/21", icon: sb6 },
-        { text: '工具器设备', num: "0/1", icon: sb7 },
-        { text: '计量设备', num: "0/1", icon: sb8 }
-    ]
+const input3 = ref('');
+
+// API 请求函数
+const queryManageLists = () => {
+    queryManageList({
+        "pageSize": 100,
+        "pageNo": 1,
+        "deviceName": input3.value
+    }).then(res => {
+        if (res.code == 0) {
+            // 将 API 返回的字段映射到组件需要的字段
+            source.value = res.data.records.map(item => ({
+                deviceCode: item.code,
+                deviceName: item.name,
+                nextInspectionDate: item.nextMaintainDate,
+                deviceType: item.deviceType || '智能设备',
+                subDeviceType: item.subDeviceType || '',
+                manufacturer: item.manufacturer || '',
+                modelSpec: item.spec || '',
+                status: item.status || '在线',
+                quantity: item.quantity || ''
+            }));
+        }
+    }).catch(err => {
+        console.error('获取设备列表失败:', err);
+    });
+};
+
+const handleAlertSearch = () => {
+    queryManageLists();
+};
+
+const handleAlertReset = () => {
+    input3.value = '';
+    queryManageLists();
+};
+
+const sorces = [
+    { text: '智能设备', num: "7/34", icon: sb1 },
+    { text: '特种设备', num: "0/2", icon: sb2 },
+    { text: '安防设备', num: "2/15", icon: sb3 },
+    { text: '巡更设备', num: "0/6", icon: sb4 },
+    { text: '环境设备', num: "0/21", icon: sb5 },
+    { text: '消防设备', num: "0/21", icon: sb6 },
+    { text: '工具器设备', num: "0/1", icon: sb7 },
+    { text: '计量设备', num: "0/1", icon: sb8 }
+];
+
+onMounted(() => {
+    queryManageLists();
+});
 
 onUnmounted(() => {
-
-
-
-
-})
+    // 清理资源
+});
 
 
 </script>

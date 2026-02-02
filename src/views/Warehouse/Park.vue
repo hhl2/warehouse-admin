@@ -42,7 +42,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                                }}</div>
+                            }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -68,7 +68,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                                }}</div>
+                            }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -177,225 +177,34 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, inject } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, inject, nextTick } from 'vue';
 import * as echarts from 'echarts';
-import { useRouter, useRoute } from 'vue-router'
-import {queryParkWeatherListPagination, queryYardWarehouseRate, queryEnergyNumCount, queryAlarmCurrent, queryMonitoringCount, queryEnvironmentCount, querySecurityAlarmCount } from '@/api/user'
-//环境监测
-const queryParkWeatherListPaginations = () => {
-    queryParkWeatherListPagination().then((res) => {
-        console.log(res)
-        if (res.code === '0' && res.data?.data?.list?.length > 0) {
-            // 获取第一个设备的数据
-            const firstDevice = res.data.data.list[0];
-            
-            // 定义API字段与environmentData的key映射关系
-            const fieldMapping = {
-                temperature: 'temperature',  // 温度
-                humidity: 'humidity',        // 湿度
-                pmTen: 'pm10',              // PM10
-                pmTwoFive: 'pm25'           // PM2.5
-                // CO2 和 SO2 在API响应中没有对应字段，保持为空
-            };
-            
-            // 遍历environmentData并赋值
-            environmentData.forEach(item => {
-                // 查找映射关系
-                const apiField = Object.keys(fieldMapping).find(key => fieldMapping[key] === item.key);
-                if (apiField && firstDevice[apiField] !== null && firstDevice[apiField] !== undefined) {
-                    item.value = firstDevice[apiField];
-                }
-            });
-        }
-    })
-}
-//能源监测
-const queryEnergyNumCounts = () => {
-    const currentYear = new Date().getFullYear();
-    queryEnergyNumCount({ "queryDate": currentYear.toString() }).then((res) => {
-        if (res.code === '0' && res.data?.data) {
-            // 处理能源数据并填充缺失月份
-            const processedData = processEnergyData(res.data.data);
-            // 更新图表
-            updateEnergyChart(processedData);
-        }
-    })
-}
-// 处理能源数据：填充缺失月份
-const processEnergyData = (dataList) => {
-    // 初始化12个月的数据结构
-    const monthsData = {
-        water: new Array(12).fill(0),  // deviceType 1 = 水耗
-        electricity: new Array(12).fill(0)  // deviceType 2 = 电耗
-    };
-    
-    // 遍历API返回的数据
-    dataList.forEach(item => {
-        if (item.staticMonth && item.readNum) {
-            // 提取月份 (格式: "2025-12" -> 12)
-            const monthMatch = item.staticMonth.match(/-(\d+)$/);
-            if (monthMatch) {
-                const monthIndex = parseInt(monthMatch[1]) - 1; // 转换为0-11的索引
-                const value = parseFloat(item.readNum) || 0;
-                
-                // 根据deviceType分类
-                if (item.deviceType === '1' || item.deviceType === 1) {
-                    monthsData.water[monthIndex] = value;
-                } else if (item.deviceType === '2' || item.deviceType === 2) {
-                    monthsData.electricity[monthIndex] = value;
-                }
-            }
-        }
-    });
-    
-    return monthsData;
-}
+import { useRouter } from 'vue-router';
+import {
+    queryParkWeatherListPagination,
+    queryYardWarehouseRate,
+    queryEnergyNumCount,
+    queryMonitoringCount,
+    queryEnvironmentCount,
+    querySecurityAlarmCount
+} from '@/api/user';
 
-// 更新能源图表数据
-const updateEnergyChart = (monthsData) => {
-    if (!chartInstance) return;
-    
-    chartInstance.setOption({
-        series: [
-            {
-                name: '水耗',
-                data: monthsData.water
-            },
-            {
-                name: '电耗',
-                data: monthsData.electricity
-            }
-        ]
-    });
-}
-
-
-
-//告警管理
-const querySecurityAlarmCounts = () => {
-    // dealState：是否处理（1=已处理，2=未处理）非必填
-    querySecurityAlarmCount({ "dealState": "2" }).then((res)=>{
-        if (res.code == 0) {
-            //alramTotal：告警数量，oneLevelNum：紧急告警数量，towLevelNum：重要告警数量，threeLevelNum：一般告警数量
-            alertData.total = res.data.alramTotal;
-            alertData.items[0].value = res.data.oneLevelNum;
-            alertData.items[1].value = res.data.towLevelNum;
-            alertData.items[2].value = res.data.threeLevelNum;
-            
-            // 更新图表
-            initChart3();
-        }
-    })
-}
-
-
-//消防监测
-const queryEnvironmentCounts = () => {
-    queryEnvironmentCount({}).then((res)=>{
-        if (res.code == 0) {
-            fireData.total = res.data.data.total;
-            fireData.items[0].value = res.data.data.onNum;
-            fireData.items[1].value = res.data.data.offNum;
-            //total：总数，onNum：在线数量，offNum：离线数量
-            
-            // 更新图表
-            initChart2();
-        }
-    })
-}
-
-
-//安防监测
-const queryMonitoringCounts = () => {
-    queryMonitoringCount({}).then((res)=>{
-        if (res.code == 0) {
-            securityData.total = res.data.data.total;
-            securityData.items[0].value = res.data.data.onNum;
-            securityData.items[1].value = res.data.data.offNum;
-            //total：总数，onNum：在线数量，offNum：离线数量
-            
-            // 更新图表
-            initChart1();
-        }
-    })
-}
-
-
-
-
-
-
-
-
-
-
-//堆场的
-const getYardWarehouseRates = () => {
-    queryYardWarehouseRate().then(res => {
-        if (res.code==0) {
-            yardData.percentage = res.data[0].useWarehouseRate;
-            yardData.items[0].value = res.data[0].useWarehouseRate;
-            yardData.items[1].value = res.data[0].useWarehouseCount;
-            yardData.items[2].value = res.data[0].freeWarehouseCount;
-            
-            // 更新图表
-            initChart5();
-        }
-    })
-}
-
-// 处理图表数据:确保0值也能显示,全0则平分
-const normalizeChartData = (values) => {
-    const numbers = values.map(v => parseFloat(v) || 0);
-    const total = numbers.reduce((sum, val) => sum + val, 0);
-    
-    // 如果所有值都是0,平分图表
-    if (total === 0) {
-        const evenValue = 100 / numbers.length;
-        return numbers.map(() => evenValue);
-    }
-    
-    // 如果有0值,给它们分配一个小比例(总和的1%)
-    const minValue = total * 0.01;
-    return numbers.map(val => val === 0 ? minValue : val);
-}
-
-
-// 接收从 index 传入的面板状态
-const props = defineProps({
-    isPanelVisible: {
-        type: Boolean,
-        default: true
-    },
-
-})
-
-
-// 获取路由实例和当前路由对象
-const router = useRouter();
-const route = useRoute();
-const changelist = (value) => {
-
-    const type = {
-        type1: "hjjc",
-        type2: "nyjc",
-        type3: "afjc",
-        type4: "xfjc",
-        type5: "gjgl",
-        type6: "ryjc",
-        type7: "zxzy",
-        type8: "dczy",
-
-    }
-
-    ue5click(type[value])
-
-    router.push({ name: value })
+// --- Constants & Config ---
+const ROUTE_TYPE_MAP = {
+    type1: "hjjc", type2: "nyjc", type3: "afjc", type4: "xfjc",
+    type5: "gjgl", type6: "ryjc", type7: "zxzy", type8: "dczy"
 };
 
+const PIE_COLORS = ['#42FFF9', '#F0B716', '#16B4F0'];
 
+// --- Props & Inject ---
+const props = defineProps({
+    isPanelVisible: { type: Boolean, default: true }
+});
+const playerMethods = inject('playerMethods');
+const router = useRouter();
 
-// 图表引用 - 保持原变量名
+// --- Template Refs ---
 const chartRef = ref(null);
 const chartDom = ref(null);
 const chartDom1 = ref(null);
@@ -403,739 +212,304 @@ const chartDom2 = ref(null);
 const chartDom3 = ref(null);
 const chartDom4 = ref(null);
 
-// 图表实例存储
-let chartInstance = null;
-let myChart = null;
-let myChart1 = null;
-let myChart2 = null;
-let myChart3 = null;
-let myChart4 = null;
+// --- Chart Instances ---
+const instances = {
+    energy: null,
+    security: null,
+    fire: null,
+    alert: null,
+    loading: null,
+    yard: null
+};
 
-// 数据结构定义 - 只定义结构，不包含具体数值
+// --- Reactive Data (Initialized with Default/Mock values for Fault Tolerance) ---
 const environmentData = reactive([
-    { icon: require('@/assets/温度.png'), label: '温度', value: '', unit: '°C', key: 'temperature' },
-    { icon: require('@/assets/多云.png'), label: 'PM10', value: '', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm10' },
-    { icon: require('@/assets/C02.png'), label: 'CO2', value: '', unit: 'PU/m3', colorClass: 'gjyellow', key: 'co2' },
-    { icon: require('@/assets/湿度.png'), label: '湿度', value: '', unit: '%', key: 'humidity' },
-    { icon: require('@/assets/多云.png'), label: 'PM2.5', value: '', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm25' },
-    { icon: require('@/assets/C02.png'), label: 'SO2', value: '', unit: 'PU/m3', colorClass: 'gjyellow', key: 'so2' }
+    { icon: require('@/assets/温度.png'), label: '温度', value: '22', unit: '°C', key: 'temperature' },
+    { icon: require('@/assets/多云.png'), label: 'PM10', value: '116', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm10' },
+    { icon: require('@/assets/C02.png'), label: 'CO2', value: '116', unit: 'PU/m3', colorClass: 'gjyellow', key: 'co2' },
+    { icon: require('@/assets/湿度.png'), label: '湿度', value: '75', unit: '%', key: 'humidity' },
+    { icon: require('@/assets/多云.png'), label: 'PM2.5', value: '116', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm25' },
+    { icon: require('@/assets/C02.png'), label: 'SO2', value: '116', unit: 'PU/m3', colorClass: 'gjyellow', key: 'so2' }
 ]);
 
 const securityData = reactive({
-    total: 0,
+    total: 35,
     items: [
-        { label: '在线设备', value: 0, unit: '个', color: 'blue', key: 'online' },
-        { label: '离线设备', value: 0, unit: '个', color: 'yellow', key: 'offline' }
+        { label: '在线设备', value: 33, unit: '个', color: 'blue', key: 'online' },
+        { label: '离线设备', value: 2, unit: '个', color: 'yellow', key: 'offline' }
     ]
 });
 
 const fireData = reactive({
-    total: 0,
+    total: 14,
     items: [
-        { label: '在线设备', value: 0, unit: '个', color: 'blue', key: 'online' },
-        { label: '离线设备', value: 0, unit: '个', color: 'yellow', key: 'offline' }
+        { label: '在线设备', value: 12, unit: '个', color: 'blue', key: 'online' },
+        { label: '离线设备', value: 2, unit: '个', color: 'yellow', key: 'offline' }
     ]
 });
 
 const alertData = reactive({
-    total: 0,
+    total: 8,
     items: [
-        { label: '紧急告警', value: 0, unit: '个', color: 'blue', key: 'urgent' },
-        { label: '重要告警', value: 0, unit: '个', color: 'yellow', key: 'important' },
-        { label: '一般告警', value: 0, unit: '个', color: 'green', key: 'normal' }
+        { label: '紧急告警', value: 1, unit: '个', color: 'blue', key: 'urgent' },
+        { label: '重要告警', value: 2, unit: '个', color: 'yellow', key: 'important' },
+        { label: '一般告警', value: 5, unit: '个', color: 'green', key: 'normal' }
     ]
 });
 
 const personnelData = reactive({
-    current: 0,
+    current: 12,
     stats: [
-        { label: '今日累计入园人数', value: 0, key: 'todayTotal' },
-        { label: '今日累计入园任务量', value: 0, key: 'todayTasks' },
-        { label: '当前在园任务量', value: 0, key: 'currentTasks' }
+        { label: '今日累计入园人数', value: 50, key: 'todayTotal' },
+        { label: '今日累计入园任务量', value: 12, key: 'todayTasks' },
+        { label: '当前在园任务量', value: 9, key: 'currentTasks' }
     ]
 });
 
 const loadingData = reactive({
-    percentage: '0%',
+    percentage: '95%',
     items: [
-        { label: '已完成', value: 0, unit: '个', color: 'blue', key: 'completed' },
-        { label: '作业中', value: 0, unit: '个', color: 'yellow', key: 'inProgress' },
-        { label: '等待作业', value: 0, unit: '个', color: 'green', key: 'pending' }
+        { label: '已完成', value: 102, unit: '个', color: 'blue', key: 'completed' },
+        { label: '作业中', value: 52, unit: '个', color: 'yellow', key: 'inProgress' },
+        { label: '等待作业', value: 2, unit: '个', color: 'green', key: 'pending' }
     ]
 });
 
 const yardData = reactive({
-    percentage: '0%',
+    percentage: '78%',
     items: [
-        { label: '待清理', value: 0, unit: '个', color: 'blue', key: 'pendingClean' },
-        { label: '空闲', value: 0, unit: '个', color: 'yellow', key: 'idle' },
-        { label: '占用', value: 0, unit: '个', color: 'green', key: 'occupied' }
+        { label: '待清理', value: 2, unit: '个', color: 'blue', key: 'pendingClean' },
+        { label: '空闲', value: 6, unit: '个', color: 'yellow', key: 'idle' },
+        { label: '占用', value: 78, unit: '个', color: 'green', key: 'occupied' }
     ]
 });
 
-// 模拟接口数据 - 实际项目中替换为真实的 API 调用
-const mockApiData = {
-    environment: {
-        temperature: '22',
-        pm10: '116',
-        co2: '116',
-        humidity: '75',
-        pm25: '116',
-        so2: '116'
-    },
-    security: {
-        total: 35,
-        online: 33,
-        offline: 2
-    },
-    fire: {
-        total: 14,
-        online: 12,
-        offline: 2
-    },
-    alert: {
-        total: 8,
-        urgent: 1,
-        important: 2,
-        normal: 5
-    },
-    personnel: {
-        current: 12,
-        todayTotal: 50,
-        todayTasks: 12,
-        currentTasks: 9
-    },
-    loading: {
-        percentage: '95%',
-        completed: 102,
-        inProgress: 52,
-        pending: 2
-    },
-    yard: {
-        percentage: '78%',
-        pendingClean: 2,
-        idle: 6,
-        occupied: 78
+// --- Helper Functions ---
+const normalizeChartData = (values) => {
+    const numbers = values.map(v => parseFloat(v) || 0);
+    const total = numbers.reduce((sum, val) => sum + val, 0);
+    if (total === 0) {
+        const evenValue = 100 / numbers.length;
+        return numbers.map(() => evenValue);
     }
+    const minValue = total * 0.01;
+    return numbers.map(val => val === 0 ? minValue : val);
 };
 
-// 数据更新函数
-const updateEnvironmentData = (data) => {
-    environmentData.forEach(item => {
-        if (data[item.key] !== undefined) {
-            item.value = data[item.key];
-        }
-    });
-};
+const getPieOption = (values, colors = PIE_COLORS) => ({
+    tooltip: { trigger: 'item' },
+    series: [{
+        type: 'pie',
+        radius: ['75%', '90%'],
+        avoidLabelOverlap: false,
+        itemStyle: { borderWidth: 5, borderColor: 'transparent' },
+        label: { show: false },
+        emphasis: { label: { show: false } },
+        labelLine: { show: false },
+        data: normalizeChartData(values).map((value, index) => ({
+            value,
+            name: '',
+            itemStyle: { color: colors[index] || PIE_COLORS[index] }
+        }))
+    }]
+});
 
-const updateSecurityData = (data) => {
-    securityData.total = data.total || 0;
-    securityData.items.forEach(item => {
-        if (data[item.key] !== undefined) {
-            item.value = data[item.key];
-        }
-    });
-};
-
-const updateFireData = (data) => {
-    fireData.total = data.total || 0;
-    fireData.items.forEach(item => {
-        if (data[item.key] !== undefined) {
-            item.value = data[item.key];
-        }
-    });
-};
-
-const updateAlertData = (data) => {
-    alertData.total = data.total || 0;
-    alertData.items.forEach(item => {
-        if (data[item.key] !== undefined) {
-            item.value = data[item.key];
-        }
-    });
-};
-
-const updatePersonnelData = (data) => {
-    personnelData.current = data.current || 0;
-    personnelData.stats.forEach(stat => {
-        if (data[stat.key] !== undefined) {
-            stat.value = data[stat.key];
-        }
-    });
-};
-
-const updateLoadingData = (data) => {
-    loadingData.percentage = data.percentage || '0%';
-    loadingData.items.forEach(item => {
-        if (data[item.key] !== undefined) {
-            item.value = data[item.key];
-        }
-    });
-};
-
-const updateYardData = (data) => {
-    yardData.percentage = data.percentage || '0%';
-    yardData.items.forEach(item => {
-        if (data[item.key] !== undefined) {
-            item.value = data[item.key];
-        }
-    });
-};
-
-// 统一数据更新函数
-const updateAllData = (apiData) => {
-    updateEnvironmentData(apiData.environment);
-    updateSecurityData(apiData.security);
-    updateFireData(apiData.fire);
-    updateAlertData(apiData.alert);
-    updatePersonnelData(apiData.personnel);
-    updateLoadingData(apiData.loading);
-    updateYardData(apiData.yard);
-};
-
-// 模拟 API 调用
-const fetchData = async () => {
-    try {
-        // 实际项目中替换为真实的 API 调用
-        // const response = await fetch('/api/dashboard-data');
-        // const data = await response.json();
-
-        // 使用模拟数据
-        const data = mockApiData;
-        updateAllData(data);
-
-        // 更新图表数据
-        updateCharts();
-    } catch (error) {
-        console.error('获取数据失败:', error);
+const updateChart = (key, dom, option) => {
+    if (!dom) return;
+    if (!instances[key]) {
+        instances[key] = echarts.init(dom);
     }
+    instances[key].setOption(option);
 };
-
-// 定时更新数据（可选）
-const startAutoRefresh = () => {
-    // 每30秒更新一次数据
-    setInterval(fetchData, 30000);
-};
-
-// 更新图表数据
-const updateCharts = () => {
-    // 重新设置饼图数据
-    initChart1();
-    initChart2();
-    initChart3();
-    initChart4();
-    initChart5();
-};
-
-// 初始化能源图表 - 保持原函数名
-const initChart = () => {
-    if (!chartRef.value) return;
-
-    chartInstance = echarts.init(chartRef.value);
-
-    const option = {
-        title: {
-            text: '',
-            textStyle: {
-                color: '#3CDFF3'
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                label: {
-                    backgroundColor: '#6a7985',
-                    color: '#3CDFF3'
-                }
-            },
-            textStyle: {
-                color: '#3CDFF3'
-            }
-        },
-        legend: {
-            data: ['水耗', '电耗'],
-            textStyle: {
-                color: '#3CDFF3'
-            }
-        },
-        toolbox: {
-            feature: {
-            },
-            iconStyle: {
-                color: '#3CDFF3'
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            top: '15%',
-            containLabel: true
-        },
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                axisLine: {
-                    lineStyle: {
-                        color: '#3CDFF3'
-                    }
-                },
-                axisLabel: {
-                    color: '#3CDFF3'
-                }
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value',
-                axisLine: {
-                    show: true,
-                    lineStyle: {
-                        color: '#3CDFF3',
-                        type: 'solid'
-                    }
-                },
-                axisLabel: {
-                    color: '#3CDFF3'
-                },
-                splitLine: {
-                    lineStyle: {
-                        color: '#3CDFF3',
-                        type: 'solid',
-                        opacity: 0.5
-                    }
-                }
-            }
-        ],
-        series: [
-            {
-                name: '水耗',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {
-                    color: 'rgba(12, 229, 248, 0.3)'
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                lineStyle: {
-                    color: 'rgba(12, 229, 248, 0.6)'
-                },
-                itemStyle: {
-                    color: 'rgba(12, 229, 248, 0.6)'
-                },
-                symbol: 'none',
-                data: [120, 132, 101, 134, 190, 230, 210, 120, 132, 101, 134, 90]
-            },
-            {
-                name: '电耗',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {
-                    color: 'rgba(248, 200, 12, 0.3)'
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                lineStyle: {
-                    color: 'rgba(248, 200, 12, 0.6)'
-                },
-                itemStyle: {
-                    color: 'rgba(248, 200, 12, 0.6)'
-                },
-                symbol: 'none',
-                data: [220, 182, 191, 234, 90, 330, 310, 210, 120, 132, 101, 134]
-            }
-        ]
-    };
-
-    chartInstance.setOption(option);
-};
-
-//安防检测 - 保持原函数名
-const initChart1 = () => {
-    if (!chartDom.value) return;
-
-    myChart = echarts.init(chartDom.value);
-
-    const option = {
-        tooltip: {
-            trigger: 'item'
-        },
-        legend: {
-            top: '5%',
-            left: 'center'
-        },
-        series: [
-            {
-                name: '',
-                type: 'pie',
-                radius: ['75%', '90%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderWidth: 5,
-                    borderColor: 'transparent'
-                },
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: 40,
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: normalizeChartData([
-                    securityData.items[0].value,
-                    securityData.items[1].value
-                ]).map((value, index) => ({
-                    value,
-                    name: '',
-                    itemStyle: {
-                        color: index === 0 ? '#42FFF9' : '#F0B716'
-                    }
-                }))
-            }
-        ]
-    };
-
-    myChart.setOption(option);
-}
-
-//消防检测 - 保持原函数名
-const initChart2 = () => {
-    if (!chartDom1.value) return;
-
-    myChart1 = echarts.init(chartDom1.value);
-
-    const option = {
-        tooltip: {
-            trigger: 'item'
-        },
-        legend: {
-            top: '5%',
-            left: 'center'
-        },
-        series: [
-            {
-                name: '',
-                type: 'pie',
-                radius: ['75%', '90%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderWidth: 5,
-                    borderColor: 'transparent'
-                },
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: 40,
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: normalizeChartData([
-                    fireData.items[0].value,
-                    fireData.items[1].value
-                ]).map((value, index) => ({
-                    value,
-                    name: '',
-                    itemStyle: {
-                        color: index === 0 ? '#42FFF9' : '#F0B716'
-                    }
-                }))
-            }
-        ]
-    };
-
-    myChart1.setOption(option);
-}
-
-//告警管理 - 保持原函数名
-const initChart3 = () => {
-
-    if (!chartDom2.value) return;
-
-    myChart2 = echarts.init(chartDom2.value);
-
-    const option = {
-        tooltip: {
-            trigger: 'item'
-        },
-        legend: {
-            top: '5%',
-            left: 'center'
-        },
-        series: [
-            {
-                name: '',
-                type: 'pie',
-                radius: ['75%', '90%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderWidth: 5,
-                    borderColor: 'transparent'
-                },
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: 40,
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: normalizeChartData([
-                    alertData.items[0].value,
-                    alertData.items[1].value,
-                    alertData.items[2].value
-                ]).map((value, index) => ({
-                    value,
-                    name: '',
-                    itemStyle: {
-                        color: index === 0 ? '#42FFF9' : index === 1 ? '#F0B716' : '#16B4F0'
-                    }
-                }))
-            }
-        ]
-    };
-
-    myChart2.setOption(option);
-}
-
-//装卸作业 - 保持原函数名
-const initChart4 = () => {
-    if (!chartDom3.value) return;
-
-    myChart3 = echarts.init(chartDom3.value);
-
-    const option = {
-        tooltip: {
-            trigger: 'item'
-        },
-        legend: {
-            top: '5%',
-            left: 'center'
-        },
-        series: [
-            {
-                name: '',
-                type: 'pie',
-                radius: ['75%', '90%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderWidth: 5,
-                    borderColor: 'transparent'
-                },
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: 40,
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: [
-                    {
-                        value: loadingData.items[0].value, name: '',
-                        itemStyle: {
-                            color: '#42FFF9'
-                        }
-                    },
-                    {
-                        value: loadingData.items[1].value, name: '',
-                        itemStyle: {
-                            color: '#F0B716'
-                        }
-                    },
-                    {
-                        value: loadingData.items[2].value, name: '',
-                        itemStyle: {
-                            color: '#16B4F0'
-                        }
-                    }
-                ]
-            }
-        ]
-    };
-
-    myChart3.setOption(option);
-}
-
-//堆场作业 - 保持原函数名
-const initChart5 = () => {
-    if (!chartDom4.value) return;
-
-    myChart4 = echarts.init(chartDom4.value);
-
-    const option = {
-        tooltip: {
-            trigger: 'item'
-        },
-        legend: {
-            top: '5%',
-            left: 'center'
-        },
-        series: [
-            {
-                name: '',
-                type: 'pie',
-                radius: ['75%', '90%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderWidth: 5,
-                    borderColor: 'transparent'
-                },
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: 40,
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: normalizeChartData([
-                    yardData.items[0].value,
-                    yardData.items[1].value,
-                    yardData.items[2].value
-                ]).map((value, index) => ({
-                    value,
-                    name: '',
-                    itemStyle: {
-                        color: index === 0 ? '#42FFF9' : index === 1 ? '#F0B716' : '#16B4F0'
-                    }
-                }))
-            }
-        ]
-    };
-
-    myChart4.setOption(option);
-}
-
-const handleResize = () => {
-    if (chartInstance) {
-        chartInstance.resize();
-    }
-    if (myChart) {
-        myChart.resize();
-    }
-    if (myChart1) {
-        myChart1.resize();
-    }
-    if (myChart2) {
-        myChart2.resize();
-    }
-    if (myChart3) {
-        myChart3.resize();
-    }
-    if (myChart4) {
-        myChart4.resize();
-    }
-};
-/* 触发ue5 */
-// 注入父组件提供的方法
-const playerMethods = inject('playerMethods')
-// 封装调用逻辑
-const callParentMethod = (message) => {
-    if (playerMethods?.sendMessage) {
-        playerMethods.sendMessage(message)
-    } else {
-        console.error('方法未成功注入')
-    }
-}
 
 const ue5click = (type) => {
-    console.log(type)
-    console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": type } });
-    callParentMethod({ "code": 1, "type": "btn", "data": { "id": type } });
-}
+    const message = { "code": 1, "type": "btn", "data": { "id": type } };
+    if (playerMethods?.sendMessage) {
+        playerMethods.sendMessage(message);
+    } else {
+        console.error('UE5 Interaction: playerMethods not injected');
+    }
+};
 
-onMounted(() => {
-    // 初始化数据
-    fetchData();
+const changelist = (value) => {
+    // 先立即跳转路由，不等待任何操作
+    router.push({ name: value });
 
-    // 初始化图表
-    initChart();
-    initChart1();
-    initChart2();
-    initChart3();
-    initChart4();
-    initChart5();
+    // 异步发送 UE5 消息，不阻塞路由跳转
+    nextTick(() => {
+        ue5click(ROUTE_TYPE_MAP[value]);
+    });
+};
 
+// --- Chart Rendering ---
+const renderAllCharts = () => {
+    // 能源监测 (立即刷新)
+    const defWater = [120, 132, 101, 134, 190, 230, 210, 120, 132, 101, 134, 90];
+    const defElect = [220, 182, 191, 234, 90, 330, 310, 210, 120, 132, 101, 134];
+    updateChart('energy', chartRef.value, getEnergyOption(defWater, defElect));
+    // 安防监测
+    updateChart('security', chartDom.value, getPieOption([securityData.items[0].value, securityData.items[1].value]));
+    // 消防监测
+    updateChart('fire', chartDom1.value, getPieOption([fireData.items[0].value, fireData.items[1].value]));
+    // 告警管理
+    updateChart('alert', chartDom2.value, getPieOption(alertData.items.map(i => i.value)));
+    // 装卸作业
+    updateChart('loading', chartDom3.value, getPieOption(loadingData.items.map(i => i.value)));
+    // 堆场作业
+    updateChart('yard', chartDom4.value, getPieOption(yardData.items.map(i => i.value)));
+};
 
-    queryParkWeatherListPaginations();//环境监测
-    queryEnergyNumCounts();//能耗监测
-    queryMonitoringCounts();//安防监测
-    querySecurityAlarmCounts();//告警管理
-    getYardWarehouseRates();//堆场
-    queryEnvironmentCounts();//消防监测
+// --- API Functions with Fault Tolerance ---
+const loadData = async () => {
+    try {
+        await Promise.allSettled([
+            fetchWeather(),
+            fetchEnergy(),
+            fetchMonitoring(),
+            fetchSecurityAlarm(),
+            fetchYardRate(),
+            fetchEnvironment()
+        ]);
+    } catch (err) {
+        console.error('Data refreshing failed, showing existing data.', err);
+    }
+};
 
+const fetchWeather = async () => {
+    try {
+        const res = await queryParkWeatherListPagination();
+        if (res.code === '0' && res.data?.data?.list?.length > 0) {
+            const device = res.data.data.list[0];
+            const mapping = { temperature: 'temperature', humidity: 'humidity', pm10: 'pmTen', pm25: 'pmTwoFive' };
+            environmentData.forEach(item => {
+                const apiField = mapping[item.key];
+                if (apiField && device[apiField] != null) item.value = device[apiField];
+            });
+        }
+    } catch (e) {
+        console.warn('Weather API failed, showing defaults');
+    }
+};
+
+const getEnergyOption = (water, electricity) => ({
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985', color: '#3CDFF3' } }
+    },
+    legend: { data: ['水耗', '电耗'], textStyle: { color: '#3CDFF3' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+    xAxis: {
+        type: 'category', boundaryGap: false,
+        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+        axisLine: { lineStyle: { color: '#3CDFF3' } },
+        axisLabel: { color: '#3CDFF3' }
+    },
+    yAxis: {
+        type: 'value',
+        axisLine: { show: true, lineStyle: { color: '#3CDFF3' } },
+        axisLabel: { color: '#3CDFF3' },
+        splitLine: { lineStyle: { color: '#3CDFF3', opacity: 0.3 } }
+    },
+    series: [
+        { name: '水耗', type: 'line', stack: 'Total', areaStyle: { color: 'rgba(12, 229, 248, 0.3)' }, symbol: 'none', data: water },
+        { name: '电耗', type: 'line', stack: 'Total', areaStyle: { color: 'rgba(248, 200, 12, 0.3)' }, symbol: 'none', data: electricity }
+    ]
+});
+
+const fetchEnergy = async () => {
+    try {
+        const year = new Date().getFullYear();
+        const res = await queryEnergyNumCount({ queryDate: year.toString() });
+        if (res.code === '0' && res.data?.data?.length > 0) {
+            const newData = { water: new Array(12).fill(0), electricity: new Array(12).fill(0) };
+            res.data.data.forEach(item => {
+                const monthMatch = item.staticMonth?.match(/-(\d+)$/);
+                if (monthMatch) {
+                    const idx = parseInt(monthMatch[1]) - 1;
+                    const val = parseFloat(item.readNum) || 0;
+                    if ([1, '1'].includes(item.deviceType)) newData.water[idx] = val;
+                    else if ([2, '2'].includes(item.deviceType)) newData.electricity[idx] = val;
+                }
+            });
+            // 只有拿到真实数据才更新图表
+            updateChart('energy', chartRef.value, getEnergyOption(newData.water, newData.electricity));
+        }
+    } catch (e) {
+        console.warn('Energy API failed, kept showing defaults');
+    }
+};
+
+const fetchMonitoring = async () => {
+    try {
+        const res = await queryMonitoringCount({});
+        if (res.code == 0 && res.data?.data) {
+            securityData.total = res.data.data.total;
+            securityData.items[0].value = res.data.data.onNum;
+            securityData.items[1].value = res.data.data.offNum;
+        }
+    } catch (e) { console.warn('Monitoring API failed'); }
+    updateChart('security', chartDom.value, getPieOption([securityData.items[0].value, securityData.items[1].value]));
+};
+
+const fetchSecurityAlarm = async () => {
+    try {
+        const res = await querySecurityAlarmCount({ dealState: "2" });
+        if (res.code == 0) {
+            alertData.total = res.data.alramTotal;
+            alertData.items[0].value = res.data.oneLevelNum;
+            alertData.items[1].value = res.data.towLevelNum;
+            alertData.items[2].value = res.data.threeLevelNum;
+        }
+    } catch (e) { console.warn('Alert API failed'); }
+    updateChart('alert', chartDom2.value, getPieOption(alertData.items.map(i => i.value)));
+};
+
+const fetchEnvironment = async () => {
+    try {
+        const res = await queryEnvironmentCount({});
+        if (res.code == 0 && res.data?.data) {
+            fireData.total = res.data.data.total;
+            fireData.items[0].value = res.data.data.onNum;
+            fireData.items[1].value = res.data.data.offNum;
+        }
+    } catch (e) { console.warn('Environment API failed'); }
+    updateChart('fire', chartDom1.value, getPieOption([fireData.items[0].value, fireData.items[1].value]));
+};
+
+const fetchYardRate = async () => {
+    try {
+        const res = await queryYardWarehouseRate();
+        if (res.code == 0 && res.data?.[0]) {
+            const data = res.data[0];
+            yardData.percentage = data.useWarehouseRate;
+            yardData.items[0].value = data.useWarehouseRate;
+            yardData.items[1].value = data.useWarehouseCount;
+            yardData.items[2].value = data.freeWarehouseCount;
+        }
+    } catch (e) { console.warn('Yard API failed'); }
+    updateChart('yard', chartDom4.value, getPieOption(yardData.items.map(i => i.value)));
+};
+
+// --- Lifecycle ---
+const handleResize = () => {
+    Object.values(instances).forEach(instance => instance?.resize());
+};
+
+onMounted(async () => {
+    await nextTick();
+    // 1. 先使用初始数据渲染图表，保证页面不空白
+    renderAllCharts();
+    // 2. 异步获取真实数据并更新
+    loadData();
 
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
-    document.addEventListener('webkitfullscreenchange', handleResize);
 });
+
 onUnmounted(() => {
-
-
-    if (chartInstance) {
-        chartInstance.dispose();
-        chartInstance = null;
-    }
-    if (myChart) {
-        myChart.dispose();
-        myChart = null;
-    }
-    if (myChart1) {
-        myChart1.dispose();
-        myChart1 = null;
-    }
-    if (myChart2) {
-        myChart2.dispose();
-        myChart2 = null;
-    }
-    if (myChart3) {
-        myChart3.dispose();
-        myChart3 = null;
-    }
-    if (myChart4) {
-        myChart4.dispose();
-        myChart4 = null;
-    }
+    Object.values(instances).forEach(instance => instance?.dispose());
     window.removeEventListener('resize', handleResize);
     document.removeEventListener('fullscreenchange', handleResize);
-    document.removeEventListener('webkitfullscreenchange', handleResize);
 });
 </script>
 
@@ -1235,53 +609,6 @@ onUnmounted(() => {
     border: 2px dashed #2DA9C0;
     border-radius: 50%;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .changchart {

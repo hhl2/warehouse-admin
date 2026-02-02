@@ -6,10 +6,10 @@
         </div>
 
         <div class="sblf">
-            <el-input v-model="input3" style="width: 203px" placeholder="请输入设备名称" :prefix-icon="Search" />
+            <el-input v-model="input3" class="inputwidth" placeholder="请输入设备名称" :prefix-icon="Search" />
             <div class="sblf_search">
-                <div class="sblf_search_box" @click="handleAlertSearch">查询</div>
-                <div class="sblf_search_box" @click="handleAlertReset">重置</div>
+                <el-button type="primary" class="search-btn" @click="handleAlertSearch">查询</el-button>
+                <el-button type="primary" class="search-btn" @click="handleAlertReset">重置</el-button>
             </div>
         </div>
 
@@ -95,12 +95,13 @@ const queryAlarmCurrents = () => {
 }
 
 const queryManageLists = () => {
-    queryManageList({ "pageSize": 100, "pageNo": 1 }).then(res => {
-        console.log(res)
-        if(res.code==0){
-            console.log(res.data.records)
-            source.value=res.data.records
-
+    queryManageList({
+        "pageSize": 100,
+        "pageNo": 1,
+        "deviceName": input3.value
+    }).then(res => {
+        if (res.code == 0) {
+            source.value = res.data.records
         }
     })
 }
@@ -127,7 +128,7 @@ const source2 = [
         "deviceName": "四向车002"
     }
 ]
-const source = [
+const source = ref([
     {
         code: '64BC256336654588523369814CVT3',
         name: '堆垛机',
@@ -176,19 +177,24 @@ const source = [
         status: '在线',
         quantity: ''
     }
-]
+])
 
 // 响应式数据
 const activeTab = ref(1);
-const selectedRow = ref(source[0]);
+const selectedRow = ref(source.value[0]);
 const input3 = ref('')
 
 const handleRowClick = (row) => {
     selectedRow.value = row;
 };
 
-const handleAlertSearch = () => { }
-const handleAlertReset = () => { }
+const handleAlertSearch = () => {
+    queryManageLists();
+}
+const handleAlertReset = () => {
+    input3.value = '';
+    queryManageLists();
+}
 
 onMounted(() => {
     // 页面逻辑初始化
@@ -203,6 +209,10 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.inputwidth {
+    width: 203px;
+}
+
 .left {
     display: flex;
     flex-direction: column;
@@ -272,11 +282,12 @@ onUnmounted(() => {
     background-color: rgba(28, 112, 215, 0.9) !important;
 }
 
+/*
 ::v-deep(.el-input__wrapper) {
     height: 25px;
     background-color: #476B9A;
     box-shadow: 0 0 0 1px #409eff inset;
-}
+} */
 
 ::v-deep(.el-input__icon) {
     color: #18A7DE;
@@ -337,22 +348,23 @@ onUnmounted(() => {
 .sblf_search {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 110px;
+    gap: 8px;
+
 }
 
-.sblf_search_box {
-    margin-left: 10px;
-    color: #E6F2FF;
-    font-family: MicrosoftYaHei-Bold;
-    font-weight: bold;
-    font-size: 15px;
-    height: 25px;
-    line-height: 25px;
-    width: 45px;
-    background-color: #10A8FD;
+.search-btn {
+    height: 32px;
+    background: #10A8FD;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
     border-radius: 3px;
-    text-align: center;
+    font-weight: bold;
+}
+
+.search-btn:hover {
+    background: rgba(16, 168, 253, 0.8);
+    color: #fff;
 }
 
 .title_txet {
