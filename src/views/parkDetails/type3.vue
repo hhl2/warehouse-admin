@@ -9,9 +9,10 @@
             <template v-for="(value, index) in sorces" :key="index">
                 <div class="spjkList" @click="handleRowClick(value)">
                     <div class="spjkListbox">
-                        <img :src="value.url" alt="" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <!-- 显示图片 -->
+                        <img :src="value.imageUrl || require('@/assets/camera/图.png')" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
-                    <div class="spjkList_label">{{ value.name || '摄像头' + (index + 1) }}</div>
+                    <div class="spjkList_label">{{ value.cn || '摄像头' + (index + 1) }}</div>
                 </div>
             </template>
         </div>
@@ -20,12 +21,12 @@
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
-                    @keyup.enter="fetchData2" />
-                <el-button type="primary" class="search-btn" @click="fetchData2">查询</el-button>
+                <el-input v-model="input4" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                    @keyup.enter="querySecurityAlarmListPagination" />
+                <el-button type="primary" class="search-btn" @click="querySecurityAlarmListPagination">查询</el-button>
             </div>
             <div class="changleft">
-                <el-table class="my-spacing-table" ref="tableRef" :data="data" @row-click="handleRowClick">
+                <el-table class="my-spacing-table" ref="tableRef" :data="AlarmList" >
                     <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="cameraType" label="设备类型" />
                     <el-table-column prop="installLocation" label="检测点位置" show-overflow-tooltip />
@@ -38,13 +39,10 @@
                     </el-table-column>
                     <el-table-column prop="" label="关键应急预案" show-overflow-tooltip>
                         <template #default="scope">
-                            <img src="" alt="">
+                            <!-- <img src="" alt=""> -->
 
                         </template>
                     </el-table-column>
-
-
-
 
                 </el-table>
 
@@ -55,13 +53,17 @@
 
     <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
+            <!-- <img src="@/assets/title_bgs.png" alt=""> -->
+             
             <img src="@/assets/title_bgs.png" alt="">
-            <div class="title_text_box">
+            <div class="title_txet">摄像头监控列表</div>
+        </div>
+            <!-- <div class="title_text_box">
                 <div class="title_txets">立体仓库</div>
                 <div class="title_txets">平置仓库</div>
                 <div class="title_txets">堆场</div>
-            </div>
-        </div>
+            </div> -->
+     
 
 
         <div class="inputbox">
@@ -71,13 +73,13 @@
         </div>
 
         <div class="changleft2">
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data2" @row-click="handleRowClick">
-                <el-table-column prop="name1" label="设备名称" show-overflow-tooltip />
-                <el-table-column prop="countNums2" label="设备类型" />
-                <el-table-column prop="name" label="检测点位置" show-overflow-tooltip />
-                <el-table-column prop="countNams6" label="状态" width="50">
+            <el-table class="my-spacing-table2" ref="tableRef" :data="data" @row-click="handleRowClick">
+                <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
+                <el-table-column prop="manufacturer" label="设备类型" />
+                <el-table-column prop="cn" label="检测点位置" show-overflow-tooltip />
+                <el-table-column prop="online" label="状态" width="50">
                     <template #default="scope">
-                        <span class='status-normal'>在线
+                        <span class='status-normal'>{{ scope.row.online }}
                         </span>
                     </template>
                 </el-table-column>
@@ -392,6 +394,7 @@
     align-items: center;
     margin: 10px 0px;
     cursor: pointer;
+    width: 200px; /* 固定宽度，确保子元素不会超出 */
 }
 
 .spjkLists .spjkListbox {
@@ -404,7 +407,11 @@
     margin-top: 10px;
     color: #fff;
     font-size: 18px;
-
+    display: block; /* 确保是块级元素 */
+    max-width: 200px; /* 最大宽度，与图片宽度一致 */
+    white-space: nowrap; /* 不换行 */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
@@ -515,10 +522,13 @@ const showMenus = ref(false);
 const menuRef = ref(null);
 const showSingleVideoPopup = ref(false);
 const isLoadingVideo = ref(false); // 视频加载状态
+const AlarmList=ref([]);
 
 // EasyPlayer 播放器相关引用
 const videoElementSingle = ref(null);
 const easyPlayerInstance = ref(null);
+const input3 =ref(null);
+const input4 =ref(null);
 
 const currentCamera = ref({
     id: 'cam001',
@@ -549,14 +559,23 @@ const queryMonitoringPointListPagination = async () => {
 const querySecurityAlarmListPagination
     = async () => {
         try {
-            const response = await request({
+            const res = await request({
                 url: '/api/qydigital-park-service/qyMonitoringPoint/querySecurityAlarmListPagination',
                 method: 'post',
                 data: {
-                    "pageNo": 1, "pageSize": 25, "cn": "", "indexCode": ""
+                    "pageNo": 1, "pageSize": 25, "cn": input4.value, "indexCode": ""
                 },
                 skipGlobalParams: true
             });
+            if(res.code==0){
+                AlarmList.value=res.data?.list||[]
+
+            }else{
+                AlarmList.value=[];
+
+
+            }
+            
             console.log(response);
         } catch (error) {
             console.error('获取监控点列表失败:', error);
@@ -597,8 +616,8 @@ const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', 
         // 调用API获取视频预览URL（使用代理避免跨域）
         // /api/mm/qydigital-park-service/qyMonitoringPoint/queryWatchUrl
         const response = await request({
-            // url: '/api/qydigital-park-service/qyVideoPoint/previewURLs',
-            url: "qydigital-park-service/qyMonitoringPoint/queryWatchUrl",
+            url: '/api/qydigital-park-service/qyVideoPoint/previewURLs',
+            // url: "qydigital-park-service/qyMonitoringPoint/queryWatchUrl",
 
             method: 'post',
             data: {
@@ -645,8 +664,8 @@ const handleRowClick = async (row) => {
     // 使用可选链和默认值避免 undefined 错误
     await fetchCameraVideoAndOpenPopup(
         row.id || '',
-        row.name || '摄像头',
-        row.countNums6 === '在线' ? 'online' : 'offline'
+        row.cn || '摄像头',
+        row.online === '在线' ? 'online' : 'offline'
     );
 }
 
@@ -790,61 +809,130 @@ const handleClickOutside = (event) => {
     }
 };
 
-const sorces =
-    [
-        {
-            name: "摄像头#1",
-            id: 'ee0febb859a541f1bca7515db0e5a41a',
-            url: require("@/assets/camera/图1.png"),
-        },
-        {
-            name: "摄像头#2",
-            id: 'dafe004a0d264b18ac12564fefc9dcd6',
-            url: require("@/assets/camera/图2.png"),
-        },
-        {
-            name: "摄像头#3",
-            id: 'b9877ba9b8d94041a8a448eb178d8163',
-            url: require("@/assets/camera/图3.png"),
-        },
-        {
-            name: "摄像头#4",
-            id: 'facf0b82581f43db9144d12a53c40102',
-            url: require("@/assets/camera/图4.png"),
-        },
-        {
-            name: "摄像头#5",
-            id: 'ffbfc244a9d44a7e838329526f47f904',
-            url: require("@/assets/camera/图5.png"),
-        },
-        {
-            name: "摄像头#6",
-            id: 'f4cdcb8f913941ddb77f9a034d0c90fe',
-            url: require("@/assets/camera/图6.png"),
-        },
-        {
-            name: "摄像头#7",
-            id: 'ee0febb859a541f1bca7515db0e5a41a',
-            url: require("@/assets/camera/图7.png"),
-        },
-        {
-            name: "摄像头#8",
-            id: 'dafe004a0d264b18ac12564fefc9dcd6',
-            url: require("@/assets/camera/图.png"),
+// 视频网格数据 - 默认显示8张图片
+const sorces = ref([
+    { id: '', cn: '指挥中心四楼档案室南面走廊-半球', imageUrl: require('@/assets/camera/图.png') },
+    { id: '', cn: '摄像头2', imageUrl: require('@/assets/camera/图1.png') },
+    { id: '', cn: '摄像头3', imageUrl: require('@/assets/camera/图2.png') },
+    { id: '', cn: '摄像头4', imageUrl: require('@/assets/camera/图3.png') },
+    { id: '', cn: '摄像头5', imageUrl: require('@/assets/camera/图4.png') },
+    { id: '', cn: '摄像头6', imageUrl: require('@/assets/camera/图5.png') },
+    { id: '', cn: '摄像头7', imageUrl: require('@/assets/camera/图6.png') },
+    { id: '', cn: '摄像头8', imageUrl: require('@/assets/camera/图7.png') }
+]);
+
+// 视频网格播放器管理
+const videoElementRefs = ref([]);
+const gridPlayerInstances = ref([]);
+
+// 设置视频元素引用的辅助函数
+const setVideoRef = (el, index) => {
+    if (el) {
+        videoElementRefs.value[index] = el;
+    }
+};
+
+// 初始化单个网格播放器
+const initGridPlayer = async (index, videoUrl) => {
+    if (!videoElementRefs.value[index] || !videoUrl) {
+        console.warn(`网格播放器 ${index}: 元素或URL不存在`);
+        return;
+    }
+
+    try {
+        // 如果已存在播放器实例，先销毁
+        if (gridPlayerInstances.value[index]) {
+            try {
+                gridPlayerInstances.value[index].destroy();
+            } catch (e) {
+                console.warn(`销毁网格播放器 ${index} 失败:`, e);
+            }
         }
-    ]
+
+        let absoluteUrl = videoUrl;
+        if (videoUrl && !videoUrl.match(/^(http|https|ws|wss|webrtc|wt|artc):/)) {
+            absoluteUrl = window.location.origin + videoUrl;
+        }
+
+        if (!window.EasyPlayerPro) {
+            console.error('EasyPlayer Pro 库未加载');
+            return;
+        }
+
+        gridPlayerInstances.value[index] = new window.EasyPlayerPro(videoElementRefs.value[index], {
+            stretch: true,
+            hasAudio: true,
+            autoplay: true,
+            live: false,
+            object_fit: "fill",
+        });
+
+        gridPlayerInstances.value[index].play(absoluteUrl);
+        console.log(`✅ 网格播放器 ${index} 初始化成功`);
+    } catch (error) {
+        console.error(`网格播放器 ${index} 初始化失败:`, error);
+    }
+};
+
+// 销毁所有网格播放器
+const destroyGridPlayers = () => {
+    gridPlayerInstances.value.forEach((player, index) => {
+        if (player) {
+            try {
+                player.destroy();
+                console.log(`✅ 网格播放器 ${index} 已销毁`);
+            } catch (error) {
+                console.error(`销毁网格播放器 ${index} 失败:`, error);
+            }
+        }
+    });
+    gridPlayerInstances.value = [];
+    videoElementRefs.value = [];
+};
+
+// 初始化视频网格数据 - 只显示图片，不加载视频
+const initializeVideoGrids = async () => {
+    if (!data.value || data.value.length === 0) {
+        console.warn('data 为空，无法初始化视频网格');
+        return;
+    }
+
+    // 定义8张默认图片
+    const defaultImages = [
+        require('@/assets/camera/图.png'),
+        require('@/assets/camera/图1.png'),
+        require('@/assets/camera/图2.png'),
+        require('@/assets/camera/图3.png'),
+        require('@/assets/camera/图4.png'),
+        require('@/assets/camera/图5.png'),
+        require('@/assets/camera/图6.png'),
+        require('@/assets/camera/图7.png')
+    ];
+
+    // 取前8条数据
+    const first8Items = data.value.slice(0, 8);
+    
+    // 初始化 sorces 数组，为每条数据分配对应的默认图片
+    sorces.value = first8Items.map((item, index) => ({
+        id: item.id,
+        cn: item.cn || '摄像头',
+        imageUrl: defaultImages[index] || defaultImages[0] // 如果超出范围，使用第一张图
+    }));
+
+    console.log('✅ 初始化视频网格完成，共', sorces.value.length, '个摄像头');
+}
 
 const data = ref([
 ]);
-
+const RUN_STATUS_MAP = { 0: "离线", 1: "在线" };
 //列表查询
 const fetchData2 = async () => {
     try {
         const res = await request({
-            url: 'api/qydigital-park-service/videoMonitoringPoint/queryDataListByPage', // 请在此处填入接口地址
+            url: 'api/qydigital-park-service/videoMonitoringPoint/queryDataListByPage',
             method: 'post',
             data: {
-                pageSize: 25,
+                pageSize: 999,
                 pageNo: 1,
                 cn: input3.value || ''
             },
@@ -855,17 +943,15 @@ const fetchData2 = async () => {
             if (res.data && res.data.list) {
                 const mappedList = res.data.list.map((item, index) => ({
                     id: item.id,
-                    name: item.name, // 对应检测点位置
-                    name1: `摄像头#${index + 1}`, // 对应设备名称
-                    countNums2: '安防设备', // 对应设备类型
-                    countNums6: '在线',
-                    countNams6: '在线', // 对应 prop="countNams6"
-                    countNums5: '', // 告警时间
-                    countNums7: '', // 告警等级
-                    countNums8: ''  // 告警信息
+                    name1: `摄像头#${index + 1}`,
+                    cn: item.cn,
+                    online: RUN_STATUS_MAP[item.online] || '未知',
+                    manufacturer: item.manufacturer
                 }));
-                data2.value = mappedList;
                 data.value = mappedList;
+                
+                // 数据加载完成后，初始化视频网格（只显示图片）
+                await initializeVideoGrids();
             }
         }
     } catch (err) {
@@ -878,6 +964,7 @@ const fetchData2 = async () => {
 onMounted(() => {
     fetchData2();
     // queryMonitoringPointListPagination();
+    querySecurityAlarmListPagination();
     document.addEventListener("click", handleClickOutside);
 
 
@@ -889,8 +976,9 @@ onUnmounted(() => {
 });
 
 onBeforeUnmount(() => {
-    // 组件卸载前销毁 FLV 播放器
+    // 组件卸载前销毁所有播放器
     destroySingleFlvPlayer();
+    destroyGridPlayers();
 });
 
 </script>

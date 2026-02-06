@@ -2,8 +2,10 @@ import axios from 'axios';
 
 // token相关配置
 const TOKEN_CONFIG = {
-    tokenUrl: '/api/jadp/auth/session/thirdSystem',
+    tokenUrl: '/api203/jadp/auth/session/thirdSystem',
     tokenKey: 'access-token',
+    tokenTimestampKey: 'access-token-timestamp', // 存储token获取时间的key
+    expirationHours: 8, // token过期时间（小时）
     authInfo: {
         // account: "qyznjcpt@qy.gd.csg.cn",
         // password: "36AAE1DFB66C734AAC7C9C658B96358F",
@@ -27,8 +29,10 @@ export const getToken = async () => {
     try {
         const response = await axios.post(TOKEN_CONFIG.tokenUrl, TOKEN_CONFIG.authInfo);
         if (response.data && response.data.token) {
+            // 存储token
             localStorage.setItem(TOKEN_CONFIG.tokenKey, response.data.token);
-            // localStorage.setItem('access_token', response.data.token);
+            // 存储当前时间戳
+            localStorage.setItem(TOKEN_CONFIG.tokenTimestampKey, Date.now().toString());
 
             return response.data.token;
         } else {
@@ -40,13 +44,35 @@ export const getToken = async () => {
     }
 };
 
+
 /**
- * 获取存储的token
+ * 检查token是否过期
+ */
+export const isTokenExpired = () => {
+    const timestamp = localStorage.getItem(TOKEN_CONFIG.tokenTimestampKey);
+    if (!timestamp) {
+        return true; // 没有时间戳，认为已过期
+    }
+
+    const tokenTime = parseInt(timestamp, 10);
+    const currentTime = Date.now();
+    const expirationTime = TOKEN_CONFIG.expirationHours * 60 * 60 * 1000; // 转换为毫秒
+
+    return (currentTime - tokenTime) > expirationTime;
+};
+
+/**
+ * 获取存储的token（自动检查过期）
  */
 export const getStoredToken = () => {
-    return localStorage.getItem(TOKEN_CONFIG.tokenKey);
-    //  return   localStorage.setItem('access_token', response.data.token);
+    // 检查token是否过期
+    if (isTokenExpired()) {
+        console.log('Token已过期，自动清除');
+        clearToken();
+        return null;
+    }
 
+    return localStorage.getItem(TOKEN_CONFIG.tokenKey);
 };
 
 /**
@@ -54,8 +80,7 @@ export const getStoredToken = () => {
  */
 export const clearToken = () => {
     localStorage.removeItem(TOKEN_CONFIG.tokenKey);
-    // return  localStorage.removeItem('access_token');
-
+    localStorage.removeItem(TOKEN_CONFIG.tokenTimestampKey);
 };
 
 /**

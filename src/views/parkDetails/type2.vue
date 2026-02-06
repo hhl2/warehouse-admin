@@ -122,7 +122,7 @@
 
 .search-btn {
     height: 32px;
-    background: #476B9A;
+     background: #10A8FD;
     border: none;
     color: #fff;
     padding: 0 15px;

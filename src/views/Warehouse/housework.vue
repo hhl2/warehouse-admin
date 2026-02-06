@@ -11,11 +11,11 @@
                     <img :src="imageMap2[activeTab === 1 ? 'active' : 'default']" alt="">
                     <div class="jcrwx_box_text">仓库作业</div>
                 </div>
-
+<!-- 
                 <div class="jcrwx_box_li" :class="{ active: activeTab === 2 }" @click="switchTab(2)">
                     <img :src="imageMap2[activeTab === 2 ? 'active' : 'default']" alt="">
                     <div class="jcrwx_box_text">入园任务</div>
-                </div>
+                </div> -->
             </div>
 
             <div class="yySearch setyySearch">

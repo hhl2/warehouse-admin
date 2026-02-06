@@ -2,7 +2,38 @@
 
 
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="title">
+
+
+                <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">设备概览</div>
+        </div>
+
+
+        <div class="sbglx">
+
+            <div class="sbglx_boxs">
+                <template v-for="value in sorces">
+                    <div class="sbglx_box">
+                        <img :src="value.icon" alt="">
+                        <div class="sbglx_label">{{ value.text }}</div>
+                        <div class="sbglx_text">{{ value.num }}</div>
+                    </div>
+
+                </template>
+
+
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
+                <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">智能设备</div>
         </div>
@@ -58,33 +89,6 @@
 
         </div>
 
-
-    </div>
-
-    <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="title">
-            <img src="@/assets/title_bgs.png" alt="">
-            <div class="title_txet">设备概览</div>
-        </div>
-
-
-        <div class="sbglx">
-
-            <div class="sbglx_boxs">
-                <template v-for="value in sorces">
-                    <div class="sbglx_box">
-                        <img :src="value.icon" alt="">
-                        <div class="sbglx_label">{{ value.text }}</div>
-                        <div class="sbglx_text">{{ value.num }}</div>
-                    </div>
-
-                </template>
-
-
-
-            </div>
-
-        </div>
     </div>
 
 
@@ -316,7 +320,7 @@
 <script setup>
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
-import { queryManageList } from '@/api/user'
+import { getDeviceList } from '@/api/user'
 
 import sb1 from '@/assets/shebei/智能设备.png';
 import sb2 from '@/assets/shebei/特种设备.png';
@@ -385,15 +389,15 @@ const input3 = ref('');
 
 // API 请求函数
 const queryManageLists = () => {
-    queryManageList({
+    getDeviceList({
         "pageSize": 100,
         "pageNo": 1,
-        "deviceName": input3.value
+        "name": input3.value
     }).then(res => {
         if (res.code == 0) {
             // 将 API 返回的字段映射到组件需要的字段
             source.value = res.data.records.map(item => ({
-                deviceCode: item.code,
+                deviceCode: item.deviceCode,
                 deviceName: item.name,
                 nextInspectionDate: item.nextMaintainDate,
                 deviceType: item.deviceType || '智能设备',

@@ -5,13 +5,18 @@
                 <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
             </div>
             <div class="changleft">
-                <el-table class="my-spacing-table" ref="tableRef" :data="data">
-                    <el-table-column prop="countNums1" label="设备名称" show-overflow-tooltip />
-                    <el-table-column prop="countNums2" label="设备类型" />
-                    <el-table-column prop="countNums3" label="检测点位置" show-overflow-tooltip />
-                    <el-table-column prop="countNums4" label="检测数值" />
-                    <el-table-column prop="countNums5" label="检查时间" show-overflow-tooltip />
-                    <el-table-column prop="countNams6" label="状态" width="60">
+                <!-- 告警编号、告警类型、告警等级、告警内容、告警时间、告警处理过程、告警处理结果 -->
+                 <!-- warnCode：告警编号、warnType：告警类型、alarmLevel：告警等级、alarmInfo：告警内容、watchTime：告警时间、alarmPrecess：告警处理过程、warnResult：告警处理结果 -->
+                <el-table class="my-spacing-table" ref="tableRef" :data="warnData">
+                    <el-table-column prop="warnCode" label="告警编号" show-overflow-tooltip />
+                    <el-table-column prop="warnType" label="告警类型" />
+                    <el-table-column prop="alarmLevel" label="告警内容" show-overflow-tooltip />
+                    <el-table-column prop="alarmInfo" label="告警等级" />
+                    <el-table-column prop="watchTime" label="告警时间" show-overflow-tooltip />
+                    <el-table-column prop="alarmPrecess" label="告警处理过程" show-overflow-tooltip />
+                    <el-table-column prop="warnResult" label="告警处理结果" show-overflow-tooltip />
+                    
+                    <!-- <el-table-column prop="countNams6" label="状态" width="60">
                         <template #default="scope">
                             <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
                                 {{ scope.row.countNums6 === '在线' ? '在线' : '离线' }}
@@ -33,7 +38,7 @@
                                 {{ scope.row.countNums8 }}
                             </span>
                         </template>
-                    </el-table-column>
+                    </el-table-column> -->
 
 
 
@@ -55,7 +60,7 @@
                     <div class="echartp" ref="chartDom1"></div>
 
                     <div class="chart_sum">
-                        <div class="chart_snumber">{{ fireData.total }}</div>
+                        <div class="chart_snumber">{{ alertData.total }}</div>
                     </div>
                 </div>
 
@@ -68,7 +73,7 @@
 
                     <div class="txzyimg">
                         <img src="@/assets/tubiao.png" alt="">
-                        <div class="txzyimg_text">2</div>
+                        <div class="txzyimg_text">  {{alertData.items[2].value}}</div>
                     </div>
                     <div class="txzy_text">一般告警</div>
                 </div>
@@ -79,7 +84,7 @@
 
                     <div class="txzyimg">
                         <img src="@/assets/tubiao2.png" alt="">
-                        <div class="txzyimg_text green_label">10</div>
+                        <div class="txzyimg_text green_label">{{alertData.items[1].value}}</div>
                     </div>
                     <div class="txzy_text">重要告警</div>
                 </div>
@@ -88,7 +93,7 @@
                 <div class="txzyList_box">
                     <div class="txzyimg">
                         <img src="@/assets/tubiao1.png" alt="">
-                        <div class="txzyimg_text yellow_label">5</div>
+                        <div class="txzyimg_text yellow_label">{{alertData.items[0].value}}</div>
                     </div>
                     <div class="txzy_text">紧急告警</div>
                 </div>
@@ -418,16 +423,49 @@ import * as echarts from 'echarts';
 import request from '@/utils/request'
 
 
+import {
+    querySecurityAlarmCount
+} from '@/api/user';
+
+const alertData = reactive({
+    total: 17,
+    items: [
+        { label: '紧急告警', value: 2, unit: '个', color: 'blue', key: 'urgent' },
+        { label: '重要告警', value: 10, unit: '个', color: 'yellow', key: 'important' },
+        { label: '一般告警', value: 5, unit: '个', color: 'green', key: 'normal' }
+    ]
+});
+const warnCode =ref('');
+
+const fetchSecurityAlarm = async () => {
+    try {
+        const res = await querySecurityAlarmCount({ dealState: "2" });
+        if (res.code == 0) {
+            alertData.total = res.data.alramTotal;
+            alertData.items[0].value = res.data.oneLevelNum;
+            alertData.items[1].value = res.data.towLevelNum;
+            alertData.items[2].value = res.data.threeLevelNum;
+        }
+    } catch (e) { console.warn('Alert API failed'); }
+    // updateChart('alert', chartDom2.value, getPieOption(alertData.items.map(i => i.value)));
+};
 const queryWarnListPagination = async () => {
     try {
-        const response = await request({
+        const res = await request({
             url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnListPagination',
             method: 'post',
-            data: {  "warnCode":"","watchTime":""
+            data: {  "warnCode":warnCode.value,"watchTime":""
             },
             skipGlobalParams: true
         });
-        console.log(response);
+        if(res.code==0){
+            warnData.value=res.data?.list || [];
+
+        }else{
+            warnData.value=[]
+
+        }
+        
         // visitordata.value=response.data.data.list
     } catch (error) {
         console.error('获取监控点列表失败:', error);
@@ -687,90 +725,8 @@ watch(ueResponseData, async (newVal, oldVal) => {
     }
 })
 
-var data = [
-    {
-        countNums1: "温度传感器#1",
-        countNums2: "环境检测",
-        countNums3: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "重要告警",
-        countNums8: "1号检测点温度过高",
-        type: 2
-
-    },
-    {
-        countNums1: "温度传感器#2",
-        countNums2: "环境检测",
-        countNums3: "室内2号检测点",
-        countNums4: "75°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "一般告警",
-        countNums8: "1号检测点温度过高",
-        type: 3
-
-    },
-
-    {
-        countNums1: "PM2.5传感器#1",
-        countNums2: "环境检测",
-        countNums3: "室内3号检测点",
-        countNums4: "116pg/m3",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "PM2.5传感器#2",
-        countNums2: "环境检测",
-        countNums3: "室内4号检测点",
-        countNums4: "116pg/m3",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "PM10传感器#1",
-        countNums2: "环境检测",
-        countNums3: "室内5号检测点",
-        countNums4: "35pg/m3",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "PM10传感器#2",
-        countNums2: "环境检测",
-        countNums3: "室内5号检测点",
-        countNums4: "35pg/m3",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-
-
-
-
-
-];
+const warnData = ref([
+    ]) 
 
 const toggleActive = (selected) => {
     isactive.value = selected
@@ -897,6 +853,7 @@ const handleClickOutside = (event) => {
 };
 // 生命周期
 onMounted(() => {
+    fetchSecurityAlarm();//告警等级
     queryWarnListPagination();
     queryWarnGroupCount();
     initChart2();

@@ -1,5 +1,15 @@
 import request from '@/utils/request';
 
+
+
+export const queryParkReservationListPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/qyQueryPersonInfo/queryParkReservationListPagination',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
 export const queryMonitoringPointListPagination = (data) =>
   request({
     url: '/api/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination',
@@ -23,7 +33,7 @@ export const querySecurityAlarmListPagination = (data) =>
 
 
 
-// 告警管理
+// 告警管理统计
 export const querySecurityAlarmCount = (data) =>
   request({
     url: '/api/qydigital-park-service/qyQueryDeviceInfo/querySecurityAlarmCount',
@@ -54,6 +64,24 @@ export const queryEnvironmentCount = (data) =>
 export const queryMonitoringCount = (data) =>
   request({
     url: '/api/qydigital-park-service/qyMonitoringPoint/queryMonitoringCount',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+// 管理列表接口
+export const getDeviceList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getDeviceList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+// 管理列表接口2
+export const queryMaintainDataList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/syncWcs/queryMaintainDataList',
     method: 'post',
     data,
     skipGlobalParams: true
@@ -99,7 +127,8 @@ export const queryEnergyNumCount = (data) =>
 export const queryParkWeatherListPagination = (data) => request({
   url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryParkWeatherListPagination',
   method: 'post',
-  data
+  data,
+  skipGlobalParams: true
 });
 
 // 作业指标概况

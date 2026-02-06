@@ -226,10 +226,10 @@ const instances = {
 const environmentData = reactive([
     { icon: require('@/assets/温度.png'), label: '温度', value: '22', unit: '°C', key: 'temperature' },
     { icon: require('@/assets/多云.png'), label: 'PM10', value: '116', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm10' },
-    { icon: require('@/assets/C02.png'), label: 'CO2', value: '116', unit: 'PU/m3', colorClass: 'gjyellow', key: 'co2' },
+    { icon: require('@/assets/C02.png'), label: '风向', value: '116', unit: '°', colorClass: 'gjyellow', key: 'windPower' },
     { icon: require('@/assets/湿度.png'), label: '湿度', value: '75', unit: '%', key: 'humidity' },
     { icon: require('@/assets/多云.png'), label: 'PM2.5', value: '116', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm25' },
-    { icon: require('@/assets/C02.png'), label: 'SO2', value: '116', unit: 'PU/m3', colorClass: 'gjyellow', key: 'so2' }
+    { icon: require('@/assets/C02.png'), label: '大气压', value: '116', unit: 'Pa', colorClass: 'gjyellow', key: 'atmospheric' }
 ]);
 
 const securityData = reactive({
@@ -258,20 +258,20 @@ const alertData = reactive({
 });
 
 const personnelData = reactive({
-    current: 12,
+    current: 0,
     stats: [
-        { label: '今日累计入园人数', value: 50, key: 'todayTotal' },
-        { label: '今日累计入园任务量', value: 12, key: 'todayTasks' },
-        { label: '当前在园任务量', value: 9, key: 'currentTasks' }
+        { label: '今日累计入园人数', value: 0, key: 'todayTotal' },
+        { label: '今日累计入园任务量', value: 0, key: 'todayTasks' },
+        { label: '当前在园任务量', value: 0, key: 'currentTasks' }
     ]
 });
 
 const loadingData = reactive({
-    percentage: '95%',
+    percentage: '0',
     items: [
-        { label: '已完成', value: 102, unit: '个', color: 'blue', key: 'completed' },
-        { label: '作业中', value: 52, unit: '个', color: 'yellow', key: 'inProgress' },
-        { label: '等待作业', value: 2, unit: '个', color: 'green', key: 'pending' }
+        { label: '已完成', value: 0, unit: '个', color: 'blue', key: 'completed' },
+        { label: '作业中', value: 0, unit: '个', color: 'yellow', key: 'inProgress' },
+        { label: '等待作业', value: 0, unit: '个', color: 'green', key: 'pending' }
     ]
 });
 
@@ -332,13 +332,13 @@ const ue5click = (type) => {
 };
 
 const changelist = (value) => {
-    // 先立即跳转路由，不等待任何操作
+    // 先立即跳转路由
     router.push({ name: value });
 
-    // 异步发送 UE5 消息，不阻塞路由跳转
-    nextTick(() => {
+    // 使用 setTimeout 确保 UE5 消息在下一个事件循环发送，完全不阻塞路由
+    setTimeout(() => {
         ue5click(ROUTE_TYPE_MAP[value]);
-    });
+    }, 0);
 };
 
 // --- Chart Rendering ---
@@ -377,10 +377,10 @@ const loadData = async () => {
 
 const fetchWeather = async () => {
     try {
-        const res = await queryParkWeatherListPagination();
-        if (res.code === '0' && res.data?.data?.list?.length > 0) {
-            const device = res.data.data.list[0];
-            const mapping = { temperature: 'temperature', humidity: 'humidity', pm10: 'pmTen', pm25: 'pmTwoFive' };
+        const res = await queryParkWeatherListPagination({ "pageNo": 1, "pageSize": 99 });
+        if (res.code === '0' && res.data?.list?.length > 0) {
+            const device = res.data.list[0];
+            const mapping = { temperature: 'temperature', humidity: 'humidity', pm10: 'pmTen', pm25: 'pmTwoFive', windPower:'windPower','atmospheric':'atmospheric'};
             environmentData.forEach(item => {
                 const apiField = mapping[item.key];
                 if (apiField && device[apiField] != null) item.value = device[apiField];
@@ -419,10 +419,11 @@ const getEnergyOption = (water, electricity) => ({
 const fetchEnergy = async () => {
     try {
         const year = new Date().getFullYear();
-        const res = await queryEnergyNumCount({ queryDate: year.toString() });
-        if (res.code === '0' && res.data?.data?.length > 0) {
+        const res = await queryEnergyNumCount({ queryDate:"2025"});
+        // queryDate: year.toString()
+        if (res.code === '0' && res?.data?.length > 0) {
             const newData = { water: new Array(12).fill(0), electricity: new Array(12).fill(0) };
-            res.data.data.forEach(item => {
+            res.data.forEach(item => {
                 const monthMatch = item.staticMonth?.match(/-(\d+)$/);
                 if (monthMatch) {
                     const idx = parseInt(monthMatch[1]) - 1;
@@ -442,10 +443,10 @@ const fetchEnergy = async () => {
 const fetchMonitoring = async () => {
     try {
         const res = await queryMonitoringCount({});
-        if (res.code == 0 && res.data?.data) {
-            securityData.total = res.data.data.total;
-            securityData.items[0].value = res.data.data.onNum;
-            securityData.items[1].value = res.data.data.offNum;
+        if (res.code == 0 && res.data) {
+            securityData.total = res.data.total;
+            securityData.items[0].value = res.data.onNum;
+            securityData.items[1].value = res.data.offNum;
         }
     } catch (e) { console.warn('Monitoring API failed'); }
     updateChart('security', chartDom.value, getPieOption([securityData.items[0].value, securityData.items[1].value]));
@@ -467,10 +468,10 @@ const fetchSecurityAlarm = async () => {
 const fetchEnvironment = async () => {
     try {
         const res = await queryEnvironmentCount({});
-        if (res.code == 0 && res.data?.data) {
-            fireData.total = res.data.data.total;
-            fireData.items[0].value = res.data.data.onNum;
-            fireData.items[1].value = res.data.data.offNum;
+        if (res.code == 0 && res.data) {
+            fireData.total = res.data.total;
+            fireData.items[0].value = res.data.onNum;
+            fireData.items[1].value = res.data.offNum;
         }
     } catch (e) { console.warn('Environment API failed'); }
     updateChart('fire', chartDom1.value, getPieOption([fireData.items[0].value, fireData.items[1].value]));

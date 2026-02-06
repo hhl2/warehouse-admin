@@ -11,7 +11,11 @@
                     <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="deviceType" label="设备类型" />
                     <el-table-column prop="location" label="监测点位置" show-overflow-tooltip />
-                    <el-table-column prop="countNums4" label="检测数值" />
+                    <el-table-column label="检测数值" show-overflow-tooltip >
+                        <template #default="scope">
+                            {{ formatEnvironmentData(scope.row) }}
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="watchTime" label="检查时间" show-overflow-tooltip />
                     <el-table-column prop="runStatus" label="状态" width="60">
                     </el-table-column>
@@ -111,7 +115,7 @@ const props = defineProps({
         default: true
     },
 })
-
+const RUN_STATUS_MAP = { 0: "正常", 1: "异常" };
 const showMenus = ref(false);
 const menuRef = ref(null);
 const deviceName = ref('');
@@ -125,6 +129,35 @@ watch(ueResponseData, (newVal) => {
         }
     }
 })
+
+// 环境数据映射配置（字段名对应接口返回的实际字段）
+const environmentDataMap = {
+    temperature: { label: '温度', unit: '°C' },
+    humidity: { label: '湿度', unit: '%' },
+    windDirection: { label: '风向', unit: '°' },
+    windPower: { label: '风力', unit: '级' },
+    atmospheric: { label: '大气压', unit: 'Pa' },
+    pmTwoFive: { label: 'PM2.5', unit: 'PU/m³' },
+    pmTen: { label: 'PM10', unit: 'PU/m³' }
+};
+
+// 格式化环境数据函数
+const formatEnvironmentData = (row) => {
+    if (!row || typeof row !== 'object') return '';
+    
+    const formattedParts = [];
+    
+    // 遍历环境数据映射配置
+    for (const [fieldName, config] of Object.entries(environmentDataMap)) {
+        const value = row[fieldName];
+        // 只显示有值的字段（排除null、undefined、空字符串）
+        if (value !== null && value !== undefined && value !== '') {
+            formattedParts.push(`${config.label}：${value}${config.unit}`);
+        }
+    }
+    
+    return formattedParts.join('，');
+};
 
 const deviceData = ref([
     {
@@ -237,7 +270,9 @@ const queryParkWeatherListPaginations = async () => {
         deviceData.value = list.map(item => {
             return {
                 ...item,
+                  runStatus: RUN_STATUS_MAP[item.runStatus] || '未知',
                 watchTime: formatDate(item.watchTime)
+    
             }
         });
     }

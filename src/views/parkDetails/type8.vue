@@ -177,7 +177,11 @@ onMounted(()=>{
 const queryYardWarehouseInfos = () => {
     queryYardWarehouseInfo().then(res => {
 
-        if (res?.data?.code == 200) {
+        if (res?.code == 0) {
+            hwboxs.value=res.data?.list||[]
+
+        }else{
+            hwboxs.value=[]
 
         }
         console.log(res)

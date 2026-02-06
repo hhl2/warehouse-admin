@@ -79,7 +79,7 @@
 <script setup>
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
-import { queryAlarmCurrent, queryManageList } from '@/api/user'
+import { queryAlarmCurrent, queryManageList ,queryMaintainDataList } from '@/api/user'
 
 const props = defineProps({
     isPanelVisible: {
@@ -89,94 +89,114 @@ const props = defineProps({
 })
 
 const queryAlarmCurrents = () => {
-    queryAlarmCurrent({ "pageSize": 100, "pageNo": 1 }).then(res => {
-        console.log(res)
+    queryAlarmCurrent({ "pageSize": 999, "pageNo": 1 }).then(res => {
+   
+        if(res.code==0){
+  
+            source2.value=res.data?.records
+               console.log(res,res.data?.records)
+
+        }
     })
 }
 
-const queryManageLists = () => {
-    queryManageList({
+const queryMaintainDataLists = () => {
+    queryMaintainDataList({
         "pageSize": 100,
         "pageNo": 1,
         "deviceName": input3.value
     }).then(res => {
         if (res.code == 0) {
-            source.value = res.data.records
+            // source.value = res.data.records
         }
     })
 }
-const source2 = [
-    {
-        "level_dictText": "错误报警",
-        "cause": "测试原因1111111111111111112",
-        "type_dictText": "硬件报警",
-        "title": "测试标题11111111111112",
-        "deviceName": "四向车002"
-    },
-    {
-        "cause": "儿童退热贴",
-        "title": null,
-        "type_dictText": null,
-        "level_dictText": null,
-        "deviceName": "立体仓库001"
-    },
-    {
-        "cause": "223232",
-        "title": null,
-        "type_dictText": null,
-        "level_dictText": null,
-        "deviceName": "四向车002"
-    }
-]
+
+const queryManageLists = () => {
+    queryManageList({
+        "pageSize": 999,
+        "pageNo": 1,
+        "deviceName": input3.value
+    }).then(res => {
+        if (res.code == 0) {
+            source.value = res.data?.records ||[]
+        }else{
+            source.value =[]
+        }
+    })
+}
+const source2 = ref([
+    // {
+    //     "level_dictText": "错误报警",
+    //     "cause": "测试原因1111111111111111112",
+    //     "type_dictText": "硬件报警",
+    //     "title": "测试标题11111111111112",
+    //     "deviceName": "四向车002"
+    // },
+    // {
+    //     "cause": "儿童退热贴",
+    //     "title": null,
+    //     "type_dictText": null,
+    //     "level_dictText": null,
+    //     "deviceName": "立体仓库001"
+    // },
+    // {
+    //     "cause": "223232",
+    //     "title": null,
+    //     "type_dictText": null,
+    //     "level_dictText": null,
+    //     "deviceName": "四向车002"
+    // }
+]) 
 const source = ref([
     {
-        code: '64BC256336654588523369814CVT3',
-        name: '堆垛机',
-        lastMaintainDate: '2025-11-23',
-        nextMaintainDate: '2025-12-23',
-        deviceType: '智能设备',
-        subDeviceType: '作业设备',
-        manufacturer: '某某厂家',
-        spec: 'DZ-001',
-        status: '在线',
+        code: '',
+        name: '',
+        lastMaintainDate: '',
+        nextMaintainDate: '',
+        deviceType: '',
+        subDeviceType: '',
+        manufacturer: '',
+        spec: '',
+        status: '',
         quantity: ''
     },
-    {
-        code: '74BC256336654588523369814CVT4',
-        name: 'AGV小车',
-        lastMaintainDate: '2025-12-15',
-        nextMaintainDate: '2025-12-23',
-        deviceType: '智能设备',
-        subDeviceType: '运输设备',
-        manufacturer: '智能科技',
-        spec: 'AGV-2023',
-        status: '在线',
-        quantity: '5'
-    },
-    {
-        code: '84BC256336654588523369814CVT5',
-        name: '码垛机器人',
-        lastMaintainDate: '2026-01-10',
-        nextMaintainDate: '2025-12-23',
-        deviceType: '智能设备',
-        subDeviceType: '作业设备',
-        manufacturer: '机器人公司',
-        spec: 'MD-500',
-        status: '离线',
-        quantity: '2'
-    },
-    {
-        code: '94BC256336654588523369814CVT6',
-        name: '输送带',
-        lastMaintainDate: '2025-10-20',
-        nextMaintainDate: '2025-12-23',
-        deviceType: '智能设备',
-        subDeviceType: '传输设备',
-        manufacturer: '传输设备厂',
-        spec: 'SST-100',
-        status: '在线',
-        quantity: ''
-    }
+    // {
+    //     code: '74BC256336654588523369814CVT4',
+    //     name: 'AGV小车',
+    //     lastMaintainDate: '2025-12-15',
+    //     nextMaintainDate: '2025-12-23',
+    //     deviceType: '智能设备',
+    //     subDeviceType: '运输设备',
+    //     manufacturer: '智能科技',
+    //     spec: 'AGV-2023',
+    //     status: '在线',
+    //     quantity: '5'
+    // },
+    // {
+    //     code: '84BC256336654588523369814CVT5',
+    //     name: '码垛机器人',
+    //     lastMaintainDate: '2026-01-10',
+    //     nextMaintainDate: '2025-12-23',
+    //     deviceType: '智能设备',
+    //     subDeviceType: '作业设备',
+    //     manufacturer: '机器人公司',
+    //     spec: 'MD-500',
+    //     status: '离线',
+    //     quantity: '2'
+    // },
+    // {
+    //     code: '94BC256336654588523369814CVT6',
+    //     name: '输送带',
+    //     lastMaintainDate: '2025-10-20',
+    //     nextMaintainDate: '2025-12-23',
+    //     deviceType: '智能设备',
+    //     subDeviceType: '传输设备',
+    //     manufacturer: '传输设备厂',
+    //     spec: 'SST-100',
+    //     status: '在线',
+    //     quantity: ''
+    // }
 ])
 
 // 响应式数据
@@ -190,14 +210,17 @@ const handleRowClick = (row) => {
 
 const handleAlertSearch = () => {
     queryManageLists();
+    queryMaintainDataLists();
 }
 const handleAlertReset = () => {
     input3.value = '';
     queryManageLists();
+     queryMaintainDataLists();
 }
 
 onMounted(() => {
     // 页面逻辑初始化
+    queryMaintainDataLists();
     queryAlarmCurrents();
 
     queryManageLists();

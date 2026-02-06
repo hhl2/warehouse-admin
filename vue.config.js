@@ -13,16 +13,26 @@ module.exports = defineConfig({
         target: 'http://10.151.223.203:8010',  // 更新为实际的API服务器地址
         changeOrigin: true,
         logLevel: "debug",
-        pathRewrite: {
-          '^/api': '/api'  // 移除 /api 前缀，避免重复
-        }
+        // pathRewrite: {
+        //   '^/api': '/api' 
+        // },
+        // 不需要pathRewrite，直接转发
 
-        // rewrite: path => path.replace(/^\/api/, ''),
-        // Headers:{
-        //   'Access-control-Allow-origin':'*',
-        // }
+        '/api203': {
+          target: 'http://10.151.223.203:8010',  // 更新为实际的API服务器地址
+          changeOrigin: true,
+          logLevel: "debug",
+          pathRewrite: {
+            '^/api203': '/api'
+          }
+
+          // rewrite: path => path.replace(/^\/api/, ''),
+          // Headers:{
+          //   'Access-control-Allow-origin':'*',
+          // }
+        },
+
       },
-
     },
   },
   outputDir: 'dist',

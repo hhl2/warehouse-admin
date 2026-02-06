@@ -54,14 +54,13 @@
 
         <div class="changleft">
             <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick">
-                <el-table-column prop="name1" label="设备名称" show-overflow-tooltip />
-                <el-table-column prop="countNums2" label="设备类型" />
-                <el-table-column prop="name" label="监测点位置" show-overflow-tooltip />
+                <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
+                <el-table-column prop="manufacturer" label="设备类型" />
+                <el-table-column prop="cn" label="监测点位置" show-overflow-tooltip />
 
-                <el-table-column prop="countNams4" label="状态" width="60">
+                 <el-table-column prop="online" label="状态" width="50">
                     <template #default="scope">
-                        <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
-                            {{ scope.row.countNums6 === '在线' ? '在线' : '离线' }}
+                        <span class='status-normal'>{{ scope.row.online }}
                         </span>
                     </template>
                 </el-table-column>
@@ -156,7 +155,7 @@
 }
 
 .imgbox3 {
-    width: 425px;
+    width: 445px;
     height: 294px;
     background-color: #fff;
     margin: 15px 10px 15px 20px;
@@ -486,7 +485,8 @@ const initPopupPlayer = () => {
             stretch: true,
             hasAudio: true,
             autoplay: true,
-            live: false
+            live: false,
+            object_fit: "fill",
         });
         easyPlayerInstancePopup.value.play(videoUrl);
     } catch (error) {
@@ -528,7 +528,8 @@ const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', 
             method: 'post',
             data: {
                 cameraIndexCode: safeCameraId
-            }
+            },
+              skipGlobalParams: true
         });
 
         if (response && response.code === '0' && response.data && response.data.url) {
@@ -549,8 +550,8 @@ const handleRowClick = async (row) => {
     if (!row) return;
     await fetchCameraVideoAndOpenPopup(
         row.id || '',
-        row.name1 || '摄像头',
-        row.countNums6 === '在线' ? 'online' : 'offline'
+        row.cn || '摄像头',
+        row.online === '在线' ? 'online' : 'offline'
     );
     // 点击表格行时，同步打开大屏弹窗
     openVideoPopup();
@@ -593,7 +594,8 @@ const initEasyPlayer = (videoUrl) => {
             stretch: true,
             hasAudio: true,
             autoplay: true,
-            live: false
+            live: false,
+            object_fit: "fill",
         });
 
         easyPlayerInstance.value.play(absoluteUrl);
@@ -638,7 +640,7 @@ const queryDistributionInfoPaginations = () => {
     queryDistributionInfoPagination().then(res => {
 
         // 因为 request.js 拦截器已经返回了 response.data，所以这里直接判断 res.code
-        if (res?.code == 200) {
+        if (res?.code == 0) {
             const list = res?.data?.list || []
             workdata.value = list.map(item => {
                 return {
@@ -755,128 +757,20 @@ const workdata = ref([
         "actualQty": 1.0,
         "warehouseCode": "031864T64T006001001003"
     },
-    {
-        "materialName": "电缆",
-        "OUTER_TABLE_ROWNUM": 10,
-        "receiptTime": 1768381751489,
-        "id": "59EF1BEE850E4723A95802020A6406D5",
-        "receiptCode": "SGMPR03182026010029",
-        "materialId": "080200100000004",
-        "actualQty": 0.05,
-        "warehouseCode": "031864T64T006001001001"
-    },
-    {
-        "materialName": " 叶轮给煤机",
-        "OUTER_TABLE_ROWNUM": 11,
-        "receiptTime": 1768375680991,
-        "id": "324574231EE84503AA0C9DCA95D53048",
-        "receiptCode": "SGMPR03182026010030",
-        "materialId": "010200100060001",
-        "actualQty": 5.0,
-        "warehouseCode": "031864T64T006001001002"
-    },
-    {
-        "materialName": "电缆",
-        "OUTER_TABLE_ROWNUM": 12,
-        "receiptTime": 1768375680991,
-        "id": "3ABCB4E2B21647BA8258335B524F8EDF",
-        "receiptCode": "SGMPR03182026010030",
-        "materialId": "080200100000004",
-        "actualQty": 0.05,
-        "warehouseCode": "031864T64T006001001001"
-    },
-    {
-        "materialName": " 叶轮给煤机",
-        "OUTER_TABLE_ROWNUM": 13,
-        "receiptTime": 1768374718547,
-        "id": "50E84C695523481BAA51DF1CEAEEAE2C",
-        "receiptCode": "SGMPR03182026010030",
-        "materialId": "010200100060001",
-        "actualQty": 5.0,
-        "warehouseCode": "031864T64R64R001001042"
-    },
-    {
-        "materialName": "电缆",
-        "OUTER_TABLE_ROWNUM": 14,
-        "receiptTime": 1768374718547,
-        "id": "51210E3DC4DA4597A2789A59905B6024",
-        "receiptCode": "SGMPR03182026010030",
-        "materialId": "080200100000004",
-        "actualQty": 9.93,
-        "warehouseCode": "031864T64R64R001002016"
-    },
-    {
-        "materialName": " 叶轮给煤机",
-        "OUTER_TABLE_ROWNUM": 15,
-        "receiptTime": 1768370929633,
-        "id": "B94179683BC34665B81838484E3F5152",
-        "receiptCode": "SGMPR03182026010029",
-        "materialId": "010200100060001",
-        "actualQty": 5.0,
-        "warehouseCode": "031864T64T64R002001006"
-    },
-    {
-        "materialName": " 叶轮给煤机",
-        "OUTER_TABLE_ROWNUM": 16,
-        "receiptTime": 1768361264114,
-        "id": "209D09034D7E4CDA91D76C62E77585E1",
-        "receiptCode": "SGMPR03182026010029",
-        "materialId": "010200100060001",
-        "actualQty": 5.0,
-        "warehouseCode": "031864T64R64R001002013"
-    },
-    {
-        "materialName": "电缆",
-        "OUTER_TABLE_ROWNUM": 17,
-        "receiptTime": 1768361264114,
-        "id": "837558770385454193D85043241D76B1",
-        "receiptCode": "SGMPR03182026010029",
-        "materialId": "080200100000004",
-        "actualQty": 9.93,
-        "warehouseCode": "031864T64R64R001002015"
-    },
-    {
-        "materialName": "电缆",
-        "OUTER_TABLE_ROWNUM": 18,
-        "receiptTime": 1768351613870,
-        "id": "3FA4D2E1ABC74D479FDA6F305C0476ED",
-        "receiptCode": "SGMPR03182026010015",
-        "materialId": "080200100000004",
-        "actualQty": 0.01,
-        "warehouseCode": "031864T64T003001001001"
-    },
-    {
-        "materialName": "电缆",
-        "OUTER_TABLE_ROWNUM": 19,
-        "receiptTime": 1768351613870,
-        "id": "164D0D398CC540F0BC776B5227BDBA11",
-        "receiptCode": "SGMPR03182026010015",
-        "materialId": "080200100000004",
-        "actualQty": 0.01,
-        "warehouseCode": "031864T64T003001001003"
-    },
-    {
-        "materialName": "电动电缆剪",
-        "OUTER_TABLE_ROWNUM": 20,
-        "receiptTime": 1768299716983,
-        "id": "17F6D571D2154857A89633A0B49015C0",
-        "receiptCode": "SGMPR03182025120057",
-        "materialId": "200501500000004",
-        "actualQty": 1.0,
-        "warehouseCode": "031864T64T006001001003"
-    }
+
 ]);
 
 const data1 = ref([
-    { id: 'dafe004a0d264b18ac12564fefc9dcd6', name1: "摄像头#1", countNums2: "球机", name: "ADD", countNums6: "在线" },
-    { id: 'b9877ba9b8d94041a8a448eb178d8163', name1: "摄像头#2", countNums2: "球机", name: "ADD", countNums6: "在线" },
-    { id: 'ee0febb859a541f1bca7515db0e5a41a', name1: "摄像头#3", countNums2: "球机", name: "ADD", countNums6: "在线" },
-    { id: 'b9877ba9b8d94041a8a448eb178d8163', name1: "摄像头#4", countNums2: "球机", name: "ADD", countNums6: "在线" },
-    { id: 'dafe004a0d264b18ac12564fefc9dcd6', name1: "摄像头#5", countNums2: "球机", name: "ADD", countNums6: "在线" },
-    { id: 'ee0febb859a541f1bca7515db0e5a41a', name1: "摄像头#6", countNums2: "球机", name: "ADD", countNums6: "在线" },
-    { id: 'dafe004a0d264b18ac12564fefc9dcd6', name1: "摄像头#7", countNums2: "球机", name: "ADD", countNums6: "在线" },
-    { id: 'b9877ba9b8d94041a8a448eb178d8163', name1: "摄像头#8", countNums2: "球机", name: "ADD", countNums6: "在线" }
+    { id: 'dafe004a0d264b18ac12564fefc9dcd6', cn: "摄像头#1", countNums2: "球机", name: "ADD", countNums6: "在线" },
+    { id: 'b9877ba9b8d94041a8a448eb178d8163', cn: "摄像头#2", countNums2: "球机", name: "ADD", countNums6: "在线" },
+    { id: 'ee0febb859a541f1bca7515db0e5a41a', cn: "摄像头#3", countNums2: "球机", name: "ADD", countNums6: "在线" },
+    { id: 'b9877ba9b8d94041a8a448eb178d8163', cn: "摄像头#4", countNums2: "球机", name: "ADD", countNums6: "在线" },
+    { id: 'dafe004a0d264b18ac12564fefc9dcd6', cn: "摄像头#5", countNums2: "球机", name: "ADD", countNums6: "在线" },
+    { id: 'ee0febb859a541f1bca7515db0e5a41a', cn: "摄像头#6", countNums2: "球机", name: "ADD", countNums6: "在线" },
+    { id: 'dafe004a0d264b18ac12564fefc9dcd6', cn: "摄像头#7", countNums2: "球机", name: "ADD", countNums6: "在线" },
+    { id: 'b9877ba9b8d94041a8a448eb178d8163', cn: "摄像头#8", countNums2: "球机", name: "ADD", countNums6: "在线" }
 ]);
+const RUN_STATUS_MAP = { 0: "离线", 1: "在线" };
 // /api/mm/qydigital-park-service/qyMonitoringPoint/queryMonitoringPointListPagination
 const fetchData2 = async () => {
     try {
@@ -885,7 +779,7 @@ const fetchData2 = async () => {
             method: 'post',
             skipGlobalParams: true,
             data: {
-                pageSize: 25,
+                pageSize: 999,
                 pageNo: 1
             }
         });
@@ -894,17 +788,17 @@ const fetchData2 = async () => {
             if (res.data && res.data.list) {
                 const mappedList = res.data.list.map((item, index) => ({
                     id: item.id,
-                    name: item.name, // 对应检测点位置
+                    cn: item.cn, // 对应检测点位置
                     name1: `摄像头#-${index + 1}`, // 对应设备名称
-                    countNums2: 'ADD' + index,  // 对应设备类型
-                    countNums6: '在线',
+                    online:RUN_STATUS_MAP[item.online] || '未知',
+                    manufacturer:item.manufacturer
                 }));
                 data1.value = mappedList;
                 // 进来默认拿第一条数据的id进行播放
                 if (mappedList.length > 0) {
                     fetchCameraVideoAndOpenPopup(
                         mappedList[0].id,
-                        mappedList[0].name1,
+                        mappedList[0].cn,
                         'online'
                     );
                 }
