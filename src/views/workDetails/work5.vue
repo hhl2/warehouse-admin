@@ -58,7 +58,7 @@
                 <el-table-column prop="manufacturer" label="设备类型" />
                 <el-table-column prop="cn" label="监测点位置" show-overflow-tooltip />
 
-                 <el-table-column prop="online" label="状态" width="50">
+                <el-table-column prop="online" label="状态" width="50">
                     <template #default="scope">
                         <span class='status-normal'>{{ scope.row.online }}
                         </span>
@@ -529,7 +529,7 @@ const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', 
             data: {
                 cameraIndexCode: safeCameraId
             },
-              skipGlobalParams: true
+            skipGlobalParams: true
         });
 
         if (response && response.code === '0' && response.data && response.data.url) {
@@ -788,10 +788,10 @@ const fetchData2 = async () => {
             if (res.data && res.data.list) {
                 const mappedList = res.data.list.map((item, index) => ({
                     id: item.id,
-                    cn: item.cn, // 对应检测点位置
+                    cn: item.cn, // 对应监测点位置
                     name1: `摄像头#-${index + 1}`, // 对应设备名称
-                    online:RUN_STATUS_MAP[item.online] || '未知',
-                    manufacturer:item.manufacturer
+                    online: RUN_STATUS_MAP[item.online] || '未知',
+                    manufacturer: item.manufacturer
                 }));
                 data1.value = mappedList;
                 // 进来默认拿第一条数据的id进行播放

@@ -12,7 +12,7 @@
                 <el-table class="my-spacing-table" ref="tableRef" :data="data" height="310">
                     <el-table-column prop="countNums1" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="countNums2" label="设备类型" />
-                    <el-table-column prop="countNums3" label="检测点位置" />
+                    <el-table-column prop="countNums3" label="监测点位置" />
                     <el-table-column prop="countNums4" label="检测数值" />
                     <el-table-column prop="countNums5" label="检查时间" show-overflow-tooltip />
                     <el-table-column prop="countNams6" label="状态" width="60">

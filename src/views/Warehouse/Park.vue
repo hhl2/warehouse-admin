@@ -31,7 +31,7 @@
             <div class="View_Details_tag" @click="changelist('type3')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changechart" ref="chartDom"></div>
+            <div class="echartp changchart" ref="chartDom"></div>
             <div class="chart_sum">
                 <div class="chart_snumber">{{ securityData.total }}</div>
             </div>
@@ -42,7 +42,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                            }}</div>
+                                }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -68,7 +68,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                            }}</div>
+                                }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -85,11 +85,11 @@
             <div class="View_Details_tag" @click="changelist('type5')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changechart" ref="chartDom2"></div>
+            <div class="echartp changchart" ref="chartDom2"></div>
             <div class=" chart_sum">
                 <div class="chart_snumber">{{ alertData.total }}</div>
             </div>
-            <div class="right_numberss">
+            <div class="right_numbers">
                 <div v-for="item in alertData.items" :key="item.label" class="card card--urgent">
                     <div class="card__badges" :class="`card__badges--${item.color}`"></div>
                     <div class="card__labels">{{ item.label }}</div>
@@ -133,11 +133,11 @@
             <div class="View_Details_tag" @click="changelist('type7')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changechart" ref="chartDom3"></div>
+            <div class="echartp changchart" ref="chartDom3"></div>
             <div class=" chart_sum">
                 <div class="chart_snumber changeSize">{{ loadingData.percentage }}</div>
             </div>
-            <div class="right_numberss">
+            <div class="right_numbers">
                 <div v-for="item in loadingData.items" :key="item.label" class="card card--urgent">
                     <div class="card__badges" :class="`card__badges--${item.color}`"></div>
                     <div class="card__labels">{{ item.label }}</div>
@@ -156,11 +156,11 @@
             <div class="View_Details_tag" @click="changelist('type8')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changechart" ref="chartDom4"></div>
+            <div class="echartp changchart" ref="chartDom4"></div>
             <div class=" chart_sum">
                 <div class="chart_snumber changeSize">{{ yardData.percentage }}</div>
             </div>
-            <div class="right_numberss">
+            <div class="right_numbers">
                 <div v-for="item in yardData.items" :key="item.label" class="card card--urgent">
                     <div class="card__badges" :class="`card__badges--${item.color}`"></div>
                     <div class="card__labels">{{ item.label }}</div>
@@ -233,27 +233,27 @@ const environmentData = reactive([
 ]);
 
 const securityData = reactive({
-    total: 35,
+    total: 0,
     items: [
-        { label: '在线设备', value: 33, unit: '个', color: 'blue', key: 'online' },
-        { label: '离线设备', value: 2, unit: '个', color: 'yellow', key: 'offline' }
+        { label: '在线设备', value: 0, unit: '个', color: 'blue', key: 'online' },
+        { label: '离线设备', value: 0, unit: '个', color: 'yellow', key: 'offline' }
     ]
 });
 
 const fireData = reactive({
-    total: 14,
+    total: 0,
     items: [
-        { label: '在线设备', value: 12, unit: '个', color: 'blue', key: 'online' },
-        { label: '离线设备', value: 2, unit: '个', color: 'yellow', key: 'offline' }
+        { label: '在线设备', value: 0, unit: '个', color: 'blue', key: 'online' },
+        { label: '离线设备', value: 0, unit: '个', color: 'yellow', key: 'offline' }
     ]
 });
 
 const alertData = reactive({
-    total: 8,
+    total: 0,
     items: [
-        { label: '紧急告警', value: 1, unit: '个', color: 'blue', key: 'urgent' },
-        { label: '重要告警', value: 2, unit: '个', color: 'yellow', key: 'important' },
-        { label: '一般告警', value: 5, unit: '个', color: 'green', key: 'normal' }
+        { label: '紧急告警', value: 0, unit: '个', color: 'blue', key: 'urgent' },
+        { label: '重要告警', value: 0, unit: '个', color: 'yellow', key: 'important' },
+        { label: '一般告警', value: 0, unit: '个', color: 'green', key: 'normal' }
     ]
 });
 
@@ -276,11 +276,11 @@ const loadingData = reactive({
 });
 
 const yardData = reactive({
-    percentage: '78%',
+    percentage: '0',
     items: [
-        { label: '待清理', value: 2, unit: '个', color: 'blue', key: 'pendingClean' },
-        { label: '空闲', value: 6, unit: '个', color: 'yellow', key: 'idle' },
-        { label: '占用', value: 78, unit: '个', color: 'green', key: 'occupied' }
+        { label: '待清理', value: 0, unit: '个', color: 'blue', key: 'pendingClean' },
+        { label: '空闲', value: 0, unit: '个', color: 'yellow', key: 'idle' },
+        { label: '占用', value: 0, unit: '个', color: 'green', key: 'occupied' }
     ]
 });
 
@@ -344,8 +344,8 @@ const changelist = (value) => {
 // --- Chart Rendering ---
 const renderAllCharts = () => {
     // 能源监测 (立即刷新)
-    const defWater = [120, 132, 101, 134, 190, 230, 210, 120, 132, 101, 134, 90];
-    const defElect = [220, 182, 191, 234, 90, 330, 310, 210, 120, 132, 101, 134];
+    const defWater = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const defElect = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     updateChart('energy', chartRef.value, getEnergyOption(defWater, defElect));
     // 安防监测
     updateChart('security', chartDom.value, getPieOption([securityData.items[0].value, securityData.items[1].value]));
@@ -363,12 +363,12 @@ const renderAllCharts = () => {
 const loadData = async () => {
     try {
         await Promise.allSettled([
-            fetchWeather(),
-            fetchEnergy(),
-            fetchMonitoring(),
-            fetchSecurityAlarm(),
-            fetchYardRate(),
-            fetchEnvironment()
+            // fetchWeather(),
+            // fetchEnergy(),
+            // fetchMonitoring(),
+            // fetchSecurityAlarm(),
+            // fetchYardRate(),
+            // fetchEnvironment()
         ]);
     } catch (err) {
         console.error('Data refreshing failed, showing existing data.', err);
@@ -380,7 +380,7 @@ const fetchWeather = async () => {
         const res = await queryParkWeatherListPagination({ "pageNo": 1, "pageSize": 99 });
         if (res.code === '0' && res.data?.list?.length > 0) {
             const device = res.data.list[0];
-            const mapping = { temperature: 'temperature', humidity: 'humidity', pm10: 'pmTen', pm25: 'pmTwoFive', windPower:'windPower','atmospheric':'atmospheric'};
+            const mapping = { temperature: 'temperature', humidity: 'humidity', pm10: 'pmTen', pm25: 'pmTwoFive', windPower: 'windPower', 'atmospheric': 'atmospheric' };
             environmentData.forEach(item => {
                 const apiField = mapping[item.key];
                 if (apiField && device[apiField] != null) item.value = device[apiField];
@@ -397,7 +397,7 @@ const getEnergyOption = (water, electricity) => ({
         axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985', color: '#3CDFF3' } }
     },
     legend: { data: ['水耗', '电耗'], textStyle: { color: '#3CDFF3' } },
-    grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+    grid: { left: '0%', right: '4%', bottom: '3%', top: '14%', containLabel: true },
     xAxis: {
         type: 'category', boundaryGap: false,
         data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
@@ -419,7 +419,7 @@ const getEnergyOption = (water, electricity) => ({
 const fetchEnergy = async () => {
     try {
         const year = new Date().getFullYear();
-        const res = await queryEnergyNumCount({ queryDate:"2025"});
+        const res = await queryEnergyNumCount({ queryDate: "2025" });
         // queryDate: year.toString()
         if (res.code === '0' && res?.data?.length > 0) {
             const newData = { water: new Array(12).fill(0), electricity: new Array(12).fill(0) };
@@ -515,20 +515,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.View_Details_tag {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-60%);
-    background-color: #1A6892;
-    color: #78D0EF;
-    font-size: 14px;
-    padding: 2px 5px;
-    border-radius: 5px;
-    font-style: normal;
-    cursor: pointer;
-}
-
 .parck_left {
     display: flex;
     flex-wrap: wrap;
@@ -540,7 +526,6 @@ onUnmounted(() => {
     margin-top: 12px;
     position: relative;
 }
-
 
 .gjbox .gjlalel {
     font-family: Microsoft YaHei;
@@ -574,6 +559,22 @@ onUnmounted(() => {
     background-clip: text;
 }
 
+.View_Details_tag {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-60%);
+    background-color: #1A6892;
+    color: #78D0EF;
+    font-size: 14px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-style: normal;
+    cursor: pointer;
+}
+
+
+
 .gjtexts {
     display: inline-block;
     font-size: 12px;
@@ -595,8 +596,8 @@ onUnmounted(() => {
 
 
 .allBoxs {
-    height: 155px;
-    padding: 16px 26px;
+    height: 157px;
+    padding: 15px 20px;
     padding-bottom: 8px;
     display: flex;
     align-items: center;
@@ -646,7 +647,7 @@ onUnmounted(() => {
     width: 90px;
     height: 90px;
     position: absolute;
-    left: 55px;
+    left: 48px;
     top: 48px;
     background: #193F8E;
     z-index: 9999;
@@ -669,7 +670,7 @@ onUnmounted(() => {
 }
 
 .changeSize {
-    font-size: 30px !important;
+    /* font-size: 30px !important; */
 }
 
 
@@ -854,7 +855,7 @@ onUnmounted(() => {
     color: #F8FFFF;
 }
 
-.right_numberss {
+.right_numbers {
     font-family: Microsoft YaHei;
     font-weight: bold;
     color: #76CBFB;
@@ -862,8 +863,9 @@ onUnmounted(() => {
     flex-direction: column;
     justify-content: space-between;
     width: 205px;
-    height: 130px;
+    height: 140px;
     margin-right: 10px;
+    margin-top: 15px;
 }
 
 .card {

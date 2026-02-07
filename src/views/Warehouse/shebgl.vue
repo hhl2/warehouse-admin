@@ -4,7 +4,7 @@
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
 
 
-                <div class="title">
+        <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">设备概览</div>
         </div>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
-                <div class="title">
+        <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">智能设备</div>
         </div>
@@ -46,47 +46,49 @@
             </div>
         </div>
 
-        <div v-for="(value, index) in source" :key="index">
-            <div class="sblf_box">
-                <div class="sblf_box_title">
-                    设备编码：
-                    <span>{{ value.deviceCode }}</span>
+        <div class="sblf_list">
+            <div v-for="(value, index) in source" :key="index">
+                <div class="sblf_box">
+                    <div class="sblf_box_title">
+                        设备编码：
+                        <span>{{ value.deviceCode }}</span>
+                    </div>
+
+                    <div class="margin_sb_box">
+                        <div class="sb_box_label">
+                            <span>设备名称</span>
+                            <span>下次检验日期</span>
+                            <span>设备类型</span>
+                            <span>子设备类型</span>
+                        </div>
+
+                        <div class="sb_box_label2">
+                            <span>{{ value.deviceName }}</span>
+                            <span>{{ value.nextInspectionDate }}</span>
+                            <span>{{ value.deviceType }}</span>
+                            <span>{{ value.subDeviceType }}</span>
+                        </div>
+
+                        <div class="sb_box_label">
+                            <span>生产厂家</span>
+                            <span>规格型号</span>
+                            <span>运行状态</span>
+                            <span>领用数量</span>
+                        </div>
+
+                        <div class="sb_box_label2">
+                            <span>{{ value.manufacturer }}</span>
+                            <span>{{ value.modelSpec }}</span>
+                            <span>{{ value.status }}</span>
+                            <span>{{ value.quantity || '' }}</span>
+                        </div>
+
+                    </div>
+
+
                 </div>
-
-                <div class="margin_sb_box">
-                    <div class="sb_box_label">
-                        <span>设备名称</span>
-                        <span>下次检验日期</span>
-                        <span>设备类型</span>
-                        <span>子设备类型</span>
-                    </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.deviceName }}</span>
-                        <span>{{ value.nextInspectionDate }}</span>
-                        <span>{{ value.deviceType }}</span>
-                        <span>{{ value.subDeviceType }}</span>
-                    </div>
-
-                    <div class="sb_box_label">
-                        <span>生产厂家</span>
-                        <span>规格型号</span>
-                        <span>运行状态</span>
-                        <span>领用数量</span>
-                    </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.manufacturer }}</span>
-                        <span>{{ value.modelSpec }}</span>
-                        <span>{{ value.status }}</span>
-                        <span>{{ value.quantity || '' }}</span>
-                    </div>
-
-                </div>
-
 
             </div>
-
         </div>
 
     </div>
@@ -99,16 +101,21 @@
     margin: 0px 7px;
 }
 
+.left {
+    display: flex;
+    flex-direction: column;
+}
+
 .sbglx {
-    margin: 52px 15px 0px 15px;
-
-
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0px 15px;
+    min-height: 0;
 }
 
 .sbglx_box {
     position: relative;
-    margin-bottom: 65px;
-
 }
 
 .sbglx_text {
@@ -153,10 +160,11 @@
 }
 
 .sbglx_boxs {
+    flex: 1;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
+    align-content: space-evenly;
+    justify-content: space-evenly;
 }
 
 .sbglx_boxs hr {
@@ -186,9 +194,41 @@
 }
 
 .sblf {
-    margin: 10px 18px;
+    margin: 10px 15px;
     display: flex;
     justify-content: space-between;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+}
+
+.sblf_list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 transparent;
+}
+
+.sblf_list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sblf_list::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.sblf_list::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.sblf_list:hover::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
 }
 
 .sblf_box {
@@ -281,6 +321,7 @@
     padding: 0 15px;
     border-radius: 3px;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .search-btn:hover {
@@ -290,12 +331,6 @@
 
 .inputwidth {
     width: 203px;
-}
-
-
-
-.testmians {
-    /* margin: 0 auto; */
 }
 
 .testmian {
@@ -429,8 +464,8 @@ const sorces = [
     { text: '巡更设备', num: "0/6", icon: sb4 },
     { text: '环境设备', num: "0/21", icon: sb5 },
     { text: '消防设备', num: "0/21", icon: sb6 },
-    { text: '工具器设备', num: "0/1", icon: sb7 },
-    { text: '计量设备', num: "0/1", icon: sb8 }
+    // { text: '工具器设备', num: "0/1", icon: sb7 },
+    // { text: '计量设备', num: "0/1", icon: sb8 }
 ];
 
 onMounted(() => {

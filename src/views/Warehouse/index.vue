@@ -6,25 +6,21 @@
     </div>
     <div class="menu_boxs" v-if='showMenu'>
         <div class="menu_box_uls">
-            <div v-for="(item, index) in menuList2" :key="item.id" class="menu_box_lis"
+            <div v-for="(item, index) in menuList2" :key="item.id" class="nav-button-item"
                 :class="{ active: changli2 === item.id }" @click.stop="changelist2(item)">
-                <img :src="getImagePath2(item.id)" :alt="item.name">
-                <div :class="{
-                    'menu_box_texts': changli2 == item.id,
-                    'menu_box_text1': changli2 != item.id
-                }">{{ item.name }}</div>
+                <div class="nav-button-content">
+                    <span class="nav-button-text">{{ item.name }}</span>
+                </div>
             </div>
         </div>
     </div>
     <div class="menu_boxs" v-if='showgl'>
         <div class="menu_box_uls">
-            <div v-for="(item, index) in menuList3" :key="item.id" class="menu_box_lis menu_change_box"
+            <div v-for="(item, index) in menuList3" :key="item.id" class="nav-button-item gl-button"
                 :class="{ active: changli3 === item.id }" @click.stop="changelist3(item)">
-                <img :src="getImagePath3(item.id)" :alt="item.name">
-                <div :class="{
-                    'menu_box_texts': changli3 == item.id,
-                    'menu_box_text1': changli3 != item.id
-                }">{{ item.name }}</div>
+                <div class="nav-button-content">
+                    <span class="nav-button-text">{{ item.name }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -54,7 +50,7 @@
     <div class="menu_box">
         <div class="menu_box_ul">
             <div v-for="(item, index) in menuList" :key="item.id" class="menu_box_li"
-                :class="{ active: changli2 === item.id }" @click="changelist(item)">
+                :class="{ active: changli === item.id }" @click="changelist(item)">
                 <img :src="getImagePath(item.id)" :alt="item.name">
                 <div class="menu_box_text">{{ item.name }}</div>
             </div>
@@ -92,6 +88,119 @@
 </template>
 
 <style scoped>
+/* 核心导航按钮样式 */
+.nav-button-item {
+    position: relative;
+    width: 138px;
+    height: 32px;
+    margin-left: -20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 1;
+}
+
+.nav-button-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2px;
+    background: rgba(0, 48, 96, 0.4);
+    border: 1px solid rgba(0, 228, 255, 0.2);
+    /* 采用倾斜平行四边形切角 */
+    clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.nav-button-text {
+    font-family: YouSheBiaoTiHei, Microsoft YaHei;
+    font-size: 16px;
+    color: rgba(174, 210, 245, 0.8);
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+/* 悬浮效果 */
+.nav-button-item:hover {
+    z-index: 5;
+    transform: translateY(-2px);
+}
+
+.nav-button-item:hover .nav-button-content {
+    background: rgba(0, 48, 96, 0.7);
+    border-color: rgba(0, 228, 255, 0.6);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button-item:hover .nav-button-text {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* 激活状态 */
+.nav-button-item.active {
+    z-index: 10;
+    transform: translateY(-1px);
+}
+
+.nav-button-item.active .nav-button-content {
+    /* 渐变背景 */
+    background: linear-gradient(135deg, rgba(16, 168, 253, 0.85) 0%, rgba(9, 107, 180, 0.85) 100%);
+    border-color: #00E4FF;
+    border-width: 1.5px;
+    box-shadow:
+        0 0 15px rgba(0, 228, 255, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.nav-button-item.active .nav-button-text {
+    color: #fff !important;
+    font-size: 17px;
+    text-shadow: 0 0 10px rgba(0, 228, 255, 0.8);
+    background: linear-gradient(to bottom, #FFFFFF, #DAEDFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 特殊宽度调整 */
+.gl-button {
+    width: 180px !important;
+}
+
+.footer-item {
+    width: 156px;
+    height: 40px;
+}
+
+.footer-item .nav-button-content {
+    clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+}
+
+.menu_box_li {
+    width: 146px;
+    position: relative;
+}
+
+.menu_box_li img {
+    width: 100%;
+    height: 42px;
+}
+
+.menu_box_li .menu_box_text {
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    transform: translate(-50%);
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    font-size: 17px;
+    color: #fff;
+}
+
 .xm_texts {
     position: fixed;
     top: 55px;

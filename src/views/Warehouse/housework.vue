@@ -7,18 +7,18 @@
             </div>
 
             <div class="jcrwx">
-                <div class="jcrwx_box_li" :class="{ active: activeTab === 1 }" @click="switchTab(1)">
+                <!-- <div class="jcrwx_box_li" :class="{ active: activeTab === 1 }" @click="switchTab(1)">
                     <img :src="imageMap2[activeTab === 1 ? 'active' : 'default']" alt="">
                     <div class="jcrwx_box_text">仓库作业</div>
-                </div>
-<!-- 
+                </div> -->
+                <!-- 
                 <div class="jcrwx_box_li" :class="{ active: activeTab === 2 }" @click="switchTab(2)">
                     <img :src="imageMap2[activeTab === 2 ? 'active' : 'default']" alt="">
                     <div class="jcrwx_box_text">入园任务</div>
                 </div> -->
             </div>
 
-            <div class="yySearch setyySearch">
+            <!-- <div class="yySearch setyySearch">
                 <div class="yySearch_left changeyySearch_left">
                     <div class="yylf_label yylf_color">统计周期</div>
                     <el-select size="small" v-model="filterParams.period" placeholder="请选择">
@@ -33,7 +33,7 @@
                 <div class="yySearch_left">
                     <div class="yylf_search_box" @click="handleSearch">查询</div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="jcfx">
                 <div class="jcfx_box">

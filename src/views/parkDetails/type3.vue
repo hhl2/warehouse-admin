@@ -10,7 +10,8 @@
                 <div class="spjkList" @click="handleRowClick(value)">
                     <div class="spjkListbox">
                         <!-- 显示图片 -->
-                        <img :src="value.imageUrl || require('@/assets/camera/图.png')" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img :src="value.imageUrl || require('@/assets/camera/图.png')" alt=""
+                            style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div class="spjkList_label">{{ value.cn || '摄像头' + (index + 1) }}</div>
                 </div>
@@ -25,11 +26,11 @@
                     @keyup.enter="querySecurityAlarmListPagination" />
                 <el-button type="primary" class="search-btn" @click="querySecurityAlarmListPagination">查询</el-button>
             </div>
-            <div class="changleft">
-                <el-table class="my-spacing-table" ref="tableRef" :data="AlarmList" >
+            <div class="device-table-wrapper">
+                <el-table class="device-custom-table" ref="tableRef" :data="AlarmList" height="100%">
                     <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="cameraType" label="设备类型" />
-                    <el-table-column prop="installLocation" label="检测点位置" show-overflow-tooltip />
+                    <el-table-column prop="installLocation" label="监测点位置" show-overflow-tooltip />
                     <el-table-column prop="online" label="状态" width="50">
                     </el-table-column>
                     <el-table-column prop="alarmTime" label="监测时间" show-overflow-tooltip />
@@ -37,10 +38,9 @@
                     <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip>
 
                     </el-table-column>
-                    <el-table-column prop="" label="关键应急预案" show-overflow-tooltip>
+                    <el-table-column prop="" label="抓拍信息" show-overflow-tooltip>
                         <template #default="scope">
-                            <!-- <img src="" alt=""> -->
-
+                            <img src="" alt="">
                         </template>
                     </el-table-column>
 
@@ -54,16 +54,16 @@
     <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
             <!-- <img src="@/assets/title_bgs.png" alt=""> -->
-             
+
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">摄像头监控列表</div>
         </div>
-            <!-- <div class="title_text_box">
+        <!-- <div class="title_text_box">
                 <div class="title_txets">立体仓库</div>
                 <div class="title_txets">平置仓库</div>
                 <div class="title_txets">堆场</div>
             </div> -->
-     
+
 
 
         <div class="inputbox">
@@ -72,11 +72,11 @@
             <el-button type="primary" class="search-btn" @click="fetchData2">查询</el-button>
         </div>
 
-        <div class="changleft2">
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data" @row-click="handleRowClick">
+        <div class="device-table-wrapper">
+            <el-table class="device-custom-table" ref="tableRef" :data="data" @row-click="handleRowClick" height="100%">
                 <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="manufacturer" label="设备类型" />
-                <el-table-column prop="cn" label="检测点位置" show-overflow-tooltip />
+                <el-table-column prop="cn" label="监测点位置" show-overflow-tooltip />
                 <el-table-column prop="online" label="状态" width="50">
                     <template #default="scope">
                         <span class='status-normal'>{{ scope.row.online }}
@@ -155,6 +155,7 @@
     margin-left: 10px;
     border-radius: 3px;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .search-btn:hover {
@@ -355,10 +356,12 @@
     bottom: 65px;
     transform: translateX(-50%);
     z-index: 999;
+    display: flex;
+    flex-direction: column;
 }
 
 .inputbox {
-    margin: 10px 20px;
+    margin: 10px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -394,7 +397,8 @@
     align-items: center;
     margin: 10px 0px;
     cursor: pointer;
-    width: 200px; /* 固定宽度，确保子元素不会超出 */
+    width: 200px;
+    /* 固定宽度，确保子元素不会超出 */
 }
 
 .spjkLists .spjkListbox {
@@ -407,9 +411,12 @@
     margin-top: 10px;
     color: #fff;
     font-size: 18px;
-    display: block; /* 确保是块级元素 */
-    max-width: 200px; /* 最大宽度，与图片宽度一致 */
-    white-space: nowrap; /* 不换行 */
+    display: block;
+    /* 确保是块级元素 */
+    max-width: 200px;
+    /* 最大宽度，与图片宽度一致 */
+    white-space: nowrap;
+    /* 不换行 */
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -470,38 +477,9 @@
     align-items: center;
 }
 
-.changleft {
-    margin-left: 10px;
-
-}
-
-.changleft2 {
-    margin-left: 20px;
-    margin-right: 5px;
-    flex: 1;
-    overflow: hidden;
-}
-
-
-.context-menu {
-    width: 584px;
-    height: 246px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: url("@/assets/try/图层弹窗.png") no-repeat 0 0;
-    background-size: 100% 100%;
-    z-index: 999;
-}
-
-
-.my-spacing-table {
-    height: 288px;
-}
-
-.my-spacing-table2 {
-    height: 100%;
+.left,
+.right {
+    overflow: hidden !important;
 }
 </style>
 
@@ -522,13 +500,13 @@ const showMenus = ref(false);
 const menuRef = ref(null);
 const showSingleVideoPopup = ref(false);
 const isLoadingVideo = ref(false); // 视频加载状态
-const AlarmList=ref([]);
+const AlarmList = ref([]);
 
 // EasyPlayer 播放器相关引用
 const videoElementSingle = ref(null);
 const easyPlayerInstance = ref(null);
-const input3 =ref(null);
-const input4 =ref(null);
+const input3 = ref(null);
+const input4 = ref(null);
 
 const currentCamera = ref({
     id: 'cam001',
@@ -567,15 +545,15 @@ const querySecurityAlarmListPagination
                 },
                 skipGlobalParams: true
             });
-            if(res.code==0){
-                AlarmList.value=res.data?.list||[]
+            if (res.code == 0) {
+                AlarmList.value = res.data?.list || []
 
-            }else{
-                AlarmList.value=[];
+            } else {
+                AlarmList.value = [];
 
 
             }
-            
+
             console.log(response);
         } catch (error) {
             console.error('获取监控点列表失败:', error);
@@ -911,7 +889,7 @@ const initializeVideoGrids = async () => {
 
     // 取前8条数据
     const first8Items = data.value.slice(0, 8);
-    
+
     // 初始化 sorces 数组，为每条数据分配对应的默认图片
     sorces.value = first8Items.map((item, index) => ({
         id: item.id,
@@ -949,7 +927,7 @@ const fetchData2 = async () => {
                     manufacturer: item.manufacturer
                 }));
                 data.value = mappedList;
-                
+
                 // 数据加载完成后，初始化视频网格（只显示图片）
                 await initializeVideoGrids();
             }

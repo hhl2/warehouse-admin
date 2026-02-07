@@ -9,22 +9,18 @@
                 <el-table class="my-spacing-table" ref="tableRef" :data="visitordata">
                     <el-table-column prop="visitor" label="人员姓名" show-overflow-tooltip />
                     <el-table-column prop="carNumber" label="车牌号" />
-                    <el-table-column prop="countNums3" label="作业区域" show-overflow-tooltip />
-                    <el-table-column prop="countNums4" label="入园时间" show-overflow-tooltip />
-                    <el-table-column prop="countNums5" label="出园时间" show-overflow-tooltip />
+                    <el-table-column prop="address" label="作业区域" show-overflow-tooltip />
+                    <el-table-column prop="arriveTime" label="入园时间" show-overflow-tooltip />
+                    <el-table-column prop="leaceTime" label="出园时间" show-overflow-tooltip />
                     <el-table-column prop="sendType" label="状态" width="50">
                         <template #default="scope">
                             <span :class="[scope.row.sendType === '在园' ? 'status-normal' : '.status-important']">
-                                {{ scope.row.countNums6 === '在园' ? '在园' : '离园' }}
+                                {{ scope.row.sendType === '在园' ? '在园' : '离园' }}
                             </span>
                         </template>
                     </el-table-column>
 
-                    <el-table-column prop="" label="告警信息" show-overflow-tooltip>
-                        <template #default="scope">
-                            <img src="" alt="">
-
-                        </template>
+                    <el-table-column prop="alarmInfo" label="告警描述" show-overflow-tooltip>
                     </el-table-column>
 
 
@@ -57,7 +53,7 @@
             <el-table class="my-spacing-table2" ref="tableRef" :data="data2">
                 <el-table-column prop="countNums1" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="countNums2" label="设备类型" />
-                <el-table-column prop="countNums3" label="检测点位置" show-overflow-tooltip />
+                <el-table-column prop="address" label="监测点位置" show-overflow-tooltip />
 
                 <el-table-column prop="countNams6" label="状态" width="50">
 
@@ -177,6 +173,7 @@
     padding: 0 15px;
     border-radius: 3px;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .search-btn:hover {
@@ -235,7 +232,7 @@
 }
 
 .changewidth {
-    margin: 5px 15px 10px 10px;
+    margin: 5px 15px 10px 15px;
     display: flex;
     gap: 10px;
     align-items: center;
@@ -517,26 +514,18 @@ const isLoadingVideo = ref(false); // 视频加载状态
 
 // mpegts 播放器相关引用（支持 H.265）
 const videoElementSingle = ref(null);
-
-const queryEnvironmentDeviceListPagination = async () => {
-    try {
-        const response = await request({
-            url: '/api/qydigital-park-service/qyQueryPersonInfo/queryWatchPersonInfoPagination',
-            method: 'post',
-            data: {
-                visitor: "",
-                "pageNo": 1, "pageSize": 25,
-            },
-            skipGlobalParams: true
-        });
-        console.log(response);
-        visitordata.value = response.data.data.list
-    } catch (error) {
-        console.error('获取监控点列表失败:', error);
-    }
-}
-
 const input3 = ref('');
+const formatDate = (timestamp) => {
+    if (!timestamp) return ''
+    const date = new Date(timestamp)
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, '0')
+    const d = String(date.getDate()).padStart(2, '0')
+    const h = String(date.getHours()).padStart(2, '0')
+    const min = String(date.getMinutes()).padStart(2, '0')
+    const s = String(date.getSeconds()).padStart(2, '0')
+    return `${y}-${m}-${d} ${h}:${min}:${s}`
+}
 
 const fetchVisitorData = async () => {
     try {
@@ -546,12 +535,13 @@ const fetchVisitorData = async () => {
             data: {
                 visitor: input3.value,
                 "pageNo": 1,
-                "pageSize": 25,
+                "pageSize": 999,
             },
             skipGlobalParams: true
         });
-        if (response?.code === '0' && response.data?.data?.list) {
-            visitordata.value = response.data.data.list;
+        if (res.code == 0) {
+            visitordata.value = res.data.list
+
         }
     } catch (error) {
         console.error('获取访客列表失败:', error);
@@ -742,84 +732,317 @@ const statusClassMaps = reactive({
 })
 const visitordata = ref([
     {
-        countNums1: "李木林",
-        countNums2: "粤A23456W",
-        countNums3: "大厅1号监测点",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "在园",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-
-    {
-        countNums1: "宋哲",
-        countNums2: "粤A23457W",
-        countNums3: "大厅2号监测点",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "在园",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "刘颖",
-        countNums2: "粤A23459W",
-        countNums3: "大厅3号监测点",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "在园",
-        countNums7: "",
-        countNums8: "",
-        type: 4
-
-    },
-
-    {
-        countNums1: "伊天寿",
-        countNums2: "粤A23451W",
-        countNums3: "大厅4号监测点",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "在园",
-        countNums7: "",
-        countNums8: "",
-        type: 4
-
-    },
-
-
-
-    {
-        countNums1: "孟伊泽",
-        countNums2: "粤A23452W",
-        countNums3: "大厅5号监测点",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "在园",
-        countNums7: "",
-        countNums8: "",
-        type: 5
-
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "张178545",
+        "carNumber": "粤A10001",
+        "address": null,
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
     },
     {
-        countNums1: "侯聪",
-        countNums2: "粤A23453W",
-        countNums3: "大厅6号监测点",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "在园",
-        countNums7: "",
-        countNums8: "",
-        type: 6
-
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "周聪",
+        "carNumber": "粤B88888",
+        "address": "1号卸货点",
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "5",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
     },
-
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "范松林",
+        "carNumber": "粤RT7VD8",
+        "address": "1号卸货点",
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "李渊",
+        "carNumber": "粤P0007",
+        "address": "1号卸货点",
+        "arriveTime": 1767937921000,
+        "leaceTime": 1768035668000,
+        "sendType": "5",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "魏霞",
+        "carNumber": "粤RYP885",
+        "address": "1号卸货点",
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "张178545",
+        "carNumber": "粤A1000001",
+        "address": null,
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "刘兆贵",
+        "carNumber": "粤B88898",
+        "address": "1号卸货点",
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "hyj",
+        "carNumber": "粤B52522",
+        "address": null,
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "测试",
+        "carNumber": "粤A88888",
+        "address": "1号卸货点",
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "张178545",
+        "carNumber": "粤A0001",
+        "address": null,
+        "arriveTime": null,
+        "leaceTime": null,
+        "sendType": "0",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "叶润森",
+        "carNumber": "苏B66YNT",
+        "address": "1号装卸点",
+        "arriveTime": 1748159514000,
+        "leaceTime": 1752249599000,
+        "sendType": "1",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    },
+    {
+        "_id": null,
+        "actionType": null,
+        "idList": null,
+        "pageNo": 1,
+        "pageSize": 20,
+        "sortFieldName": null,
+        "sortType": "",
+        "primaryName": null,
+        "sortNames": [],
+        "sortTypes": [],
+        "sortFields": [],
+        "visitor": "周聪",
+        "carNumber": "苏B66YNT",
+        "address": "1号装卸点",
+        "arriveTime": 1748159438000,
+        "leaceTime": 1752249599000,
+        "sendType": "1",
+        "alarmInfo": null,
+        "reservationCode": null,
+        "billType": null,
+        "queryDate": null,
+        "visitStatus": null,
+        "endVisitDate": null,
+        "primaryValue": null
+    }
 
 
 
@@ -827,181 +1050,20 @@ const visitordata = ref([
 
 
 ]);
-
-var data2 = [
-    {
-        countNums1: "摄像头#1",
-        countNums2: "安防监控",
-        countNums3: "室内1号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-    {
-        countNums1: "摄像头#2",
-        countNums2: "安防监控",
-        countNums3: "室内2号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "摄像头#3",
-        countNums2: "安防监控",
-        countNums3: "室内3号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "紧急告警",
-        countNums8: "1号检测点温度过高",
-        type: 1
-
-    },
-
-    {
-        countNums1: "摄像头#4",
-        countNums2: "安防监控",
-        countNums3: "室内4号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-    {
-        countNums1: "摄像头#5",
-        countNums2: "安防监控",
-        countNums3: "室内5号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 1
-
-    },
-
-    {
-        countNums1: "摄像头#6",
-        countNums2: "安防监控",
-        countNums3: "室内6号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 2
-
-    },
-
-    {
-        countNums1: "摄像头#7",
-        countNums2: "安防监控",
-        countNums3: "室内7号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "摄像头#8",
-        countNums2: "安防监控",
-        countNums3: "室内8号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-    {
-        countNums1: "摄像头#9",
-        countNums2: "安防监控",
-        countNums3: "室内9号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-    {
-        countNums1: "摄像头#10",
-        countNums2: "安防监控",
-        countNums3: "室内10号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "摄像头#11",
-        countNums2: "安防监控",
-        countNums3: "室内11号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-    {
-        countNums1: "摄像头#12",
-        countNums2: "安防监控",
-        countNums3: "室内12号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-    {
-        countNums1: "摄像头#13",
-        countNums2: "安防监控",
-        countNums3: "室内13号检测点",
-        countNums4: "65°C",
-        countNums5: "2025-04-12 10:24:15",
-        countNums6: "在线",
-        countNums7: "",
-        countNums8: "",
-        type: 3
-
-    },
-
-
-
-
-
-
-];
+const RUN_STATUS_MAP = { 0: "离园", 1: "在园" };
 // 生命周期
 onMounted(() => {
-    queryEnvironmentDeviceListPagination()
+    visitordata.value = visitordata.value.map(item => {
+        return {
+            ...item,
+            sendType: RUN_STATUS_MAP[item.sendType] || '未知',
+
+            arriveTime: formatDate(item.arriveTime),
+            leaceTime: formatDate(item.arriveTime)
+
+        }
+    });
+
     document.addEventListener("click", handleClickOutside);
 
 });

@@ -1,61 +1,5 @@
 <template>
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="title">
-            <img src="@/assets/title_bgs.png" alt="">
-            <div class="title_txet">告警信息</div>
-        </div>
-        <div class="sblf">
-            <el-input v-model="input3" style="width: 203px" placeholder="请输入设备名称" :prefix-icon="Search" />
-            <div class="sblf_search">
-                <div class="sblf_search_box" @click="handleAlertSearch">查询</div>
-                <div class="sblf_search_box" @click="handleAlertReset">更多</div>
-            </div>
-        </div>
-        <div v-for="(value, index) in source" :key="index">
-            <div class="sblf_box">
-                <div class="sblf_box_title">
-                    设备编码：
-                    <span>{{ value.deviceCode }}</span>
-                </div>
-
-                <div class="margin_sb_box">
-                    <div class="sb_box_label">
-                        <span>告警名称</span>
-                        <span>告警级别</span>
-                        <span>告警时间</span>
-                        <span>告警分类</span>
-                    </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.alertName }}</span>
-                        <span>{{ value.alertLevel }}</span>
-                        <span>{{ value.alertTime }}</span>
-                        <span>{{ value.alertCategory }}</span>
-                    </div>
-
-                    <div class="sb_box_label">
-                        <span>告警恢复</span>
-                        <span>告警描述</span>
-                        <span></span>
-                        <span></span>
-
-                    </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.alertRecovery }}</span>
-                        <span>{{ value.alertDesc || '' }}</span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </div>
-    </div>
-    <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
 
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
@@ -164,6 +108,66 @@
         </div>
 
     </div>
+    <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
+
+
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">告警信息</div>
+        </div>
+        <div class="sblf">
+            <el-input v-model="input3" style="width: 203px" placeholder="请输入设备名称" :prefix-icon="Search" />
+            <div class="sblf_search">
+                <div class="sblf_search_box" @click="handleAlertSearch">查询</div>
+                <div class="sblf_search_box" @click="handleAlertReset">重置</div>
+            </div>
+        </div>
+        <div v-for="(value, index) in source" :key="index">
+            <div class="sblf_box">
+                <div class="sblf_box_title">
+                    设备编码：
+                    <span>{{ value.deviceCode }}</span>
+                </div>
+
+                <div class="margin_sb_box">
+                    <div class="sb_box_label">
+                        <span>告警名称</span>
+                        <span>告警级别</span>
+                        <span>告警时间</span>
+                        <span>告警分类</span>
+                    </div>
+
+                    <div class="sb_box_label2">
+                        <span>{{ value.alertName }}</span>
+                        <span>{{ value.alertLevel }}</span>
+                        <span>{{ value.alertTime }}</span>
+                        <span>{{ value.alertCategory }}</span>
+                    </div>
+
+                    <div class="sb_box_label">
+                        <span>告警恢复</span>
+                        <span>告警描述</span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                    <div class="sb_box_label2">
+                        <span>{{ value.alertRecovery }}</span>
+                        <span>{{ value.alertDesc || '' }}</span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
 
 
 </template>
@@ -176,16 +180,6 @@
 ::v-deep(.el-date-editor.el-input,
     .el-date-editor.el-input__wrapper) {
     width: 105px !important;
-}
-
-/* 保持原有的所有样式不变 */
-::v-deep(.el-select__placeholder) {
-    color: #FBFBFB;
-}
-
-::v-deep(.el-select__wrapper) {
-    background-color: #476B9A;
-    box-shadow: 0 0 0 1px #409eff inset;
 }
 
 .margin_sb_box {
@@ -260,7 +254,7 @@
 
 .allBoxs {
     height: 175px;
-    margin: 12px 24px;
+    margin: 0px 24px;
     padding-bottom: 20px;
     display: flex;
     align-items: center;
@@ -309,7 +303,7 @@
     height: 85px;
     position: absolute;
     left: 30px;
-    top: 45px;
+    top: 40px;
     background: #193F8E;
     z-index: 9999;
     border-radius: 50%;
@@ -378,7 +372,7 @@
 }
 
 .sblf {
-    margin: 10px 20px;
+    margin: 10px 15px;
     display: flex;
     justify-content: space-between;
 }

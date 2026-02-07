@@ -14,7 +14,7 @@
         </div>
 
         <div class="device-table-wrapper">
-            <el-table class="device-custom-table" ref="tableRef" :data="source" highlight-current-row
+            <el-table class="device-custom-table" ref="tableRef" :data="source" highlight-current-row height="100%"
                 @row-click="handleRowClick">
                 <el-table-column prop="name" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="code" label="设备编码" show-overflow-tooltip />
@@ -64,7 +64,7 @@
         </div>
 
         <div class="device-table-wrapper">
-            <el-table class="device-custom-table" ref="tableRef" :data="source2" highlight-current-row>
+            <el-table class="device-custom-table" ref="tableRef" :data="source2" highlight-current-row height="100%">
                 <el-table-column prop="deviceName" label="报警设备名称" show-overflow-tooltip />
                 <el-table-column prop="title" label="报警标题" show-overflow-tooltip />
                 <el-table-column prop="type_dictText" label="报警类型" show-overflow-tooltip />
@@ -79,7 +79,7 @@
 <script setup>
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
-import { queryAlarmCurrent, queryManageList ,queryMaintainDataList } from '@/api/user'
+import { queryAlarmCurrent, queryManageList, queryMaintainDataList } from '@/api/user'
 
 const props = defineProps({
     isPanelVisible: {
@@ -90,11 +90,11 @@ const props = defineProps({
 
 const queryAlarmCurrents = () => {
     queryAlarmCurrent({ "pageSize": 999, "pageNo": 1 }).then(res => {
-   
-        if(res.code==0){
-  
-            source2.value=res.data?.records
-               console.log(res,res.data?.records)
+
+        if (res.code == 0) {
+
+            source2.value = res.data?.records
+            console.log(res, res.data?.records)
 
         }
     })
@@ -119,9 +119,9 @@ const queryManageLists = () => {
         "deviceName": input3.value
     }).then(res => {
         if (res.code == 0) {
-            source.value = res.data?.records ||[]
-        }else{
-            source.value =[]
+            source.value = res.data?.records || []
+        } else {
+            source.value = []
         }
     })
 }
@@ -147,7 +147,7 @@ const source2 = ref([
     //     "level_dictText": null,
     //     "deviceName": "四向车002"
     // }
-]) 
+])
 const source = ref([
     {
         code: '',
@@ -161,42 +161,44 @@ const source = ref([
         status: '',
         quantity: ''
     },
-    // {
-    //     code: '74BC256336654588523369814CVT4',
-    //     name: 'AGV小车',
-    //     lastMaintainDate: '2025-12-15',
-    //     nextMaintainDate: '2025-12-23',
-    //     deviceType: '智能设备',
-    //     subDeviceType: '运输设备',
-    //     manufacturer: '智能科技',
-    //     spec: 'AGV-2023',
-    //     status: '在线',
-    //     quantity: '5'
-    // },
-    // {
-    //     code: '84BC256336654588523369814CVT5',
-    //     name: '码垛机器人',
-    //     lastMaintainDate: '2026-01-10',
-    //     nextMaintainDate: '2025-12-23',
-    //     deviceType: '智能设备',
-    //     subDeviceType: '作业设备',
-    //     manufacturer: '机器人公司',
-    //     spec: 'MD-500',
-    //     status: '离线',
-    //     quantity: '2'
-    // },
-    // {
-    //     code: '94BC256336654588523369814CVT6',
-    //     name: '输送带',
-    //     lastMaintainDate: '2025-10-20',
-    //     nextMaintainDate: '2025-12-23',
-    //     deviceType: '智能设备',
-    //     subDeviceType: '传输设备',
-    //     manufacturer: '传输设备厂',
-    //     spec: 'SST-100',
-    //     status: '在线',
-    //     quantity: ''
-    // }
+    {
+        code: '74BC256336654588523369814CVT4',
+        name: 'AGV小车',
+        lastMaintainDate: '2025-12-15',
+        nextMaintainDate: '2025-12-23',
+        deviceType: '智能设备',
+        subDeviceType: '运输设备',
+        manufacturer: '智能科技',
+        spec: 'AGV-2023',
+        status: '在线',
+        quantity: '5'
+    },
+
+
+    {
+        code: '84BC256336654588523369814CVT5',
+        name: '码垛机器人',
+        lastMaintainDate: '2026-01-10',
+        nextMaintainDate: '2025-12-23',
+        deviceType: '智能设备',
+        subDeviceType: '作业设备',
+        manufacturer: '机器人公司',
+        spec: 'MD-500',
+        status: '离线',
+        quantity: '2'
+    },
+    {
+        code: '94BC256336654588523369814CVT6',
+        name: '输送带',
+        lastMaintainDate: '2025-10-20',
+        nextMaintainDate: '2025-12-23',
+        deviceType: '智能设备',
+        subDeviceType: '传输设备',
+        manufacturer: '传输设备厂',
+        spec: 'SST-100',
+        status: '在线',
+        quantity: ''
+    }
 ])
 
 // 响应式数据
@@ -215,7 +217,7 @@ const handleAlertSearch = () => {
 const handleAlertReset = () => {
     input3.value = '';
     queryManageLists();
-     queryMaintainDataLists();
+    queryMaintainDataLists();
 }
 
 onMounted(() => {
@@ -236,23 +238,12 @@ onUnmounted(() => {
     width: 203px;
 }
 
-.left {
-    display: flex;
-    flex-direction: column;
+.left,
+.right {
+    overflow: hidden !important;
 }
 
-.device-table-wrapper {
-    flex: 1;
-    margin: 10px 16px 0px 16px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.device-custom-table {
-    width: 100%;
-    height: 100%;
-}
+/* 针对此页面的表格自定义样式 */
 
 /* 针对此页面的表格自定义样式 */
 ::v-deep(.device-custom-table.el-table) {
@@ -321,7 +312,7 @@ onUnmounted(() => {
 }
 
 .sblf {
-    margin: 10px 20px;
+    margin: 10px 15px;
     display: flex;
     justify-content: space-between;
 }
@@ -383,6 +374,7 @@ onUnmounted(() => {
     padding: 0 15px;
     border-radius: 3px;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .search-btn:hover {

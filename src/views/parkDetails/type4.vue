@@ -6,51 +6,41 @@
                     @keyup.enter="fetchDevices" />
                 <el-button type="primary" class="search-btn" @click="fetchDevices">查询</el-button>
             </div>
-            <div class="changleft">
-
-                <el-table class="my-spacing-table" ref="tableRef" :data="data">
+            <div class="device-table-wrapper">
+                <el-table class="device-custom-table" ref="tableRef" :data="data" height="100%">
                     <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="deviceType" label="设备类型" />
-                    <el-table-column prop="location" label="检测点位置" show-overflow-tooltip />
+                    <el-table-column prop="location" label="监测点位置" show-overflow-tooltip />
                     <el-table-column prop="runStatus" label="状态" width="50">
                     </el-table-column>
                     <el-table-column prop="watchTime" label="告警时间" show-overflow-tooltip />
-
                     <el-table-column prop="alarmLevel" label="告警等级">
-
                     </el-table-column>
-
                     <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip>
-
                     </el-table-column>
-
                     <el-table-column prop="linkageName" label="关联应急预案" show-overflow-tooltip>
                         <template #default="scope">
                             <span @click="handleLinkage(scope.row)">{{ scope.row.linkageName }}</span>
-
                         </template>
-
                     </el-table-column>
-
-
-
-
                 </el-table>
-
-
             </div>
         </div>
     </div>
 
     <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="title">
+        <!-- <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_text_box">
-
                 <div class="title_txets">立体仓库</div>
                 <div class="title_txets">平置仓库</div>
                 <div class="title_txets">堆场</div>
             </div>
+        </div> -->
+
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">消防设备列表</div>
         </div>
 
 
@@ -60,18 +50,14 @@
             <el-button type="primary" class="search-btn" @click="fetchDevices">查询</el-button>
         </div>
 
-        <div class="changleft2">
-
-
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data2">
+        <div class="device-table-wrapper">
+            <el-table class="device-custom-table" ref="tableRef" :data="data2" height="100%">
                 <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="deviceType" label="设备类型" />
-                <el-table-column prop="location" label="检测点位置" show-overflow-tooltip />
+                <el-table-column prop="location" label="监测点位置" show-overflow-tooltip />
                 <el-table-column prop="runStatus" label="状态" width="50">
                 </el-table-column>
-
             </el-table>
-
         </div>
 
 
@@ -98,7 +84,8 @@
     bottom: 80px;
     z-index: 999;
     left: calc(100% - 1170px);
-
+    display: flex;
+    flex-direction: column;
 }
 
 .inputbox {
@@ -117,6 +104,7 @@
     margin-left: 10px;
     border-radius: 3px;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .search-btn:hover {
@@ -182,45 +170,13 @@
 
 
 .changewidth {
-    margin: 5px 15px 10px 10px;
+    margin: 5px 15px 10px 15px;
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
-.changleft {
-    margin-left: 10px;
-
-}
-
-.changleft2 {
-    margin-left: 20px;
-    margin-right: 5px;
-
-}
-
-
-.context-menu {
-    width: 584px;
-    height: 246px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: url("@/assets/try/图层弹窗.png") no-repeat 0 0;
-    background-size: 100% 100%;
-    z-index: 999;
-}
-
-.context_tan {}
-
-.my-spacing-table {
-    height: 288px;
-}
-
-.my-spacing-table2 {
-    height: 750px;
-}
+/* 表格样式已移至 main.css */
 
 .status-normal {
     color: #8AFC67;
@@ -236,6 +192,10 @@
 }
 
 /* .search-btn styles moved and unified above */
+.left,
+.right {
+    overflow: hidden !important;
+}
 </style>
 
 <script setup>

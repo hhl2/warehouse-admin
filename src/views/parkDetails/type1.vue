@@ -11,12 +11,12 @@
                     <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="deviceType" label="设备类型" />
                     <el-table-column prop="location" label="监测点位置" show-overflow-tooltip />
-                    <el-table-column label="检测数值" show-overflow-tooltip >
+                    <el-table-column label="监测数值" show-overflow-tooltip>
                         <template #default="scope">
                             {{ formatEnvironmentData(scope.row) }}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="watchTime" label="检查时间" show-overflow-tooltip />
+                    <el-table-column prop="watchTime" label="监测时间" show-overflow-tooltip />
                     <el-table-column prop="runStatus" label="状态" width="60">
                     </el-table-column>
                     <el-table-column prop="alarmLevel" label="告警等级" show-overflow-tooltip />
@@ -75,6 +75,7 @@
     padding: 0 15px;
     border-radius: 3px;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .search-btn:hover {
@@ -144,9 +145,9 @@ const environmentDataMap = {
 // 格式化环境数据函数
 const formatEnvironmentData = (row) => {
     if (!row || typeof row !== 'object') return '';
-    
+
     const formattedParts = [];
-    
+
     // 遍历环境数据映射配置
     for (const [fieldName, config] of Object.entries(environmentDataMap)) {
         const value = row[fieldName];
@@ -155,99 +156,12 @@ const formatEnvironmentData = (row) => {
             formattedParts.push(`${config.label}：${value}${config.unit}`);
         }
     }
-    
+
     return formattedParts.join('，');
 };
 
 const deviceData = ref([
-    {
-        deviceName: "温度传感器#1",
-        deviceType: "环境检测",
-        location: "室内1号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "1号监测点温度过高",
-        type: 2
-    },
-    {
-        deviceName: "温度传感器#2",
-        deviceType: "环境检测",
-        location: "室内2号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "一般告警",
-        alarmInfo: "2号监测点温度过高",
-        type: 3
-    },
-    {
-        deviceName: "温度传感器#3",
-        deviceType: "环境检测",
-        location: "室内3号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "一般告警",
-        alarmInfo: "3号监测点温度过高",
-        type: 3
-    },
-    {
-        deviceName: "温度传感器#4",
-        deviceType: "环境检测",
-        location: "室内4号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "4号监测点温度过高",
-        type: 2
-    },
-    {
-        deviceName: "温度传感器#5",
-        deviceType: "环境检测",
-        location: "室内5号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "5号监测点温度过高",
-        type: 2
-    },
-    {
-        deviceName: "温度传感器#6",
-        deviceType: "环境检测",
-        location: "室内6号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "紧急告警",
-        alarmInfo: "6号监测点温度过高",
-        type: 1
-    },
-    {
-        deviceName: "温度传感器#7",
-        deviceType: "环境检测",
-        location: "室内7号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "7号监测点温度过高",
-        type: 2
-    },
-    {
-        deviceName: "温度传感器#8",
-        deviceType: "环境检测",
-        location: "室内8号监测点",
-        countNums4: "65°C",
-        watchTime: "2025-04-12 10:24:15",
-        runStatus: "在线",
-        alarmLevel: "重要告警",
-        alarmInfo: "8号监测点温度过高",
-        type: 2
-    },
+
 ]);
 
 const formatDate = (timestamp) => {
@@ -270,9 +184,9 @@ const queryParkWeatherListPaginations = async () => {
         deviceData.value = list.map(item => {
             return {
                 ...item,
-                  runStatus: RUN_STATUS_MAP[item.runStatus] || '未知',
+                runStatus: RUN_STATUS_MAP[item.runStatus] || '未知',
                 watchTime: formatDate(item.watchTime)
-    
+
             }
         });
     }

@@ -6,10 +6,10 @@
         </div>
 
         <div class="changeTimeTypes">
-            <div class="changeTimeType">
-                <div class="changeTimeType_item" :class="{ 'active': timeType1 === 1 }" @click="timeType1 = 1">月</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType1 === 2 }" @click="timeType1 = 2">季</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType1 === 3 }" @click="timeType1 = 3">年</div>
+            <div class="custom-segmented-control">
+                <div class="control-item" :class="{ 'active': timeType1 === 1 }" @click="timeType1 = 1">月</div>
+                <div class="control-item" :class="{ 'active': timeType1 === 2 }" @click="timeType1 = 2">季</div>
+                <div class="control-item" :class="{ 'active': timeType1 === 3 }" @click="timeType1 = 3">年</div>
             </div>
         </div>
         <div class="ck_list">
@@ -36,10 +36,10 @@
         </div>
 
         <div class="changeTimeTypes">
-            <div class="changeTimeType">
-                <div class="changeTimeType_item" :class="{ 'active': timeType2 === 1 }" @click="timeType2 = 1">月</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType2 === 2 }" @click="timeType2 = 2">季</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType2 === 3 }" @click="timeType2 = 3">年</div>
+            <div class="custom-segmented-control">
+                <div class="control-item" :class="{ 'active': timeType2 === 1 }" @click="timeType2 = 1">月</div>
+                <div class="control-item" :class="{ 'active': timeType2 === 2 }" @click="timeType2 = 2">季</div>
+                <div class="control-item" :class="{ 'active': timeType2 === 3 }" @click="timeType2 = 3">年</div>
             </div>
         </div>
 
@@ -59,10 +59,10 @@
             <div class="title_txet">平均库存下降率</div>
         </div>
         <div class="changeTimeTypes">
-            <div class="changeTimeType">
-                <div class="changeTimeType_item" :class="{ 'active': timeType3 === 1 }" @click="timeType3 = 1">月</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType3 === 2 }" @click="timeType3 = 2">季</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType3 === 3 }" @click="timeType3 = 3">年</div>
+            <div class="custom-segmented-control">
+                <div class="control-item" :class="{ 'active': timeType3 === 1 }" @click="timeType3 = 1">月</div>
+                <div class="control-item" :class="{ 'active': timeType3 === 2 }" @click="timeType3 = 2">季</div>
+                <div class="control-item" :class="{ 'active': timeType3 === 3 }" @click="timeType3 = 3">年</div>
             </div>
         </div>
         <div class="ck_lists">
@@ -84,10 +84,10 @@
         </div>
 
         <div class="changeTimeTypes">
-            <div class="changeTimeType">
-                <div class="changeTimeType_item" :class="{ 'active': timeType4 === 1 }" @click="timeType4 = 1">月</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType4 === 2 }" @click="timeType4 = 2">季</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType4 === 3 }" @click="timeType4 = 3">年</div>
+            <div class="custom-segmented-control">
+                <div class="control-item" :class="{ 'active': timeType4 === 1 }" @click="timeType4 = 1">月</div>
+                <div class="control-item" :class="{ 'active': timeType4 === 2 }" @click="timeType4 = 2">季</div>
+                <div class="control-item" :class="{ 'active': timeType4 === 3 }" @click="timeType4 = 3">年</div>
             </div>
         </div>
 
@@ -121,10 +121,10 @@
         </div>
 
         <div class="changeTimeTypes">
-            <div class="changeTimeType">
-                <div class="changeTimeType_item" :class="{ 'active': timeType5 === 1 }" @click="timeType5 = 1">月</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType5 === 2 }" @click="timeType5 = 2">季</div>
-                <div class="changeTimeType_item" :class="{ 'active': timeType5 === 3 }" @click="timeType5 = 3">年</div>
+            <div class="custom-segmented-control">
+                <div class="control-item" :class="{ 'active': timeType5 === 1 }" @click="timeType5 = 1">月</div>
+                <div class="control-item" :class="{ 'active': timeType5 === 2 }" @click="timeType5 = 2">季</div>
+                <div class="control-item" :class="{ 'active': timeType5 === 3 }" @click="timeType5 = 3">年</div>
             </div>
         </div>
 
@@ -369,25 +369,7 @@ watch(timeType5, () => {
     margin: 15px 20px 15px 0px;
 }
 
-.changeTimeType {
-    display: flex;
-    justify-content: space-between;
-    width: 200px;
-}
-
-.changeTimeType .changeTimeType_item {
-    background-color: #096BB4;
-    font-family: Microsoft YaHei;
-    font-weight: 400;
-    font-size: 20px;
-    color: #FFFFFF;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.changeTimeType .changeTimeType_item.active {
-    background-color: #11B5EE;
-}
+/* .changeTimeType redundant styles removed - now using global .custom-segmented-control */
 
 .jcfx_sum {
     display: flex;

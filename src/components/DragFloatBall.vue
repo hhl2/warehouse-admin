@@ -79,7 +79,7 @@ const props = defineProps({
     // 是否显示关闭按钮
     showCloseButton: {
         type: Boolean,
-        default: true
+        default: false
     },
     // 关闭按钮大小（相对于悬浮球的比例）
     closeButtonSize: {

@@ -14,21 +14,16 @@
                     <el-table-column prop="countNums4" label="检测数值" />
                     <el-table-column prop="watchTime" label="检查时间" show-overflow-tooltip />
                     <el-table-column prop="runStatus" label="状态" width="60">
+                        <template #default="scope">
+                            <span :class="[scope.row.runStatus === '正常' ? 'status-normal' : '.status-important']">
+                                {{ scope.row.runStatus === '正常' ? '正常' : '异常' }}
+                            </span>
+                        </template>
                     </el-table-column>
                     <el-table-column prop="alarmLevel" label="告警等级">
-                        <!-- <template #default="scope">
-                            <span :class="['status-badge', statusClassMap[scope.row.alarmLevel]]">
-                                {{ scope.row.alarmLevel }}
-                            </span>
-                        </template> -->
                     </el-table-column>
-
                     <el-table-column prop="alarmInfo" label="告警信息" show-overflow-tooltip>
-
                     </el-table-column>
-
-
-
                 </el-table>
 
 
@@ -122,10 +117,11 @@
 
 .search-btn {
     height: 32px;
-     background: #10A8FD;
+    background: #10A8FD;
     border: none;
     color: #fff;
     padding: 0 15px;
+    font-size: 16px;
 }
 
 .search-btn:hover {
@@ -168,7 +164,7 @@ const props = defineProps({
 
 // --- Constants & Config ---
 const DEVICE_TYPE_MAP = { 1: "水表", 2: "电表" };
-const RUN_STATUS_MAP = { 0: "离线", 1: "在线" };
+const RUN_STATUS_MAP = { 0: "异常", 1: "正常" };
 
 const statusClassMap = {
     '紧急告警': 'status-urgent',
@@ -177,9 +173,9 @@ const statusClassMap = {
 };
 
 const MOCK_DEVICES = [
-    { deviceName: '1号仓库水表', deviceType: '水表', location: '1号库房南侧', countNums4: '125.4', watchTime: '2026-02-02 10:15:22', runStatus: '在线', alarmLevel: '一般告警', alarmInfo: '正常运行' },
-    { deviceName: '办公楼总电表', deviceType: '电表', location: '配电房', countNums4: '1452.8', watchTime: '2026-02-02 10:14:10', runStatus: '在线', alarmLevel: '重要告警', alarmInfo: '电压波动' },
-    { deviceName: '3号装卸区水表', deviceType: '水表', location: '装卸平台', countNums4: '45.2', watchTime: '2026-02-02 09:55:01', runStatus: '离线', alarmLevel: '紧急告警', alarmInfo: '设备离线' }
+    { deviceName: '1号仓库水表', deviceType: '水表', location: '1号库房南侧', countNums4: '125.4', watchTime: '2026-02-02 10:15:22', runStatus: '正常', alarmLevel: '一般告警', alarmInfo: '正常运行' },
+    { deviceName: '办公楼总电表', deviceType: '电表', location: '配电房', countNums4: '1452.8', watchTime: '2026-02-02 10:14:10', runStatus: '正常', alarmLevel: '重要告警', alarmInfo: '电压波动' },
+    { deviceName: '3号装卸区水表', deviceType: '水表', location: '装卸平台', countNums4: '45.2', watchTime: '2026-02-02 09:55:01', runStatus: '异常', alarmLevel: '紧急告警', alarmInfo: '设备离线' }
 ];
 
 // --- State ---
@@ -218,12 +214,11 @@ const fetchDevices = async () => {
                 watchTime: formatDate(item.watchTime)
             }));
         } else if (input3.value) {
-            // If searching and no results, clear table
+
             deviceData.value = [];
         }
     } catch (err) {
         console.warn('Energy device API failed, showing defaults');
-        // Keep mock data if not searching
         if (!input3.value) deviceData.value = MOCK_DEVICES;
     }
 };

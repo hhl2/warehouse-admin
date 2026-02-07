@@ -10,8 +10,79 @@
 body,
 html {
     width: 100%;
-    overflow-x: hidden;
+    height: 100%;
+    overflow: hidden;
+}
 
+/* 统一 Element Plus 表单组件高度与样式 */
+.el-input__wrapper,
+.el-select__wrapper,
+.el-date-editor.el-input__wrapper {
+    height: 32px !important;
+    background-color: #476B9A !important;
+    box-shadow: 0 0 0 1px #409eff inset !important;
+}
+
+/* 小型尺寸 (25px) - 匹配项目中的查询按钮高度 */
+.el-input--small .el-input__wrapper,
+.el-select--small .el-select__wrapper,
+.el-date-editor--small.el-input__wrapper,
+.el-date-editor--small.el-input {
+    height: 25px !important;
+}
+
+/* 统一内部文字颜色和样式 */
+.el-input__inner,
+.el-select__inner,
+.el-date-editor .el-input__inner,
+.el-select__placeholder {
+    color: #FBFBFB !important;
+    font-size: 14px !important;
+}
+
+/* 统一 placeholder 样式 */
+.el-input__inner::placeholder,
+.el-select__placeholder.is-transparent,
+.el-date-editor .el-range-input::placeholder {
+    color: #FBFBFB !important;
+    opacity: 0.6 !important;
+}
+
+/* 修正图标位置 */
+.el-input__prefix-icon,
+.el-input__suffix-icon {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 通用表格包装容器，确保撑满 flex 布局剩余空间 */
+.device-table-wrapper {
+    flex: 1;
+    margin: 10px 16px 0px 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* 通用自定义表格样式，配合 device-table-wrapper 使用 */
+.device-custom-table {
+    width: 100%;
+    height: 100%;
+}
+
+/* 强制 el-table 内容区域高度占满，包含无数据状态 */
+.device-custom-table.el-table .el-table__inner-wrapper {
+    height: 100% !important;
+}
+
+/* 侧边栏面板通用布局 - 默认允许滚动 */
+.left,
+.right {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
 }
 
 a {
@@ -51,46 +122,30 @@ a {
     left: 15px;
     top: 80px;
     padding: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow 移至上方通用配置 */
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
-    padding: 10px;
     transition: all 0.3s ease-in-out;
     transform: translateX(0);
-    /* transform: translateX(-100%); */
 }
 
 /* Webkit 浏览器滚动条样式 */
 .left::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 .left::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
 }
 
 .left::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 4px;
+    background: rgba(193, 193, 193, 0.5);
+    border-radius: 3px;
 }
 
 .left::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-/* 兼容老版本 Webkit */
-.left::-webkit-scrollbar-thumb {
-    background: transparent;
-}
-
-.left:hover::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-}
-
-.left::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: rgba(168, 168, 168, 0.8);
 }
 
 .right {
@@ -104,8 +159,7 @@ a {
     right: 15px;
     top: 80px;
     padding: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow 移至上方通用配置 */
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
     transition: all 0.3s ease-in-out;
@@ -114,21 +168,21 @@ a {
 
 /* Webkit 浏览器滚动条样式 */
 .right::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 .right::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
 }
 
 .right::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 4px;
+    background: rgba(193, 193, 193, 0.5);
+    border-radius: 3px;
 }
 
 .right::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: rgba(168, 168, 168, 0.8);
 }
 
 /* 兼容老版本 Webkit */
@@ -167,7 +221,7 @@ a {
     font-style: italic;
     letter-spacing: 3px;
     position: relative;
-    margin: 10px 10px 0px 20px;
+    margin: 10px 10px 0px 15px;
     display: inline-block;
     font-style: italic;
 }
@@ -397,6 +451,97 @@ a {
     width: 200px;
     height: 130px;
     margin-right: 10px;
+}
+
+/* 赛博脉冲分段选择器 - 强交互科技风格 */
+.custom-segmented-control {
+    display: flex;
+    background: rgba(2, 15, 35, 0.85);
+    border: 1px solid rgba(16, 168, 253, 0.6);
+    padding: 2px;
+    border-radius: 0px;
+    position: relative;
+    box-shadow: 0 0 15px rgba(16, 168, 253, 0.2);
+}
+
+.custom-segmented-control .control-item {
+    position: relative;
+    padding: 0 25px;
+    height: 30px;
+    line-height: 30px;
+    color: rgba(4, 233, 233, 0.6);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%);
+    margin-right: -6px;
+}
+
+.custom-segmented-control .control-item:first-child {
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+}
+
+.custom-segmented-control .control-item:last-child {
+    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+    margin-right: 0;
+}
+
+/* 字体中间的电脉冲条纹 */
+.custom-segmented-control .control-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    width: 2px;
+    height: 60%;
+    background: linear-gradient(180deg, transparent, #04E9E9, transparent);
+    box-shadow: 0 0 8px #04E9E9;
+    opacity: 0.4;
+    z-index: 5;
+}
+
+.custom-segmented-control .control-item:hover {
+    color: #04E9E9;
+    background: rgba(4, 233, 233, 0.1);
+}
+
+/* 激活态：流光扫描效果 */
+.custom-segmented-control .control-item.active {
+    background: linear-gradient(90deg, rgba(16, 168, 253, 0.6) 0%, rgba(16, 168, 253, 0.2) 100%) !important;
+    color: #fff !important;
+    text-shadow: 0 0 10px #04E9E9;
+    overflow: hidden;
+}
+
+/* 扫描流光动效 */
+.custom-segmented-control .control-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: scanLight 2.5s infinite linear;
+}
+
+@keyframes scanLight {
+    0% {
+        left: -100%;
+    }
+
+    50% {
+        left: 100%;
+    }
+
+    100% {
+        left: 100%;
+    }
 }
 
 #connection {
