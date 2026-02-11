@@ -45,12 +45,12 @@
 
         <div class="ck_lists">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
-                <div class="jcfx_sum">
+                <img src="@/assets/try/kfjk.png" alt="">
+                <div class="jcfx_sum2">
                     <div class="jcfx_texts1">{{ turnoverRate }}</div>
                     <div class="jcfx_texts2">%</div>
                 </div>
-                <div class="jcfx_text wzwidth2">储备物资周转率</div>
+                <div class="jcfx_text2 wzwidth2">储备物资周转率</div>
             </div>
         </div>
 
@@ -67,12 +67,12 @@
         </div>
         <div class="ck_lists">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
-                <div class="jcfx_sum">
+                <img src="@/assets/try/kfjk.png" alt="">
+                <div class="jcfx_sum2">
                     <div class="jcfx_texts1">{{ declineRate }}</div>
                     <div class="jcfx_texts2">%</div>
                 </div>
-                <div class="jcfx_text wzwidth2">平均库存下降率</div>
+                <div class="jcfx_text2 wzwidth2">平均库存下降率</div>
             </div>
         </div>
     </div>
@@ -105,8 +105,18 @@
             <div class="title_txet">安全库存预警</div>
         </div>
 
+
+        <div class="kcyj">
+            <img src="@/assets/kcyj.png" alt="">
+            <div class="kcyj_text">
+                <div class="kcyj_text1">预警物资数量</div>
+                <div class="kcyj_text2">{{ data1?.length || 0 }}类</div>
+            </div>
+
+        </div>
+
         <div class="changleft5">
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data1">
+            <el-table class="my-spacing-table2" :data="data1">
                 <el-table-column prop="materialName" label="物资名称" show-overflow-tooltip />
                 <el-table-column prop="actualQty" label="库存数量" />
                 <el-table-column prop="name" label="预警值" show-overflow-tooltip />
@@ -130,12 +140,12 @@
 
         <div class="ck_lists">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
-                <div class="jcfx_sum">
+                <img src="@/assets/try/kfjk.png" alt="">
+                <div class="jcfx_sum2">
                     <div class="jcfx_texts1">{{ lazyRate }}</div>
                     <div class="jcfx_texts2">%</div>
                 </div>
-                <div class="jcfx_text wzwidth3">呆滞率</div>
+                <div class="jcfx_text2 wzwidth3">呆滞率</div>
             </div>
         </div>
     </div>
@@ -175,7 +185,6 @@ const declineRate = ref(0);
 const lazyRate = ref(0);
 
 const personnelData1 = reactive({
-    current: 0,
     stats: [
         { label: '入库金额', value: 0, key: 'todayTotal', unit: "万元" },
         { label: '出库金额', value: 0, key: 'todayTasks2', unit: "万元" },
@@ -197,28 +206,16 @@ const queryInventoryRateInfos = () => {
 const querySafeDistributionInfos = () => {
     querySafeDistributionInfo({ timeType: timeType1.value }).then(res => {
         if (res?.data?.code == 200) {
-
             data1.value = res.data.data.list
-            // 处理数据
         }
     })
 }
-
-const serviceFund = ref(0)
-const deliveryTransportAmt = ref(0)
-const receiptAmt = ref(0)
-const issueAmt = ref(0)
 
 //生产效率
 const queryProductionInfos = () => {
     queryProductionInfo({ timeType: timeType4.value }).then(res => {
         if (res?.data?.code == 200) {
             const resData = res?.data?.data
-            serviceFund.value = resData?.serviceFund
-            deliveryTransportAmt.value = resData?.deliveryTransportAmt
-            receiptAmt.value = resData?.receiptAmt
-            issueAmt.value = resData?.issueAmt
-
             // 更新 personnelData1.stats 中的显示值
             personnelData1.stats.forEach(stat => {
                 if (stat.label === '入库金额') stat.value = resData?.receiptAmt || 0
@@ -257,66 +254,6 @@ const queryWarehouseThroughputStatistics = () => {
         }
     })
 }
-// {
-//     "code": "0",
-//     "msg": "成功",
-//     "isJumpErrPageByBFS": false,
-//     "data": {
-//         "inventoryAmount": 0,
-//         "receiptAndIssueAmount": {
-//             "1": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "2": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "3": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "4": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "5": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "6": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "7": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "8": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "9": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "10": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "11": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             },
-//             "12": {
-//                 "receiptAmount": 0,
-//                 "issueAmount": 0
-//             }
-//         }
-//     },
-//     "successByBFS": true,
-//     "globalUnifyRPFlagByBFS": true
-// }
 onMounted(() => {
     // 调用数据接口
     queryWarehouseThroughputStatistics();
@@ -353,58 +290,74 @@ watch(timeType5, () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 27px;
-    margin-bottom: 27px;
+
+
+    margin-top: -8px;
+    padding-bottom: 52px;
+
 }
 
 .ck_list {
     display: flex;
     justify-content: space-around;
-    margin: 45px 20px 27px 0px;
+    margin: 38px 20px 20px 0px;
 }
 
 .changeTimeTypes {
     display: flex;
     justify-content: flex-end;
-    margin: 15px 20px 15px 0px;
+    margin: 10px 20px 0px 0px;
 }
 
 /* .changeTimeType redundant styles removed - now using global .custom-segmented-control */
-
-.jcfx_sum {
+.jcfx_sum,
+.jcfx_sum2 {
     display: flex;
     position: absolute;
     align-items: baseline;
     left: 50%;
-    top: 50%;
     transform: translate(-50%, -50%);
 }
 
-.jcfx_sum .jcfx_texts1 {
+.jcfx_sum {
+    top: 50%;
+}
+
+.jcfx_sum2 {
+    top: 35%;
+}
+
+.jcfx_sum .jcfx_texts1,
+.jcfx_sum2 .jcfx_texts1 {
     font-family: Microsoft YaHei;
     font-weight: bold;
-    font-size: 28px;
     color: #FFFFFF;
     background: linear-gradient(0deg, #2E86FC 0%, #FFFFFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     color: transparent;
+}
+
+.jcfx_sum .jcfx_texts1 {
+    font-size: 28px;
+}
+
+.jcfx_sum2 .jcfx_texts1 {
+    font-size: 30px;
 }
 
 .jcfx_texts2 {
     font-size: 12px;
-    color: #FFFFFF;
     background: linear-gradient(0deg, #2E86FC 0%, #FFFFFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    color: transparent;
 }
 
 .jcfx_box {
-    width: 125px;
-    height: 145px;
+    width: 140px;
+    height: 165px;
     position: relative;
 }
 
@@ -425,6 +378,21 @@ watch(timeType5, () => {
     position: absolute;
     bottom: 20px;
     left: 50%;
+    transform: translateX(-50%);
+}
+
+.jcfx_text2 {
+    width: 120px;
+    font-family: Adobe Heiti Std;
+    font-weight: bold;
+    font-size: 18px;
+    color: #FFFFFF;
+    background: linear-gradient(0deg, #6CB0FD 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: absolute;
+    bottom: -45px;
+    left: 52%;
     transform: translateX(-50%);
 }
 
@@ -453,10 +421,54 @@ watch(timeType5, () => {
 }
 
 .wzwidth2 {
-    width: 116px !important;
+    width: 135px !important;
 }
 
 .wzwidth3 {
-    width: 50px !important;
+    width: 58px !important;
+}
+
+.kcyj {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+}
+
+.kcyj img {
+    width: 401px;
+    height: 62px;
+}
+
+.kcyj_text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    pointer-events: none;
+}
+
+.kcyj_text1 {
+    font-family: Adobe Heiti Std;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.kcyj_text2 {
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    font-size: 30px;
+    color: #E8FEFF;
+    background: linear-gradient(0deg, #54D7F8 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.my-spacing-table2 {
+    height: 182px;
 }
 </style>

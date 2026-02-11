@@ -69,10 +69,16 @@
     width: 1240px;
     height: 270px;
     margin: 10px 20px;
-    background: #fff;
-    border-radius: 5px;
+    /* 玻璃质感：渐变背景 + 背景模糊 */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    /* 边缘高光 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15),
+        inset 0 0 10px rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
     overflow: hidden;
-
 }
 
 .hwbox_list {
@@ -168,7 +174,7 @@ const props = defineProps({
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
 
 
-onMounted(()=>{
+onMounted(() => {
     queryYardWarehouseInfos();
 
 })
@@ -178,10 +184,10 @@ const queryYardWarehouseInfos = () => {
     queryYardWarehouseInfo().then(res => {
 
         if (res?.code == 0) {
-            hwboxs.value=res.data?.list||[]
+            hwboxs.value = res.data?.list || []
 
-        }else{
-            hwboxs.value=[]
+        } else {
+            hwboxs.value = []
 
         }
         console.log(res)

@@ -64,8 +64,6 @@
                 <div class="title_txets">堆场</div>
             </div> -->
 
-
-
         <div class="inputbox">
             <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
                 @keyup.enter="fetchData2" />
@@ -361,7 +359,7 @@
 }
 
 .inputbox {
-    margin: 10px 15px;
+    margin: 10px 15px 0px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -471,7 +469,7 @@
 
 
 .changewidth {
-    margin: 5px 15px 10px 10px;
+    margin: 5px 15px 0px 15px;
     display: flex;
     gap: 10px;
     align-items: center;

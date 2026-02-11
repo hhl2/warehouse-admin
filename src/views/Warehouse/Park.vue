@@ -1,5 +1,7 @@
 <template>
 
+
+
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
@@ -7,6 +9,7 @@
             <div class="View_Details_tag" @click="changelist('type1')">查看详情</div>
         </div>
         <div class="parck_left">
+
             <div v-for="item in environmentData" :key="item.label" class="gjbox">
                 <img :src="item.icon" alt="">
                 <div class="gjlalel">{{ item.label }}</div>
@@ -31,9 +34,11 @@
             <div class="View_Details_tag" @click="changelist('type3')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changchart" ref="chartDom"></div>
-            <div class="chart_sum">
-                <div class="chart_snumber">{{ securityData.total }}</div>
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom"></div>
+                <div class="chart_sum">
+                    <div class="chart_snumber">{{ securityData.total }}</div>
+                </div>
             </div>
             <div class="left_number">
                 <div v-for="item in securityData.items" :key="item.label" class="jcard">
@@ -57,9 +62,11 @@
             <div class="View_Details_tag" @click="changelist('type4')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changchart" ref="chartDom1"></div>
-            <div class=" chart_sum">
-                <div class="chart_snumber">{{ fireData.total }}</div>
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom1"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber">{{ fireData.total }}</div>
+                </div>
             </div>
             <div class="left_number">
                 <div v-for="item in fireData.items" :key="item.label" class="jcard">
@@ -85,16 +92,18 @@
             <div class="View_Details_tag" @click="changelist('type5')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changchart" ref="chartDom2"></div>
-            <div class=" chart_sum">
-                <div class="chart_snumber">{{ alertData.total }}</div>
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom2"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber">{{ formatNumber(alertData.total) }}</div>
+                </div>
             </div>
             <div class="right_numbers">
                 <div v-for="item in alertData.items" :key="item.label" class="card card--urgent">
                     <div class="card__badges" :class="`card__badges--${item.color}`"></div>
                     <div class="card__labels">{{ item.label }}</div>
                     <div class="card__values" :class="`card__values--${item.color}`">
-                        <span class="card__numbers">{{ item.value }}</span>
+                        <span class="card__numbers">{{ formatNumber(item.value) }}</span>
                         <span class="card__units">{{ item.unit }}</span>
                     </div>
                 </div>
@@ -133,16 +142,18 @@
             <div class="View_Details_tag" @click="changelist('type7')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changchart" ref="chartDom3"></div>
-            <div class=" chart_sum">
-                <div class="chart_snumber changeSize">{{ loadingData.percentage }}</div>
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom3"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber changeSize">{{ formatNumber(loadingData.percentage) }}</div>
+                </div>
             </div>
             <div class="right_numbers">
                 <div v-for="item in loadingData.items" :key="item.label" class="card card--urgent">
                     <div class="card__badges" :class="`card__badges--${item.color}`"></div>
                     <div class="card__labels">{{ item.label }}</div>
                     <div class="card__values" :class="`card__values--${item.color}`">
-                        <span class="card__numbers">{{ item.value }}</span>
+                        <span class="card__numbers">{{ formatNumber(item.value) }}</span>
                         <span class="card__units">{{ item.unit }}</span>
                     </div>
                 </div>
@@ -156,16 +167,18 @@
             <div class="View_Details_tag" @click="changelist('type8')">查看详情</div>
         </div>
         <div class="allBoxs">
-            <div class="echartp changchart" ref="chartDom4"></div>
-            <div class=" chart_sum">
-                <div class="chart_snumber changeSize">{{ yardData.percentage }}</div>
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom4"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber changeSize">{{ formatNumber(yardData.percentage) }}</div>
+                </div>
             </div>
             <div class="right_numbers">
                 <div v-for="item in yardData.items" :key="item.label" class="card card--urgent">
                     <div class="card__badges" :class="`card__badges--${item.color}`"></div>
                     <div class="card__labels">{{ item.label }}</div>
                     <div class="card__values" :class="`card__values--${item.color}`">
-                        <span class="card__numbers">{{ item.value }}</span>
+                        <span class="card__numbers">{{ formatNumber(item.value) }}</span>
                         <span class="card__units">{{ item.unit }}</span>
                     </div>
                 </div>
@@ -177,7 +190,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, inject, nextTick } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, inject, nextTick, watch } from 'vue';
 import * as echarts from 'echarts';
 import { useRouter } from 'vue-router';
 import {
@@ -285,19 +298,32 @@ const yardData = reactive({
 });
 
 // --- Helper Functions ---
+const formatNumber = (val) => {
+    if (val == null || val === '') return '0';
+    const num = parseFloat(val);
+    return isNaN(num) ? val : (Math.floor(num) === num ? num.toString() : num.toFixed(2));
+};
+
 const normalizeChartData = (values) => {
     const numbers = values.map(v => parseFloat(v) || 0);
     const total = numbers.reduce((sum, val) => sum + val, 0);
     if (total === 0) {
-        const evenValue = 100 / numbers.length;
+        const evenValue = 100 / (numbers.length || 1);
         return numbers.map(() => evenValue);
     }
     const minValue = total * 0.01;
     return numbers.map(val => val === 0 ? minValue : val);
 };
 
-const getPieOption = (values, colors = PIE_COLORS) => ({
-    tooltip: { trigger: 'item' },
+const getPieOption = (values, names = [], colors = PIE_COLORS) => ({
+    tooltip: {
+        trigger: 'item',
+        confine: true,
+        extraCssText: 'z-index: 10000;',
+        formatter: (params) => {
+            return `${params.marker}${params.name || '数值'}: ${formatNumber(params.value)}`;
+        }
+    },
     series: [{
         type: 'pie',
         radius: ['75%', '90%'],
@@ -308,7 +334,7 @@ const getPieOption = (values, colors = PIE_COLORS) => ({
         labelLine: { show: false },
         data: normalizeChartData(values).map((value, index) => ({
             value,
-            name: '',
+            name: names[index] || '',
             itemStyle: { color: colors[index] || PIE_COLORS[index] }
         }))
     }]
@@ -348,15 +374,30 @@ const renderAllCharts = () => {
     const defElect = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     updateChart('energy', chartRef.value, getEnergyOption(defWater, defElect));
     // 安防监测
-    updateChart('security', chartDom.value, getPieOption([securityData.items[0].value, securityData.items[1].value]));
+    updateChart('security', chartDom.value, getPieOption(
+        securityData.items.map(i => i.value),
+        securityData.items.map(i => i.label)
+    ));
     // 消防监测
-    updateChart('fire', chartDom1.value, getPieOption([fireData.items[0].value, fireData.items[1].value]));
+    updateChart('fire', chartDom1.value, getPieOption(
+        fireData.items.map(i => i.value),
+        fireData.items.map(i => i.label)
+    ));
     // 告警管理
-    updateChart('alert', chartDom2.value, getPieOption(alertData.items.map(i => i.value)));
+    updateChart('alert', chartDom2.value, getPieOption(
+        alertData.items.map(i => i.value),
+        alertData.items.map(i => i.label)
+    ));
     // 装卸作业
-    updateChart('loading', chartDom3.value, getPieOption(loadingData.items.map(i => i.value)));
+    updateChart('loading', chartDom3.value, getPieOption(
+        loadingData.items.map(i => i.value),
+        loadingData.items.map(i => i.label)
+    ));
     // 堆场作业
-    updateChart('yard', chartDom4.value, getPieOption(yardData.items.map(i => i.value)));
+    updateChart('yard', chartDom4.value, getPieOption(
+        yardData.items.map(i => i.value),
+        yardData.items.map(i => i.label)
+    ));
 };
 
 // --- API Functions with Fault Tolerance ---
@@ -394,10 +435,12 @@ const fetchWeather = async () => {
 const getEnergyOption = (water, electricity) => ({
     tooltip: {
         trigger: 'axis',
+        confine: true,
+        extraCssText: 'z-index: 10000;',
         axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985', color: '#3CDFF3' } }
     },
     legend: { data: ['水耗', '电耗'], textStyle: { color: '#3CDFF3' } },
-    grid: { left: '0%', right: '4%', bottom: '3%', top: '14%', containLabel: true },
+    grid: { left: '0%', right: '5%', bottom: '3%', top: '12%', containLabel: true },
     xAxis: {
         type: 'category', boundaryGap: false,
         data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
@@ -449,7 +492,10 @@ const fetchMonitoring = async () => {
             securityData.items[1].value = res.data.offNum;
         }
     } catch (e) { console.warn('Monitoring API failed'); }
-    updateChart('security', chartDom.value, getPieOption([securityData.items[0].value, securityData.items[1].value]));
+    updateChart('security', chartDom.value, getPieOption(
+        securityData.items.map(i => i.value),
+        securityData.items.map(i => i.label)
+    ));
 };
 
 const fetchSecurityAlarm = async () => {
@@ -462,7 +508,10 @@ const fetchSecurityAlarm = async () => {
             alertData.items[2].value = res.data.threeLevelNum;
         }
     } catch (e) { console.warn('Alert API failed'); }
-    updateChart('alert', chartDom2.value, getPieOption(alertData.items.map(i => i.value)));
+    updateChart('alert', chartDom2.value, getPieOption(
+        alertData.items.map(i => i.value),
+        alertData.items.map(i => i.label)
+    ));
 };
 
 const fetchEnvironment = async () => {
@@ -474,7 +523,10 @@ const fetchEnvironment = async () => {
             fireData.items[1].value = res.data.offNum;
         }
     } catch (e) { console.warn('Environment API failed'); }
-    updateChart('fire', chartDom1.value, getPieOption([fireData.items[0].value, fireData.items[1].value]));
+    updateChart('fire', chartDom1.value, getPieOption(
+        fireData.items.map(i => i.value),
+        fireData.items.map(i => i.label)
+    ));
 };
 
 const fetchYardRate = async () => {
@@ -488,7 +540,10 @@ const fetchYardRate = async () => {
             yardData.items[2].value = data.freeWarehouseCount;
         }
     } catch (e) { console.warn('Yard API failed'); }
-    updateChart('yard', chartDom4.value, getPieOption(yardData.items.map(i => i.value)));
+    updateChart('yard', chartDom4.value, getPieOption(
+        yardData.items.map(i => i.value),
+        yardData.items.map(i => i.label)
+    ));
 };
 
 // --- Lifecycle ---
@@ -505,6 +560,11 @@ onMounted(async () => {
 
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
+});
+
+// 监听面板显隐，触发图表重绘（延迟执行以等待 CSS 过渡结束）
+watch(() => props.isPanelVisible, () => {
+    setTimeout(handleResize, 310);
 });
 
 onUnmounted(() => {
@@ -580,19 +640,18 @@ onUnmounted(() => {
     font-size: 12px;
 }
 
-
-
 .nyjcPadding {
     padding: 15px 0px;
-    height: 190px;
+    height: 175px;
+    width: 442px;
+    flex-shrink: 0;
 }
 
 .nyjcchart {
-    width: 465px;
-    height: 190px;
-
+    width: 442px;
+    height: 175px;
+    flex-shrink: 0;
 }
-
 
 
 .allBoxs {
@@ -605,17 +664,30 @@ onUnmounted(() => {
     position: relative;
 }
 
+
+
 .allBoxs .echartp {
     width: 142px;
     height: 142px;
     border: 2px dashed #2DA9C0;
     border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* 禁止 Flex 压缩 */
 }
 
 
 .changchart {
     width: 138px;
     height: 138px;
+}
+
+.echart_pwidth {
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -647,14 +719,16 @@ onUnmounted(() => {
     width: 90px;
     height: 90px;
     position: absolute;
-    left: 48px;
-    top: 48px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     background: #193F8E;
-    z-index: 9999;
+    z-index: 10;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 .chart_snumber {

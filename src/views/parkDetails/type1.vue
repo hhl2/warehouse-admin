@@ -84,7 +84,7 @@
 }
 
 .changleft {
-    margin-left: 12px;
+    margin-left: 10px;
 }
 
 .context-menu {

@@ -232,7 +232,7 @@
 }
 
 .changewidth {
-    margin: 5px 15px 10px 15px;
+    margin: 5px 15px 10px 10px;
     display: flex;
     gap: 10px;
     align-items: center;

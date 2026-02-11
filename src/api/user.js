@@ -2,6 +2,58 @@ import request from '@/utils/request';
 
 
 
+
+//设备管理(获取安防设备列表)
+export const getVideoPointList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getVideoPointList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+//设备管理(获取环境设备列表)
+export const getParkWeatherStationList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getParkWeatherStationList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+
+
+
+//设备管理(获取功器具设备列表)
+export const getIntelligentToolList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getIntelligentToolList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+//设备管理(获取能耗设备列表)
+export const getEnergyDeviceList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getEnergyDeviceList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+//设备管理(统计在线数和总数接口)
+export const getCountOnlinSum = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getCountOnlinSum',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+
 export const queryParkReservationListPagination = (data) =>
   request({
     url: '/api/qydigital-park-service/qyQueryPersonInfo/queryParkReservationListPagination',

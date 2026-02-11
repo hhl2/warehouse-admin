@@ -24,10 +24,10 @@
         <div class="allBoxs">
             <div class="echartp changechart">
                 <div class="chartpwidth" ref="chartDom2"></div>
-                <div class="chart_text">作业风险</div>
-            </div>
-            <div class="chart_sum">
-                <div class="chart_snumber">{{ alertData.total }}</div>
+                <div class="chart_text text_type2">作业风险</div>
+                <div class="chart_sum">
+                    <div class="chart_snumber">{{ alertData.total }}</div>
+                </div>
             </div>
 
             <div class="right_numberss">
@@ -46,9 +46,9 @@
             <div class="echartp changechart">
                 <div class="chartpwidth" ref="chartDom3"></div>
                 <div class="chart_text text_type3">作业票</div>
-            </div>
-            <div class="chart_sum">
-                <div class="chart_snumber">{{ alertData2.total }}</div>
+                <div class="chart_sum">
+                    <div class="chart_snumber">{{ alertData2.total }}</div>
+                </div>
             </div>
 
             <div class="right_numberss">
@@ -64,13 +64,12 @@
 
         </div>
         <div class="allBoxs">
-
             <div class="echartp changechart">
                 <div class="chartpwidth" ref="chartDom4"></div>
                 <div class="chart_text text_type3">告警数</div>
-            </div>
-            <div class="chart_sum">
-                <div class="chart_snumber">{{ alertData3.total }}</div>
+                <div class="chart_sum">
+                    <div class="chart_snumber">{{ alertData3.total }}</div>
+                </div>
             </div>
 
             <div class="right_numberss">
@@ -89,9 +88,9 @@
             <div class="echartp changechart">
                 <div class="chartpwidth" ref="chartDom5"></div>
                 <div class="chart_text">安全交底单</div>
-            </div>
-            <div class="chart_sum">
-                <div class="chart_snumber">{{ alertData4.total }}</div>
+                <div class="chart_sum">
+                    <div class="chart_snumber">{{ alertData4.total }}</div>
+                </div>
             </div>
 
             <div class="right_numberss">
@@ -255,11 +254,12 @@
 .allBoxs {
     height: 175px;
     margin: 0px 24px;
-    padding-bottom: 20px;
+    padding-bottom: 30px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: relative;
+    margin-top: 5px;
 
 
 }
@@ -274,13 +274,17 @@
     border: 2px dashed #2DA9C0;
     border-radius: 50%;
     position: relative;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    /* 禁止 Flex 压缩，防止图表显示不全 */
 }
 
 .echartp .chartpwidth {
-    width: 140px;
-    height: 140px;
-
+    width: 100%;
+    height: 100%;
 }
 
 .chart_text {
@@ -288,10 +292,14 @@
     position: absolute;
     left: 50%;
     transform: translateX(-40%);
-    bottom: -30px;
+    bottom: -35px;
     color: #fff;
     width: 100px;
 
+}
+
+.text_type2 {
+    width: 80px !important;
 }
 
 .text_type3 {
@@ -299,17 +307,19 @@
 }
 
 .chart_sum {
-    width: 85px;
-    height: 85px;
+    width: 88px;
+    height: 88px;
     position: absolute;
-    left: 30px;
-    top: 40px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     background: #193F8E;
-    z-index: 9999;
+    z-index: 10;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 
@@ -325,11 +335,6 @@
     background-clip: text;
     color: transparent;
 }
-
-.changeSize {
-    font-size: 30px !important;
-}
-
 
 .changewidth_left {
     margin-left: 20px;
@@ -486,7 +491,7 @@ const props = defineProps({
 
 import * as echarts from 'echarts';
 import { Search } from '@element-plus/icons-vue'
-import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
+import { onMounted, reactive, ref, onUnmounted, nextTick, watch } from 'vue'
 const source = [
     {
         deviceCode: '64BC256336654588523369814CVT3',
@@ -537,6 +542,11 @@ onMounted(() => {
 
 
 
+});
+
+// 监听面板显隐，触发图表重绘（延迟执行以等待 CSS 过渡结束）
+watch(() => props.isPanelVisible, () => {
+    setTimeout(handleResize, 310);
 });
 
 const handleResize = () => {
@@ -628,6 +638,7 @@ const initChart2 = () => {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,
@@ -691,6 +702,7 @@ const initChart3 = () => {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,
@@ -753,6 +765,7 @@ const initChart4 = () => {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,
@@ -814,6 +827,7 @@ const initChart5 = () => {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,

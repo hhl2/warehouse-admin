@@ -61,8 +61,8 @@
 
                 <div class="allBoxs">
                     <div class="allBoxs_left">
-                        <div>
-                            <div class="echartp changechart" ref="warehouseChartRef"></div>
+                        <div class="echartp changechart">
+                            <div class="echart_pwidth" ref="warehouseChartRef"></div>
                             <div class="chart_sum">
                                 <div class="chart_snumber changeSize" v-if="activeWorkType === 1">{{
                                     warehouseData.AB12 }}</div>
@@ -128,7 +128,7 @@
                 <div class="xbt_text">作业量趋势</div>
             </div>
 
-            <div style="" class="chartpadding">
+            <div class="chartpadding">
                 <div ref="trendChartRef" class="changelistChart"></div>
             </div>
         </div>
@@ -207,7 +207,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import * as echarts from 'echarts';
 import {
@@ -493,6 +493,7 @@ const initWarehouseChart = () => {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,
@@ -605,12 +606,10 @@ const loadAlertData = () => {
 
 // 响应式调整
 const handleResize = () => {
-    if (trendChart) {
-        trendChart.resize();
-    }
-    if (warehouseChart) {
-        warehouseChart.resize();
-    }
+    nextTick(() => {
+        if (trendChart) trendChart.resize();
+        if (warehouseChart) warehouseChart.resize();
+    });
 };
 
 // 生命周期
@@ -621,6 +620,12 @@ onMounted(() => {
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
     document.addEventListener('webkitfullscreenchange', handleResize);
+});
+
+// 监听面板显隐状态，触发图表自适应重绘
+watch(() => props.isPanelVisible, () => {
+    // 延迟约 300ms，等待侧边栏过渡动画彻底结束后再刷新图表尺寸
+    setTimeout(handleResize, 310);
 });
 
 onUnmounted(() => {
@@ -641,12 +646,17 @@ onUnmounted(() => {
     width: 120px !important;
 }
 
+/* 
 ::v-deep(.el-select--small .el-input__wrapper),
 ::v-deep(.el-select--small .el-select__wrapper),
 ::v-deep(.el-date-editor--small.el-input__wrapper),
 ::v-deep(.el-input--small .el-input__wrapper) {
     height: 24px !important;
     line-height: 24px !important;
+} */
+::v-deep(.el-input__inner) {
+    font-size: 14px !important;
+
 }
 
 ::v-deep(.el-select--small) {
@@ -682,6 +692,7 @@ onUnmounted(() => {
 .changelistChart {
     width: 465px;
     height: 260px;
+    flex-shrink: 0;
 
 }
 
@@ -754,16 +765,28 @@ onUnmounted(() => {
     height: 140px;
     border: 2px dashed #2DA9C0;
     border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.echart_pwidth {
+    width: 100%;
+    height: 100%;
 }
 
 .chart_sum {
     width: 85px;
     height: 85px;
     position: absolute;
-    left: 28px;
-    top: 28px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     background: #193F8E;
-    z-index: 9999;
+    z-index: 10;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -854,7 +877,7 @@ onUnmounted(() => {
 .yylf {
     display: flex;
     justify-content: space-between;
-    margin: 15px 20px 15px 20px;
+    margin: 10px 20px 10px 20px;
 }
 
 .yylf_left {

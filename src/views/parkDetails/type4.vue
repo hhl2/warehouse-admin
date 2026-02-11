@@ -89,7 +89,7 @@
 }
 
 .inputbox {
-    margin: 10px 20px;
+    margin: 10px 15px 0px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -170,7 +170,7 @@
 
 
 .changewidth {
-    margin: 5px 15px 10px 15px;
+    margin: 5px 15px 0px 15px;
     display: flex;
     gap: 10px;
     align-items: center;

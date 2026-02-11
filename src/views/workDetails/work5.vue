@@ -9,6 +9,19 @@
             <img :src="lstPicture" alt="">
         </div>
     </div>
+
+    <!-- 货架切换栏 -->
+    <div class="shelf-switch-container"
+        :class="{ 'panel-collapsed': !isPanelVisible, 'is-centered': shelfItems.length < 9 }">
+
+        <div class="shelf-switch-list">
+            <div class="shelf-switch-label">货架切换</div>
+            <div v-for="(item, index) in shelfItems" :key="index" class="shelf-switch-item"
+                :class="{ active: activeShelf === index }" @click="activeShelf = index">
+                {{ item }}
+            </div>
+        </div>
+    </div>
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
@@ -151,7 +164,7 @@
 
 
 .my-spacing-table {
-    height: 250px;
+    height: 285px;
 }
 
 .imgbox3 {
@@ -380,13 +393,98 @@
     background: url('@/assets/框中间.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 855px;
-    height: 300px;
+    height: 335px;
     position: fixed;
     left: 50%;
     bottom: 80px;
     transform: translateX(-50%);
     z-index: 999;
 
+}
+
+.shelf-switch-container {
+    position: fixed;
+    bottom: 460px;
+    right: 15px;
+    /* 默认靠右，防止多排时挡住中间 */
+    display: flex;
+    align-items: center;
+    background: #1A67BF;
+    /* 采用项目中常用的深蓝色 */
+    border: 1px solid rgba(45, 169, 192, 0.5);
+    border-radius: 4px;
+    padding: 2px 10px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* 小于9排时居中 */
+.shelf-switch-container.is-centered {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.shelf-switch-container.panel-collapsed {
+    transform: translateY(100px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.shelf-switch-container.is-centered.panel-collapsed {
+    transform: translateX(-50%) translateY(100px);
+}
+
+.shelf-switch-label {
+    color: #4ed5ff;
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 25px;
+    position: relative;
+    padding: 8px 0;
+}
+
+.shelf-switch-label::after {
+    content: '';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 14px;
+    background: rgba(45, 169, 192, 0.5);
+}
+
+.shelf-switch-list {
+    display: flex;
+    gap: 5px;
+}
+
+.shelf-switch-item {
+    color: #FBFBFB;
+    padding: 5px 14px;
+    cursor: pointer;
+    border-radius: 0px;
+    transition: all 0.2s;
+    font-size: 17px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.shelf-switch-item:hover {
+    color: #fff;
+    background: rgba(45, 169, 192, 0.3);
+}
+
+.shelf-switch-item.active {
+    color: #fff;
+    background: #093C85;
+    font-weight: bold;
+    box-shadow: inset 0 0 8px rgba(78, 213, 255, 0.5);
 }
 </style>
 
@@ -414,6 +512,10 @@ import defaultImg from '@/assets/try/work5.png'
 const showMenus = ref(false);
 const input3 = ref("");
 const menuRef = ref(null);
+
+// 货架切换数据
+const activeShelf = ref(0);
+const shelfItems = ref(['第一排', '第二排', '第三排', '第四排', '第五排', '第六排',]);
 const ueResponseData = inject('ueResponseData')
 watch(ueResponseData, async (newVal, oldVal) => {
     if (newVal) {

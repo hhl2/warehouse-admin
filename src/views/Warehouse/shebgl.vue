@@ -116,6 +116,13 @@
 
 .sbglx_box {
     position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.sbglx_box:hover {
+    transform: translateY(-5px);
+    filter: brightness(1.1);
 }
 
 .sbglx_text {
@@ -157,14 +164,18 @@
     height: 138px;
 
 
+
 }
 
 .sbglx_boxs {
     flex: 1;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     align-content: space-evenly;
-    justify-content: space-evenly;
+    /* 关键：平分剩余的所有垂直空间 */
+    justify-items: center;
+    /* padding-top: 35px; */
+    /* 固定头部间距 */
 }
 
 .sbglx_boxs hr {
@@ -355,11 +366,11 @@
 <script setup>
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
-import { getDeviceList } from '@/api/user'
+import { getDeviceList, getCountOnlinSum, getParkWeatherStationList, getVideoPointList } from '@/api/user'
 
-import sb1 from '@/assets/shebei/智能设备.png';
-import sb2 from '@/assets/shebei/特种设备.png';
-import sb3 from '@/assets/shebei/安防设备.png';
+import sb2 from '@/assets/shebei/智能设备.png';
+import sb3 from '@/assets/shebei/特种设备.png';
+import sb1 from '@/assets/shebei/安防设备.png';
 import sb4 from '@/assets/shebei/巡更设备.png';
 import sb5 from '@/assets/shebei/环境设备.png';
 import sb6 from '@/assets/shebei/消防设备.png';
@@ -400,17 +411,17 @@ const MOCK_DEVICES = [
         status: '离线',
         quantity: '2'
     },
-    {
-        deviceCode: '64BC256336654588523369814CVT6',
-        deviceName: '输送带',
-        nextInspectionDate: '2025-10-20',
-        deviceType: '智能设备',
-        subDeviceType: '传输设备',
-        manufacturer: '传输设备厂',
-        modelSpec: 'SST-100',
-        status: '在线',
-        quantity: ''
-    }
+    // {
+    //     deviceCode: '64BC256336654588523369814CVT6',
+    //     deviceName: '输送带',
+    //     nextInspectionDate: '2025-10-20',
+    //     deviceType: '智能设备',
+    //     subDeviceType: '传输设备',
+    //     manufacturer: '传输设备厂',
+    //     modelSpec: 'SST-100',
+    //     status: '在线',
+    //     quantity: ''
+    // }
 ];
 
 const source = ref(MOCK_DEVICES);
@@ -421,6 +432,65 @@ const props = defineProps({
 });
 
 const input3 = ref('');
+
+const fetchCountOnlinSums = () => {
+    // 图标数组
+    const icons = [sb1, sb2, sb3, sb4, sb5, sb6, sb7, sb8];
+
+    // 模拟数据测试（根据用户要求添加）
+    const mockRes = {
+        code: "0",
+        data: {
+            sum: [{
+                "安防设备": "0/20",
+                "智能设备": "0/20",
+                "能耗设备": "0/2",
+                "园区设备": "4/20",
+                "建筑设备": "1/20",
+                "环境设备": "0/16"
+            }]
+        }
+    };
+
+    if (mockRes.code == "0" && mockRes.data.sum && mockRes.data.sum.length > 0) {
+        const sumData = mockRes.data.sum[0];
+        const newSorces = [];
+
+        Object.keys(sumData).forEach((key, index) => {
+            newSorces.push({
+                text: key,
+                num: sumData[key],
+                icon: icons[index] || icons[0] // 按顺序分配图标
+            });
+        });
+
+        sorces.value = newSorces;
+        return; // 测试时直接返回，不走接口
+    }
+
+    getCountOnlinSum({}).then(res => {
+        if (res.code == 0) {
+            if (res.data && res.data.sum && res.data.sum.length > 0) {
+                const sumData = res.data.sum[0];
+                const newSorces = [];
+
+                Object.keys(sumData).forEach((key, index) => {
+                    newSorces.push({
+                        text: key,
+                        num: sumData[key],
+                        icon: icons[index] || icons[0] // 按顺序分配图标
+                    });
+                });
+
+                sorces.value = newSorces;
+            }
+        } else {
+            console.error(res.msg || '获取设备统计失败');
+        }
+    }).catch(error => {
+        console.error('获取设备统计失败:', error);
+    });
+}
 
 // API 请求函数
 const queryManageLists = () => {
@@ -457,7 +527,7 @@ const handleAlertReset = () => {
     queryManageLists();
 };
 
-const sorces = [
+const sorces = ref([
     { text: '智能设备', num: "7/34", icon: sb1 },
     { text: '特种设备', num: "0/2", icon: sb2 },
     { text: '安防设备', num: "2/15", icon: sb3 },
@@ -466,10 +536,11 @@ const sorces = [
     { text: '消防设备', num: "0/21", icon: sb6 },
     // { text: '工具器设备', num: "0/1", icon: sb7 },
     // { text: '计量设备', num: "0/1", icon: sb8 }
-];
+]);
 
 onMounted(() => {
     queryManageLists();
+    fetchCountOnlinSums();
 });
 
 onUnmounted(() => {

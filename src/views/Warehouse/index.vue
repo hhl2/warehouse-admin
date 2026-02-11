@@ -91,8 +91,8 @@
 /* 核心导航按钮样式 */
 .nav-button-item {
     position: relative;
-    width: 138px;
-    height: 32px;
+    width: 130px;
+    height: 30px;
     margin-left: -20px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
@@ -396,7 +396,7 @@
 
 .menu_boxs {
     position: fixed;
-    top: 30px;
+    top: 22px;
     z-index: 999;
     width: 100%;
     background-size: 100% 100%;
@@ -568,8 +568,27 @@ const changelist = (item) => {
     changli.value = item.id;
     // 如果是id为4，打开新窗口
     if (item.id == 4) {
-        console.log('打开新窗口')
+        // console.log('打开新窗口')
         // window.open('http://localhost:8082/#/', '_blank');
+        // return;
+        // const data2 = {
+
+        //     "code": 1,
+        //     "type": "agv",
+        //     "data": [
+        //         {
+        //             "id": 1
+        //         },
+        //         {
+        //             "id": 2
+        //         },
+        //         {
+        //             "id": 3
+        //         }
+        //     ]
+        // }
+        // console.log(data2)
+        // callParentMethod(data2);
         return;
     }
 

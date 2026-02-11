@@ -312,7 +312,7 @@ onUnmounted(() => {
 }
 
 .sblf {
-    margin: 10px 15px;
+    margin: 10px 15px 0px 15px;
     display: flex;
     justify-content: space-between;
 }

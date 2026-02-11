@@ -3,10 +3,11 @@
         <div class="testmian">
             <div class="changewidth">
                 <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-button type="primary" class="search-btn" @click="fetchDevices">查询</el-button>
             </div>
             <div class="changleft">
                 <!-- 告警编号、告警类型、告警等级、告警内容、告警时间、告警处理过程、告警处理结果 -->
-                 <!-- warnCode：告警编号、warnType：告警类型、alarmLevel：告警等级、alarmInfo：告警内容、watchTime：告警时间、alarmPrecess：告警处理过程、warnResult：告警处理结果 -->
+                <!-- warnCode：告警编号、warnType：告警类型、alarmLevel：告警等级、alarmInfo：告警内容、watchTime：告警时间、alarmPrecess：告警处理过程、warnResult：告警处理结果 -->
                 <el-table class="my-spacing-table" ref="tableRef" :data="warnData">
                     <el-table-column prop="warnCode" label="告警编号" show-overflow-tooltip />
                     <el-table-column prop="warnType" label="告警类型" />
@@ -15,33 +16,6 @@
                     <el-table-column prop="watchTime" label="告警时间" show-overflow-tooltip />
                     <el-table-column prop="alarmPrecess" label="告警处理过程" show-overflow-tooltip />
                     <el-table-column prop="warnResult" label="告警处理结果" show-overflow-tooltip />
-                    
-                    <!-- <el-table-column prop="countNams6" label="状态" width="60">
-                        <template #default="scope">
-                            <span :class="[scope.row.countNums6 === '在线' ? 'status-normal' : '.status-important']">
-                                {{ scope.row.countNums6 === '在线' ? '在线' : '离线' }}
-                            </span>
-                        </template>
-                    </el-table-column>
-
-                    <el-table-column prop="" label="告警等级">
-                        <template #default="scope">
-                            <span :class="['status-badge', statusClassMap[scope.row.countNums7]]">
-                                {{ scope.row.countNums7 }}
-                            </span>
-                        </template>
-                    </el-table-column>
-
-                    <el-table-column prop="" label="告警信息" show-overflow-tooltip>
-                        <template #default="scope">
-                            <span :class="['status-badge', statusClassMaps[scope.row.type]]">
-                                {{ scope.row.countNums8 }}
-                            </span>
-                        </template>
-                    </el-table-column> -->
-
-
-
                 </el-table>
 
             </div>
@@ -57,10 +31,11 @@
         <div class="txzybox">
             <div class="chartBox">
                 <div class="chartBoxs">
-                    <div class="echartp" ref="chartDom1"></div>
-
-                    <div class="chart_sum">
-                        <div class="chart_snumber">{{ alertData.total }}</div>
+                    <div class="echartp">
+                        <div class="echart_pwidth" ref="chartDom1"></div>
+                        <div class="chart_sum">
+                            <div class="chart_snumber">{{ formatNumber(alertData.total) }}</div>
+                        </div>
                     </div>
                 </div>
 
@@ -73,7 +48,7 @@
 
                     <div class="txzyimg">
                         <img src="@/assets/tubiao.png" alt="">
-                        <div class="txzyimg_text">  {{alertData.items[2].value}}</div>
+                        <div class="txzyimg_text"> {{ formatNumber(alertData.items[2].value) }}</div>
                     </div>
                     <div class="txzy_text">一般告警</div>
                 </div>
@@ -84,7 +59,7 @@
 
                     <div class="txzyimg">
                         <img src="@/assets/tubiao2.png" alt="">
-                        <div class="txzyimg_text green_label">{{alertData.items[1].value}}</div>
+                        <div class="txzyimg_text green_label">{{ formatNumber(alertData.items[1].value) }}</div>
                     </div>
                     <div class="txzy_text">重要告警</div>
                 </div>
@@ -93,7 +68,7 @@
                 <div class="txzyList_box">
                     <div class="txzyimg">
                         <img src="@/assets/tubiao1.png" alt="">
-                        <div class="txzyimg_text yellow_label">{{alertData.items[0].value}}</div>
+                        <div class="txzyimg_text yellow_label">{{ formatNumber(alertData.items[0].value) }}</div>
                     </div>
                     <div class="txzy_text">紧急告警</div>
                 </div>
@@ -181,6 +156,18 @@
 </template>
 
 <style scoped>
+.search-btn {
+    height: 32px;
+    background: #10A8FD;
+    border: none;
+    color: #fff;
+    padding: 0 15px;
+    margin-left: 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
 .status-normal {
     color: #8AFC67;
 
@@ -290,14 +277,16 @@
     width: 115px;
     height: 115px;
     position: absolute;
-    left: 35px;
-    top: 36px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     background: #193F8E;
-    z-index: 9999;
+    z-index: 10;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 .chart_snumber {
@@ -396,6 +385,17 @@
     height: 182px;
     border: 2px dashed #2DA9C0;
     border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.echart_pwidth {
+    width: 100%;
+    height: 100%;
 }
 
 .chartref {
@@ -418,7 +418,7 @@ const props = defineProps({
     },
 
 })
-import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
+import { reactive, ref, inject, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts';
 import request from '@/utils/request'
 
@@ -426,6 +426,14 @@ import request from '@/utils/request'
 import {
     querySecurityAlarmCount
 } from '@/api/user';
+
+const input3 = ref('')
+
+const formatNumber = (val) => {
+    if (val == null || val === '') return '0';
+    const num = parseFloat(val);
+    return isNaN(num) ? val : (Math.floor(num) === num ? num.toString() : num.toFixed(2));
+};
 
 const alertData = reactive({
     total: 17,
@@ -435,7 +443,7 @@ const alertData = reactive({
         { label: '一般告警', value: 5, unit: '个', color: 'green', key: 'normal' }
     ]
 });
-const warnCode =ref('');
+const warnCode = ref('');
 
 const fetchSecurityAlarm = async () => {
     try {
@@ -454,18 +462,19 @@ const queryWarnListPagination = async () => {
         const res = await request({
             url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnListPagination',
             method: 'post',
-            data: {  "warnCode":warnCode.value,"watchTime":""
+            data: {
+                "warnCode": warnCode.value, "watchTime": ""
             },
             skipGlobalParams: true
         });
-        if(res.code==0){
-            warnData.value=res.data?.list || [];
+        if (res.code == 0) {
+            warnData.value = res.data?.list || [];
 
-        }else{
-            warnData.value=[]
+        } else {
+            warnData.value = []
 
         }
-        
+
         // visitordata.value=response.data.data.list
     } catch (error) {
         console.error('获取监控点列表失败:', error);
@@ -476,8 +485,9 @@ const queryWarnGroupCount = async () => {
         const response = await request({
             url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnGroupCount',
             method: 'post',
-            data: {   "startDate":"2025-01-01 00:00:00",
-   "endDate":"2026-01-30 23:59:59"
+            data: {
+                "startDate": "2025-01-01 00:00:00",
+                "endDate": "2026-01-30 23:59:59"
             },
             skipGlobalParams: true
         });
@@ -726,7 +736,7 @@ watch(ueResponseData, async (newVal, oldVal) => {
 })
 
 const warnData = ref([
-    ]) 
+])
 
 const toggleActive = (selected) => {
     isactive.value = selected
@@ -750,17 +760,22 @@ const initChart2 = () => {
 
     const option = {
         tooltip: {
-            trigger: 'item'
+            trigger: 'item',
+            confine: true,
+            extraCssText: 'z-index: 10000;',
+            formatter: (params) => {
+                return `${params.marker}${params.name || '数值'}: ${formatNumber(params.value)}`;
+            }
         },
         legend: {
-            top: '5%',
-            left: 'center'
+            show: false
         },
         series: [
             {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,
@@ -772,9 +787,7 @@ const initChart2 = () => {
                 },
                 emphasis: {
                     label: {
-                        show: true,
-                        fontSize: 40,
-                        fontWeight: 'bold'
+                        show: false
                     }
                 },
                 labelLine: {
@@ -782,19 +795,19 @@ const initChart2 = () => {
                 },
                 data: [
                     {
-                        value: fireData.items[0].value, name: '',
+                        value: alertData.items[0].value, name: alertData.items[0].label,
                         itemStyle: {
                             color: '#42FFF9'
                         }
                     },
                     {
-                        value: fireData.items[1].value, name: '',
+                        value: alertData.items[1].value, name: alertData.items[1].label,
                         itemStyle: {
                             color: '#F0B716'
                         }
                     },
                     {
-                        value: fireData.items[2].value, name: '',
+                        value: alertData.items[2].value, name: alertData.items[2].label,
                         itemStyle: {
                             color: '#16B4F0'
                         }
@@ -807,20 +820,12 @@ const initChart2 = () => {
     myChart1.setOption(option);
 }
 const handleResize = () => {
-
-    if (myChart1) {
-        myChart1.resize();
-    }
-    if (trendChart) {
-        trendChart.resize();
-    }
-    if (trendChart1) {
-        trendChart1.resize();
-    }
-    if (trendChart2) {
-        trendChart2.resize();
-    }
-
+    nextTick(() => {
+        if (myChart1) myChart1.resize();
+        if (trendChart) trendChart.resize();
+        if (trendChart1) trendChart1.resize();
+        if (trendChart2) trendChart2.resize();
+    });
 };
 
 const fireData = reactive({
@@ -865,6 +870,12 @@ onMounted(() => {
     document.addEventListener('webkitfullscreenchange', handleResize);
     document.addEventListener("click", handleClickOutside);
 
+});
+
+// 监听面板显隐状态，触发图表自适应重绘
+watch(() => props.isPanelVisible, () => {
+    // 延迟约 300ms，等待侧边栏过渡动画彻底结束后再刷新图表尺寸
+    setTimeout(handleResize, 310);
 });
 
 onUnmounted(() => {

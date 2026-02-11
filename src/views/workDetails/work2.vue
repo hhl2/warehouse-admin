@@ -21,7 +21,7 @@
                             <div class="jcard__units">{{ item.unit }}</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                                }}</div>
+                            }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -47,7 +47,7 @@
                             <div class="jcard__units">{{ item.unit }}</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                                }}</div>
+                            }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -245,12 +245,16 @@
     border: 2px dashed #2DA9C0;
     border-radius: 50%;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .echartp .chartpwidth {
-    width: 140px;
-    height: 140px;
-
+    width: 100%;
+    height: 100%;
 }
 
 .chart_text {
@@ -270,14 +274,16 @@
     width: 85px;
     height: 85px;
     position: absolute;
-    left: 28px;
-    top: 28px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     background: #193F8E;
-    z-index: 9999;
+    z-index: 10;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 .chart_snumber {
@@ -410,7 +416,7 @@ const props = defineProps({
 })
 
 import { Search } from '@element-plus/icons-vue'
-import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
+import { reactive, ref, inject, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts';
 const detectProgressStr = ref(55)
 const detectProgressStr2 = ref(70)
@@ -440,6 +446,7 @@ const initChart1 = () => {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,
@@ -499,6 +506,7 @@ const initChart2 = () => {
                 name: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
+                center: ['50%', '50%'],
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderWidth: 5,
@@ -556,14 +564,10 @@ const fireData = reactive({
 });
 
 const handleResize = () => {
-
-    if (myChart) {
-        myChart.resize();
-    }
-    if (myChart1) {
-        myChart1.resize();
-    }
-
+    nextTick(() => {
+        if (myChart) myChart.resize();
+        if (myChart1) myChart1.resize();
+    });
 };
 const data = ref([{
     countNums1: "RK001",
@@ -652,6 +656,12 @@ onMounted(() => {
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
     document.addEventListener('webkitfullscreenchange', handleResize);
+});
+
+// 监听面板显隐状态，触发图表自适应重绘
+watch(() => props.isPanelVisible, () => {
+    // 延迟约 300ms，等待侧边栏过渡动画彻底结束后再刷新图表尺寸
+    setTimeout(handleResize, 310);
 });
 
 onUnmounted(() => {
