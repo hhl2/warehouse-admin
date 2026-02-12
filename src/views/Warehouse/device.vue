@@ -366,21 +366,6 @@ onUnmounted(() => {
 
 }
 
-.search-btn {
-    height: 32px;
-    background: #10A8FD;
-    border: none;
-    color: #fff;
-    padding: 0 15px;
-    border-radius: 3px;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.search-btn:hover {
-    background: rgba(16, 168, 253, 0.8);
-    color: #fff;
-}
 
 .title_txet {
     font-size: 22px;

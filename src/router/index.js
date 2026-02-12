@@ -33,6 +33,7 @@ const work2 = () => import('@/views/workDetails/work2.vue')
 const work3 = () => import('@/views/workDetails/work3.vue')
 const work4 = () => import('@/views/workDetails/work4.vue')
 const work5 = () => import('@/views/workDetails/work5.vue')
+const trytext = () => import('@/views/trytext.vue')
 
 
 
@@ -54,6 +55,15 @@ const routes = [
     component: Try,
     name: 'Try',
 
+  },
+  {
+    path: "/trytext",
+    name: "trytext",
+    component: trytext,
+    meta: {
+      title: 'AGV模拟',
+      keepAlive: false
+    }
   },
   {
     path: "/",

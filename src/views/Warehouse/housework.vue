@@ -6,34 +6,14 @@
                 <div class="title_txet">指标概况</div>
             </div>
 
-            <div class="jcrwx">
-                <!-- <div class="jcrwx_box_li" :class="{ active: activeTab === 1 }" @click="switchTab(1)">
-                    <img :src="imageMap2[activeTab === 1 ? 'active' : 'default']" alt="">
-                    <div class="jcrwx_box_text">仓库作业</div>
-                </div> -->
-                <!-- 
-                <div class="jcrwx_box_li" :class="{ active: activeTab === 2 }" @click="switchTab(2)">
-                    <img :src="imageMap2[activeTab === 2 ? 'active' : 'default']" alt="">
-                    <div class="jcrwx_box_text">入园任务</div>
-                </div> -->
-            </div>
 
-            <!-- <div class="yySearch setyySearch">
-                <div class="yySearch_left changeyySearch_left">
-                    <div class="yylf_label yylf_color">统计周期</div>
-                    <el-select size="small" v-model="filterParams.period" placeholder="请选择">
-                        <el-option v-for="item in periodOptions" :key="item.value" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
+            <div class="changeTimeTypes">
+                <div class="custom-segmented-control">
+                    <div class="control-item" :class="{ 'active': timeType1 === 1 }" @click="timeType1 = 1">月</div>
+                    <div class="control-item" :class="{ 'active': timeType1 === 2 }" @click="timeType1 = 2">季</div>
+                    <div class="control-item" :class="{ 'active': timeType1 === 3 }" @click="timeType1 = 3">年</div>
                 </div>
-                <div class="yySearch_left">
-                    <div class="yylf_label yylf_color">统计时间</div>
-                    <el-date-picker v-model="filterParams.date" type="date" placeholder="" size="small" />
-                </div>
-                <div class="yySearch_left">
-                    <div class="yylf_search_box" @click="handleSearch">查询</div>
-                </div>
-            </div> -->
+            </div>
 
             <div class="jcfx">
                 <div class="jcfx_box">
@@ -216,8 +196,10 @@ import {
 } from "@/api/user";
 
 
+const timeType1 = ref(1);
+
 const queryWarehouseStatusPaginations = () => {
-    queryWarehouseStatusPagination({ timeType: filterParams.period }).then(res => {
+    queryWarehouseStatusPagination({ timeType: timeType1.value }).then(res => {
         if (res && res.code == 0 && res.data) {
             overviewData.safetyBriefings = res.data.E10 || 0;
             overviewData.workPermits = res.data.AB01 || 0;
@@ -270,8 +252,6 @@ const props = defineProps({
 
 
 // 图片资源
-import jcrw from '@/assets/jcrw.png';
-import njcrw from '@/assets/njcrw.png';
 import gjrw from '@/assets/gjrw.png';
 import ngjrw from '@/assets/ngjrw.png';
 
@@ -283,15 +263,9 @@ let trendChart = null;
 let warehouseChart = null;
 
 // 响应式数据
-const activeTab = ref(1);
 const activeAlertTab = ref(1);
 const activeWorkType = ref(1);
 
-// 筛选参数
-const filterParams = reactive({
-    period: 1,
-    date: ''
-});
 
 const alertFilterParams = reactive({
     keyword: '',
@@ -300,12 +274,12 @@ const alertFilterParams = reactive({
     visitDate: ''
 });
 
-// 数据选项
-const periodOptions = [
-    { value: 1, label: '按月统计' },
-    { value: 2, label: '按季统计' },
-    { value: 3, label: '按年统计' }
-];
+// 响应式数据
+
+const imageMap3 = {
+    active: ngjrw,
+    default: gjrw
+};
 
 const businessTypeOptions = [
     { value: 'delivery', label: '供应商送货' },
@@ -317,29 +291,6 @@ const statusOptions = [
     { value: 'processing', label: '处理中' },
     { value: 'completed', label: '已完成' }
 ];
-
-// 操作按钮
-const actionButtons = [
-    //     { type: 'export', label: '导出', icon: exportIcon },
-    //     { type: 'call', label: '叫号', icon: callIcon },
-    //     { type: 'skip', label: '过号', icon: skipIcon },
-    //     { type: 'syncReservation', label: '同步预约单', icon: syncReservationIcon },
-    //     { type: 'confirm', label: '确认放行', icon: confirmIcon },
-    //     { type: 'syncRecord', label: '同步签到记录', icon: syncRecordIcon },
-    //     { type: 'signIn', label: '签到', icon: signInIcon },
-    //     { type: 'leave', label: '离园', icon: leaveIcon }
-];
-
-// 图片映射
-const imageMap2 = {
-    active: njcrw,
-    default: jcrw
-};
-
-const imageMap3 = {
-    active: ngjrw,
-    default: gjrw
-};
 
 // 模拟数据 - 实际项目中从接口获取
 const overviewData = reactive({
@@ -537,23 +488,10 @@ const initWarehouseChart = () => {
 };
 
 // 事件处理函数
-const switchTab = (tabId) => {
-    activeTab.value = tabId;
-    // 这里可以添加切换tab时的数据加载逻辑
-    loadTabData(tabId);
-};
-
 const switchAlertTab = (tabId) => {
     activeAlertTab.value = tabId;
     // 这里可以添加切换告警tab时的数据加载逻辑
     loadAlertTabData(tabId);
-};
-
-const handleSearch = () => {
-    // 处理查询逻辑
-    console.log('查询参数:', filterParams);
-    // 调用接口获取数据
-    loadData();
 };
 
 const handleAlertSearch = () => {
@@ -579,12 +517,6 @@ const handleAction = (actionType) => {
     // 处理操作按钮点击
     console.log('执行操作:', actionType);
     // 根据actionType执行相应的业务逻辑
-};
-
-// 数据加载函数
-const loadTabData = (tabId) => {
-    // 根据tabId加载对应的数据
-    console.log('加载tab数据:', tabId);
 };
 
 const loadAlertTabData = (tabId) => {
@@ -622,6 +554,10 @@ onMounted(() => {
     document.addEventListener('webkitfullscreenchange', handleResize);
 });
 
+watch(timeType1, () => {
+    queryWarehouseStatusPaginations();
+})
+
 // 监听面板显隐状态，触发图表自适应重绘
 watch(() => props.isPanelVisible, () => {
     // 延迟约 300ms，等待侧边栏过渡动画彻底结束后再刷新图表尺寸
@@ -646,6 +582,28 @@ onUnmounted(() => {
     width: 120px !important;
 }
 
+::v-deep(.yewuwidth.el-select--small) {
+    width: 88px !important;
+}
+
+::v-deep(.yewuwidth.el-date-editor.el-input,
+    .yewuwidth.el-date-editor.el-input__wrapper) {
+    width: 88px !important;
+}
+
+::v-deep(.el-input__inner) {
+    font-size: 14px !important;
+
+}
+
+
+
+.changeTimeTypes {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 20px 0px 0px;
+}
+
 /* 
 ::v-deep(.el-select--small .el-input__wrapper),
 ::v-deep(.el-select--small .el-select__wrapper),
@@ -654,9 +612,22 @@ onUnmounted(() => {
     height: 24px !important;
     line-height: 24px !important;
 } */
-::v-deep(.el-input__inner) {
-    font-size: 14px !important;
 
+/* 
+::v-deep(.el-table thead tr) {
+    background: #095DBE !important;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    font-size: 16px !important;
+    color: #04E9E9 !important;
+} */
+
+/* ::v-deep(.el-table th.el-table__cell) {
+    background-color: transparent !important;
+}
+
+::v-deep(.el-table tr) {
+    font-size: 15px !important;
 }
 
 ::v-deep(.el-select--small) {
@@ -666,16 +637,8 @@ onUnmounted(() => {
 ::v-deep(.el-date-editor.el-input,
     ::v-deep(.el-date-editor.el-input__wrapper)) {
     width: 115px;
-}
+} */
 
-::v-deep(.yewuwidth.el-select--small) {
-    width: 88px !important;
-}
-
-::v-deep(.yewuwidth.el-date-editor.el-input,
-    .yewuwidth.el-date-editor.el-input__wrapper) {
-    width: 88px !important;
-}
 
 
 
@@ -851,18 +814,11 @@ onUnmounted(() => {
     margin-top: 10px;
 }
 
-.setyySearch {
-    margin: 0px 15px;
 
-}
 
 .yySearch_left {
     display: flex;
     align-items: center;
-    margin-left: 5px;
-}
-
-.changeyySearch_left {
     margin-left: 5px;
 }
 
@@ -972,30 +928,6 @@ onUnmounted(() => {
     color: #C1E6FC;
 }
 
-.jcrwx {
-    display: flex;
-    cursor: pointer;
-    margin: 5px 10px;
-}
-
-.jcrwx .jcrwx_box_li {
-    position: relative;
-}
-
-.jcrwx .jcrwx_box_li img {
-    width: 100%;
-    height: 50px;
-}
-
-.jcrwx .jcrwx_box_li .jcrwx_box_text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-48%, -54%);
-    width: 75px;
-    font-size: 18px;
-    color: #C1E6FC;
-}
 
 .title_txet {
     font-size: 20px;
@@ -1089,12 +1021,5 @@ onUnmounted(() => {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-}
-
-.yylf_color {
-    font-family: Microsoft YaHei;
-    font-weight: 400;
-    font-size: 16px;
-    color: #04E9E9 !important;
 }
 </style>

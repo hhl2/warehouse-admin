@@ -174,8 +174,6 @@
     align-content: space-evenly;
     /* 关键：平分剩余的所有垂直空间 */
     justify-items: center;
-    /* padding-top: 35px; */
-    /* 固定头部间距 */
 }
 
 .sbglx_boxs hr {
@@ -205,7 +203,7 @@
 }
 
 .sblf {
-    margin: 10px 15px;
+    margin: 10px 15px 0px 15px;
     display: flex;
     justify-content: space-between;
 }
@@ -274,10 +272,6 @@
     padding: 5px 8px;
     background: #095DBE;
     color: #04E9E9;
-    /* background-color: rgba(93, 146, 237, 0.7); */
-    /* color: #54B1FC; */
-    /* background: #274A9D; */
-    /* color: #65D0F2; */
     font-size: 16px;
     justify-content: space-between;
     margin-bottom: 5px;
@@ -298,10 +292,7 @@
 .sb_box_label2 {
     display: flex;
     padding: 5px 8px;
-    /* background: #557FA4;
-    color: #DFF3FA; */
     background-color: rgba(9, 93, 190, 0.6);
-    /* background-color: rgba(116, 154, 205, 0.7); */
     color: #DFF3FA;
     font-size: 16px;
     justify-content: space-between;
@@ -324,21 +315,6 @@
     gap: 8px;
 }
 
-.search-btn {
-    height: 32px;
-    background: #10A8FD;
-    border: none;
-    color: #fff;
-    padding: 0 15px;
-    border-radius: 3px;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.search-btn:hover {
-    background: rgba(16, 168, 253, 0.8);
-    color: #fff;
-}
 
 .inputwidth {
     width: 203px;
@@ -365,8 +341,8 @@
 
 <script setup>
 import { Search } from '@element-plus/icons-vue'
-import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
-import { getDeviceList, getCountOnlinSum, getParkWeatherStationList, getVideoPointList } from '@/api/user'
+import { onMounted, ref } from 'vue'
+import { getDeviceList } from '@/api/user'
 
 import sb2 from '@/assets/shebei/智能设备.png';
 import sb3 from '@/assets/shebei/特种设备.png';
@@ -411,17 +387,17 @@ const MOCK_DEVICES = [
         status: '离线',
         quantity: '2'
     },
-    // {
-    //     deviceCode: '64BC256336654588523369814CVT6',
-    //     deviceName: '输送带',
-    //     nextInspectionDate: '2025-10-20',
-    //     deviceType: '智能设备',
-    //     subDeviceType: '传输设备',
-    //     manufacturer: '传输设备厂',
-    //     modelSpec: 'SST-100',
-    //     status: '在线',
-    //     quantity: ''
-    // }
+    {
+        deviceCode: '64BC256336654588523369814CVT6',
+        deviceName: '输送带',
+        nextInspectionDate: '2025-10-20',
+        deviceType: '智能设备',
+        subDeviceType: '传输设备',
+        manufacturer: '传输设备厂',
+        modelSpec: 'SST-100',
+        status: '在线',
+        quantity: ''
+    }
 ];
 
 const source = ref(MOCK_DEVICES);
@@ -467,29 +443,6 @@ const fetchCountOnlinSums = () => {
         sorces.value = newSorces;
         return; // 测试时直接返回，不走接口
     }
-
-    getCountOnlinSum({}).then(res => {
-        if (res.code == 0) {
-            if (res.data && res.data.sum && res.data.sum.length > 0) {
-                const sumData = res.data.sum[0];
-                const newSorces = [];
-
-                Object.keys(sumData).forEach((key, index) => {
-                    newSorces.push({
-                        text: key,
-                        num: sumData[key],
-                        icon: icons[index] || icons[0] // 按顺序分配图标
-                    });
-                });
-
-                sorces.value = newSorces;
-            }
-        } else {
-            console.error(res.msg || '获取设备统计失败');
-        }
-    }).catch(error => {
-        console.error('获取设备统计失败:', error);
-    });
 }
 
 // API 请求函数
@@ -543,9 +496,6 @@ onMounted(() => {
     fetchCountOnlinSums();
 });
 
-onUnmounted(() => {
-    // 清理资源
-});
 
 
 </script>

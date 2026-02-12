@@ -2,10 +2,10 @@
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable />
+                <el-button type="primary" class="search-btn">查询</el-button>
             </div>
             <div class="changleft">
-
                 <el-table class="my-spacing-table" ref="tableRef" :data="data">
                     <el-table-column prop="countNums1" label="装卸区域" show-overflow-tooltip />
                     <el-table-column prop="countNums2" label="作业车辆" />
@@ -270,10 +270,6 @@
     width: 240px;
 }
 
-.changewidth {
-    margin: 5px 15px 10px 10px;
-
-}
 
 .changleft {
     margin-left: 10px;

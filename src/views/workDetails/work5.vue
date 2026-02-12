@@ -141,10 +141,6 @@
 
 
 
-.changewidth {
-    margin: 5px 15px 10px 10px;
-
-}
 
 .inputwidth {
     width: 240px;

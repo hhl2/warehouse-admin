@@ -60,23 +60,6 @@
     width: 240px;
 }
 
-.changewidth {
-    margin: 5px 15px 10px 10px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.search-btn {
-    height: 32px;
-    background: #10A8FD;
-    border: none;
-    color: #fff;
-    padding: 0 15px;
-    border-radius: 3px;
-    font-weight: bold;
-    font-size: 16px;
-}
 
 .search-btn:hover {
     background: rgba(16, 168, 253, 0.8);
@@ -90,12 +73,6 @@
 .context-menu {
     width: 584px;
     height: 246px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: url("@/assets/try/图层弹窗.png") no-repeat 0 0;
-    background-size: 100% 100%;
     z-index: 999;
 }
 

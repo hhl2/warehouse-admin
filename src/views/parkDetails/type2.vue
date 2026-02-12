@@ -108,27 +108,6 @@
 }
 
 
-.changewidth {
-    margin: 5px 15px 10px 10px;
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
-
-.search-btn {
-    height: 32px;
-    background: #10A8FD;
-    border: none;
-    color: #fff;
-    padding: 0 15px;
-    font-size: 16px;
-}
-
-.search-btn:hover {
-    background: rgba(0, 168, 255, 0.4);
-    border-color: #00eaff;
-    color: #fff;
-}
 
 .changleft {
     margin-left: 10px;

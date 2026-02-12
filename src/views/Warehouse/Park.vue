@@ -1,7 +1,4 @@
 <template>
-
-
-
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
@@ -9,7 +6,6 @@
             <div class="View_Details_tag" @click="changelist('type1')">查看详情</div>
         </div>
         <div class="parck_left">
-
             <div v-for="item in environmentData" :key="item.label" class="gjbox">
                 <img :src="item.icon" alt="">
                 <div class="gjlalel">{{ item.label }}</div>
@@ -145,7 +141,7 @@
             <div class="echartp changchart">
                 <div class="echart_pwidth" ref="chartDom3"></div>
                 <div class=" chart_sum">
-                    <div class="chart_snumber changeSize">{{ formatNumber(loadingData.percentage) }}</div>
+                    <div class="chart_snumber">{{ formatNumber(loadingData.percentage) }}</div>
                 </div>
             </div>
             <div class="right_numbers">
@@ -170,7 +166,7 @@
             <div class="echartp changchart">
                 <div class="echart_pwidth" ref="chartDom4"></div>
                 <div class=" chart_sum">
-                    <div class="chart_snumber changeSize">{{ formatNumber(yardData.percentage) }}</div>
+                    <div class="chart_snumber">{{ formatNumber(yardData.percentage) }}</div>
                 </div>
             </div>
             <div class="right_numbers">
@@ -743,9 +739,6 @@ onUnmounted(() => {
     color: transparent;
 }
 
-.changeSize {
-    /* font-size: 30px !important; */
-}
 
 
 
@@ -897,11 +890,6 @@ onUnmounted(() => {
     color: #76CBFB;
 }
 
-.jcard__numberx {
-    font-size: 30px;
-    color: #FFFFFF;
-
-}
 
 
 .jcard__numbers {

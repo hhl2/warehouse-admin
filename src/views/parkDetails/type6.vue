@@ -165,21 +165,6 @@
     align-items: center;
 }
 
-.search-btn {
-    height: 32px;
-    background: #10A8FD;
-    border: none;
-    color: #fff;
-    padding: 0 15px;
-    border-radius: 3px;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.search-btn:hover {
-    background: rgba(16, 168, 253, 0.8);
-    color: #fff;
-}
 
 
 
@@ -231,12 +216,6 @@
 
 }
 
-.changewidth {
-    margin: 5px 15px 10px 10px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
 
 .changleft {
     margin-left: 10px;
