@@ -1,8 +1,15 @@
 import request from '@/utils/request';
 
 
+//人员监测指标接口
 
-
+export const getSignInRecordInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/signInRecord/getSignInRecordInfo',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
 //设备管理(获取安防设备列表)
 export const getVideoPointList = (data) =>
   request({

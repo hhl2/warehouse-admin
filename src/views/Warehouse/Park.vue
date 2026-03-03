@@ -43,7 +43,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                                }}</div>
+                            }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -71,7 +71,7 @@
                             <div class="jcard__units">个</div>
                             <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
                                 item.value
-                                }}</div>
+                            }}</div>
                         </div>
                     </div>
                     <div class="jcard__values">{{ item.label }}</div>
@@ -118,7 +118,7 @@
                     <img src="@/assets/图标8.png" alt="">
                     <div class="jcrys_lalel">当前在园人数</div>
                     <div class="jcrys__value">
-                        <span class="jcrys__number">{{ personnelData.current }}</span>
+                        <span class="jcrys__number">{{ personnelData.cumulativelyUser }}</span>
                         <span class="jcrys__unit">人</span>
                     </div>
                 </div>
@@ -195,7 +195,8 @@ import {
     queryEnergyNumCount,
     queryMonitoringCount,
     queryEnvironmentCount,
-    querySecurityAlarmCount
+    querySecurityAlarmCount,
+    getSignInRecordInfo
 } from '@/api/user';
 
 // --- Constants & Config ---
@@ -267,7 +268,7 @@ const alertData = reactive({
 });
 
 const personnelData = reactive({
-    current: 0,
+    cumulativelyUser: 0,
     stats: [
         { label: '今日累计入园人数', value: 0, key: 'todayTotal' },
         { label: '今日累计入园任务量', value: 0, key: 'todayTasks' },
@@ -400,12 +401,13 @@ const renderAllCharts = () => {
 const loadData = async () => {
     try {
         await Promise.allSettled([
-            // fetchWeather(),
-            // fetchEnergy(),
-            // fetchMonitoring(),
-            // fetchSecurityAlarm(),
-            // fetchYardRate(),
-            // fetchEnvironment()
+            fetchWeather(),
+            fetchEnergy(),
+            fetchMonitoring(),
+            fetchSecurityAlarm(),
+            fetchYardRate(),
+            fetchEnvironment(),
+            getSignInRecordInfos(),
         ]);
     } catch (err) {
         console.error('Data refreshing failed, showing existing data.', err);
@@ -541,6 +543,25 @@ const fetchYardRate = async () => {
         yardData.items.map(i => i.label)
     ));
 };
+
+const getSignInRecordInfos = async () => {
+    try {
+
+        const res = await getSignInRecordInfo();
+
+        if (res.code == 0) {
+
+            personnelData.cumulativelyUser = res.data.cumulativelyUser;
+            personnelData.stats[0].value = res.data.cumulativelyUser;  // 今日累计入园人数
+            personnelData.stats[1].value = res.data.cumulativelyTask;  // 今日累计入园任务量
+            personnelData.stats[2].value = res.data.onlineTask;        // 当前在园任务量
+
+        }
+
+    } catch (e) {
+        console.warn("SignIn API failed")
+    }
+}
 
 // --- Lifecycle ---
 const handleResize = () => {

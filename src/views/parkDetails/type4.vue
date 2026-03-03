@@ -3,8 +3,8 @@
         <div class="testmian">
             <div class="changewidth">
                 <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
-                    @keyup.enter="fetchDevices" />
-                <el-button type="primary" class="search-btn" @click="fetchDevices">查询</el-button>
+                    @keyup.enter="fetchDevices2" />
+                <el-button type="primary" class="search-btn" @click="fetchDevices2">查询</el-button>
             </div>
             <div class="device-table-wrapper">
                 <el-table class="device-custom-table" ref="tableRef" :data="data" height="100%">
@@ -197,10 +197,16 @@ const ALARM_STATUS_MAP = {
     '一般告警': 'status-urgent'
 };
 
+const deviceType = {
+    1: '烟雾传感器',
+    2: '水侵传感器',
+    3: '火灾报警器'
+}
+
 const MOCK_DATA = [
-    { deviceName: "烟感#1", deviceType: "消防检测", countNums3: "大厅1号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 2 },
-    { deviceName: "烟感#2", deviceType: "消防检测", countNums3: "大厅2号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 1 },
-    { deviceName: "烟感#3", deviceType: "消防检测", countNums3: "大厅3号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "一般告警", countNums8: "烟雾浓度每米>3%", type: 1 }
+    { deviceName: "烟感#1", deviceType: "烟雾传感器", countNums3: "大厅1号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 2 },
+    { deviceName: "烟感#2", deviceType: "烟雾传感器", countNums3: "大厅2号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 1 },
+    { deviceName: "烟感#3", deviceType: "烟雾传感器", countNums3: "大厅3号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "一般告警", countNums8: "烟雾浓度每米>3%", type: 1 }
 ];
 
 const MOCK_DATA2 = [
@@ -237,6 +243,12 @@ const fetchDevices = async () => {
         if (res?.code === '0' && res.data?.list?.length > 0) {
 
             data2.value = res.data.list;
+            data2.value.forEach(item => {
+                item.deviceType = deviceType[item.deviceType] || item.deviceType;
+                //0=开启；1=关闭
+                item.runStatus = item.runStatus == 1 ? '关闭' : '开启';
+            })
+
 
         }
     } catch (error) {
@@ -259,7 +271,11 @@ const fetchDevices2 = async () => {
 
         if (res?.code === '0' && res.data?.list?.length > 0) {
 
-            data.value = res.data.list;
+            data.value.forEach(item => {
+                item.deviceType = deviceType[item.deviceType] || item.deviceType;
+                //0=开启；1=关闭
+                item.runStatus = item.runStatus == 1 ? '关闭' : '开启';
+            })
         }
     } catch (error) {
         console.error('环境设备列表请求失败:', error);
