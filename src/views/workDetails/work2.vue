@@ -139,11 +139,11 @@
 
 
         <div class="changleft">
-            <el-table class="my-spacing-table" ref="tableRef" :data="data">
-                <el-table-column prop="countNums1" label="单号" show-overflow-tooltip />
+            <el-table class="my-spacing-table" ref="tableRef" :data="fetchData2">
+                <el-table-column prop="receiptCode" label="单号" show-overflow-tooltip />
                 <el-table-column prop="countNums2" label="入库货位" />
-                <el-table-column prop="countNums3" label="开始时间" show-overflow-tooltip />
-                <el-table-column prop="countNums4" label="结束时间" />
+                <el-table-column prop="createTime" label="开始时间" show-overflow-tooltip />
+                <el-table-column prop="countNums3" label="结束时间" />
                 <el-table-column prop="countNums5" label="状态" width="60">
                 </el-table-column>
             </el-table>
@@ -156,11 +156,11 @@
         </div>
 
         <div class="changleft">
-            <el-table class="my-spacing-table" ref="tableRef" :data="data">
-                <el-table-column prop="countNums1" label="单号" show-overflow-tooltip />
+            <el-table class="my-spacing-table" ref="tableRef" :data="fetchData1">
+                <el-table-column prop="IssueCode" label="单号" show-overflow-tooltip />
                 <el-table-column prop="countNums2" label="入库货位" />
-                <el-table-column prop="countNums3" label="开始时间" show-overflow-tooltip />
-                <el-table-column prop="countNums4" label="结束时间" />
+                <el-table-column prop="createTime" label="开始时间" show-overflow-tooltip />
+                <el-table-column prop="countNums3" label="结束时间" />
                 <el-table-column prop="countNums5" label="状态" width="60">
                 </el-table-column>
             </el-table>
@@ -417,6 +417,13 @@ const props = defineProps({
 
 import { Search } from '@element-plus/icons-vue'
 import { reactive, ref, inject, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import {
+    queryIssueTaskInfoPagination,
+    queryReceiptTaskInfoPagination,
+    queryTaskStatisticInfo
+
+
+} from "@/api/user";
 import * as echarts from 'echarts';
 const detectProgressStr = ref(55)
 const detectProgressStr2 = ref(70)
@@ -549,17 +556,17 @@ const initChart2 = () => {
 
 
 const securityData = reactive({
-    total: 35,
+    total: 0,
     items: [
-        { label: '统计入库作业时长', value: 58, unit: '分钟', color: 'blue', key: 'online' },
-        { label: '入库货位', value: 41, unit: '个', color: 'yellow', key: 'offline' }
+        { label: '统计入库作业时长', value: 0, unit: '分钟', color: 'blue', key: 'online' },
+        { label: '入库货位', value: 0, unit: '个', color: 'yellow', key: 'offline' }
     ]
 });
 const fireData = reactive({
-    total: 35,
+    total: 0,
     items: [
-        { label: '统计出库作业时长', value: 71, unit: '分钟', color: 'blue', key: 'online' },
-        { label: '出库货位', value: 58, unit: '个', color: 'yellow', key: 'offline' }
+        { label: '统计出库作业时长', value: 0, unit: '分钟', color: 'blue', key: 'online' },
+        { label: '出库货位', value: 0, unit: '个', color: 'yellow', key: 'offline' }
     ]
 });
 
@@ -569,89 +576,242 @@ const handleResize = () => {
         if (myChart1) myChart1.resize();
     });
 };
-const data = ref([{
-    countNums1: "RK001",
+const fetchData1 = ref([{
+    receiptCode: "RK001",
     countNums2: "A001",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "完成",
 
 }, {
-    countNums1: "RK002",
+    receiptCode: "RK002",
     countNums2: "A002",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "完成",
 
 }, {
-    countNums1: "RK003",
+    receiptCode: "RK003",
     countNums2: "A003",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "完成",
 
 }, {
-    countNums1: "RK004",
+    receiptCode: "RK004",
     countNums2: "A004",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 }, {
-    countNums1: "RK005",
+    receiptCode: "RK005",
     countNums2: "A005",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 }, {
-    countNums1: "RK006",
+    receiptCode: "RK006",
     countNums2: "A006",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 }, {
-    countNums1: "RK007",
+    receiptCode: "RK007",
     countNums2: "A007",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 }, {
-    countNums1: "RK008",
+    receiptCode: "RK008",
     countNums2: "A008",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 }, {
-    countNums1: "RK009",
+    receiptCode: "RK009",
     countNums2: "A009",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 }, {
-    countNums1: "RK0010",
+    receiptCode: "RK0010",
     countNums2: "A010",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 }, {
-    countNums1: "RK0011",
+    receiptCode: "RK0011",
     countNums2: "A010",
     countNums3: "10:45",
-    countNums4: "10:49",
+    createTime: "10:49",
     countNums5: "",
 
 },])
+const fetchData2 = ref([{
+    receiptCode: "RK001",
+    countNums2: "A001",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "完成",
+
+}, {
+    receiptCode: "RK002",
+    countNums2: "A002",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "完成",
+
+}, {
+    receiptCode: "RK003",
+    countNums2: "A003",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "完成",
+
+}, {
+    receiptCode: "RK004",
+    countNums2: "A004",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+}, {
+    receiptCode: "RK005",
+    countNums2: "A005",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+}, {
+    receiptCode: "RK006",
+    countNums2: "A006",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+}, {
+    receiptCode: "RK007",
+    countNums2: "A007",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+}, {
+    receiptCode: "RK008",
+    countNums2: "A008",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+}, {
+    receiptCode: "RK009",
+    countNums2: "A009",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+}, {
+    receiptCode: "RK0010",
+    countNums2: "A010",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+}, {
+    receiptCode: "RK0011",
+    countNums2: "A010",
+    countNums3: "10:45",
+    createTime: "10:49",
+    countNums5: "",
+
+},])
+
+// 时间戳（毫秒）转格式化字符串
+const formatTimestamp = (ts) => {
+    if (!ts) return ''
+    const d = new Date(ts)
+    const pad = n => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
+const queryIssueTaskInfoPaginations=()=>{
+        queryIssueTaskInfoPagination({
+           "bureauCode": "0318",
+              "provinceCode": "03",
+        "warehouseCode": "0318080",
+        "warehouseId": "03180000020822"
+}).then(res => {
+        if (res?.code == 0) {
+            const list = (res?.data?.list || []).map(item => ({
+                ...item,
+                createTime: formatTimestamp(item.createTime)
+            }))
+            fetchData1.value = list 
+            }
+        }
+
+    ).catch(err => {
+        console.error('实时库存接口调用失败:', err);
+    })
+
+}
+const queryReceiptTaskInfoPaginations=()=>{
+        queryReceiptTaskInfoPagination({
+        "bureauCode": "0318",
+        "provinceCode": "03",
+        "warehouseCode": "0318080",
+        "warehouseId": "03180000020822"
+        }).then(res => {
+        if (res?.code == 0) {
+            const list = (res?.data?.list || []).map(item => ({
+                ...item,
+                createTime: formatTimestamp(item.createTime)
+            }))
+            fetchData2.value = list 
+            }
+        }
+
+    ).catch(err => {
+        console.error('实时库存接口调用失败:', err);
+    })
+
+}
+const queryTaskStatisticInfos=()=>{
+        queryTaskStatisticInfo({
+        "bureauCode": "0318",
+        "provinceCode": "03",
+        "warehouseCode": "0318080",
+        "warehouseId": "03180000020822"
+        }).then(res => {
+        if (res?.code == 0) {
+            const d = res.data[0] || {}
+            securityData.total = d.receiptTaskCount        // 入库任务数量
+            fireData.total = d.issueTaskCount              // 出库任务数量
+            securityData.items[1].value = d.receiptWarehouseCount  // 入库货位数量
+            fireData.items[1].value = d.issueWarehouseCount        // 出库货位数量
+            }
+        }
+
+    ).catch(err => {
+        console.error('实时库存接口调用失败:', err);
+    })
+
+}
 
 
 onMounted(() => {
     initChart1();
     initChart2();
+    queryIssueTaskInfoPaginations();
+    queryReceiptTaskInfoPaginations();
+    queryTaskStatisticInfos();
 
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);

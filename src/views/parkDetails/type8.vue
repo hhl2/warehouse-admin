@@ -12,7 +12,7 @@
                 </div>
                 <div class="biaodian_box">
                     <div class="biaodian_lable2 "></div>
-                    <div class="biaodian_text">空间</div>
+                    <div class="biaodian_text">空闲</div>
                 </div>
             </div>
 
@@ -107,14 +107,13 @@
 .biaodian_lable {
     width: 16px;
     height: 15px;
-    background: linear-gradient(0deg, #D09292, #C82270);
+    background-color: #518670;
 }
 
 .biaodian_lable2 {
     width: 16px;
     height: 15px;
-    background: linear-gradient(0deg, #43EA80, #38F8D4) !important;
-
+    background-color: #C56843;
 }
 
 

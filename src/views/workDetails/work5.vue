@@ -526,11 +526,11 @@ const activeCategorys = (index) => {
     activeCategory.value = index;
     const ckcode = ckcodeMap[index] || '';
     console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": index, "ckcode": ckcode } });
-    callParentMethod({ "code": 1, "type": "btn", "data": { "id": index, "ckcode": ckcode } });
+    callParentMethod({ "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
 }
 
 // 货架切换数据
-const activeShelf = ref(0);
+const activeShelf = ref();
 const shelfItems = ref(['第一排', '第二排', '第三排', '第四排', '第五排', '第六排','第七排','第八排','第九排','第十排']    );
 
 const activeShelfChange = (index) => {
@@ -550,7 +550,7 @@ const handleInventoryRowClick = (row) => {
 
 // 新增分类切换数据 (与搜索框同级)
 const activeCategory = ref(0);
-const categoryItems = ref(['轻载立库', '重载立库', '智能平库',]);
+const categoryItems = ref(['轻载立库', '重载立库', '四向车库',]);
 const ueResponseData = inject('ueResponseData')
 watch(ueResponseData, async (newVal, oldVal) => {
     if (newVal) {
@@ -774,7 +774,8 @@ const queryDistributionPictures = (id) => {
 
 const queryDistributionInfoPaginations = () => {
 
-    queryDistributionInfoPagination().then(res => {
+    queryDistributionInfoPagination({ "pageNo": 1,
+        "pageSize": 999,}).then(res => {
 
         // 因为 request.js 拦截器已经返回了 response.data，所以这里直接判断 res.code
         if (res?.code == 0) {

@@ -1,20 +1,44 @@
 import request from '@/utils/request';
-//获取出库的任务
+//作业票
+export const queryWarWorkArrangementListPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/warWorkArrangement/queryWarWorkArrangementListPagination',
+    method: 'post',
+    data
+  });
 
+
+
+//作业信息
+export const queryParkReservationListPaginations = (data) =>
+  request({
+    url: '/api/qydigital-park-service/parkReservation/queryParkReservationListPagination',
+    method: 'post',
+    data
+  });
+
+
+//作业推演结果统计
+export const queryTaskStatisticInfo = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryTaskStatisticInfo',
+    method: 'post',
+    data
+  });
+
+//获取出库的任务
 export const queryIssueTaskInfoPagination = (data) =>
   request({
     url: '/api/qydigital-park-service/queryLargeWarehouse/queryIssueTaskInfoPagination',
     method: 'post',
-    data,
-    skipGlobalParams: true
+    data
   });
 //获取入库的任务
 export const queryReceiptTaskInfoPagination = (data) =>
   request({
     url: '/api/qydigital-park-service/queryLargeWarehouse/queryReceiptTaskInfoPagination',
     method: 'post',
-    data,
-    skipGlobalParams: true
+    data
   });
 
 
@@ -22,8 +46,7 @@ export const queryWarnListPagination = (data) =>
   request({
     url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnListPagination',
     method: 'post',
-    data,
-    skipGlobalParams: true
+    data
   });
 
 
@@ -34,8 +57,7 @@ export const queryWorkArrangementCountByQY = (data) =>
   request({
     url: '/api/qydigital-park-service/qyQueryStorehouse/queryWorkArrangementCountByQY',
     method: 'post',
-    data,
-    skipGlobalParams: true
+    data
   });
 
 //告警设备统计
@@ -381,8 +403,7 @@ export const queryYardWarehouseRate = (data) =>
   request({
     url: '/api/qydigital-park-service/queryLargeWarehouse/queryYardWarehouseRate',
     method: 'post',
-    data,
-    skipGlobalParams: true
+    data
   });
 
 // 获取检测工位-工位信息

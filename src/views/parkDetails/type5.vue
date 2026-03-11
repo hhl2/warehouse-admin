@@ -424,7 +424,8 @@ import request from '@/utils/request';
 import {
     querySecurityAlarmCount,
     queryAlarmAddressNumCount,
-    queryAlarmDevicelNumCount
+    queryAlarmDevicelNumCount,
+    queryWarnListPagination
 } from '@/api/user';
 
 const input3 = ref('')

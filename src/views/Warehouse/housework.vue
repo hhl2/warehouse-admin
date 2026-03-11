@@ -34,9 +34,9 @@
             <div class="ckleft">
                 <div class="ckleft_label">
                     <div class="ckleft_title" :class="{ 'active_title': activeWorkType === 1 }"
-                        @click="activeWorkType = 1">仓库作业总量</div>
+                        @click="activeWorkType = 1">运行中仓库作业总数</div>
                     <div class="ckleft_title ckleftwz" :class="{ 'active_title': activeWorkType === 2 }"
-                        @click="activeWorkType = 2"> 已完成仓库作业总量</div>
+                        @click="activeWorkType = 2"> 完成仓库作业总数</div>
                 </div>
 
                 <div class="allBoxs">
@@ -45,12 +45,12 @@
                             <div class="echart_pwidth" ref="warehouseChartRef"></div>
                             <div class="chart_sum">
                                 <div class="chart_snumber changeSize" v-if="activeWorkType === 1">{{
-                                    warehouseData.AB12 }}</div>
-                                <div class="chart_snumber changeSize" v-if="activeWorkType === 2">{{
                                     warehouseData.AB11 }}</div>
+                                <div class="chart_snumber changeSize" v-if="activeWorkType === 2">{{
+                                    warehouseData.AB12 }}</div>
                             </div>
                         </div>
-                        <div class="allBoxs_left_text">{{ activeWorkType === 1 ? '仓库作业总量' : '仓库作业总量' }}</div>
+                        <div class="allBoxs_left_text">{{ activeWorkType === 1 ? '仓库作业总数' : '仓库作业总数' }}</div>
                     </div>
 
                     <div class="ck_number" v-if="activeWorkType === 1">
@@ -131,28 +131,51 @@
             </div>
 
             <div class="yySearch">
-                <el-input v-model="alertFilterParams.keyword" size="small" placeholder="请输入名称" :prefix-icon="Search" />
-                <div class="yySearch_left">
-                    <div class="yylf_label">业务类型</div>
-                    <el-select size="small" class="yewuwidth" v-model="alertFilterParams.businessType"
-                        placeholder="请选择">
-                        <el-option v-for="item in businessTypeOptions" :key="item.value" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </div>
-                <div class="yySearch_left">
-                    <div class="yylf_label">当前状态</div>
-                    <el-select size="small" class="yewuwidth" v-model="alertFilterParams.status" placeholder="请选择">
-                        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </div>
+                <el-input v-model="alertFilterParams.visitor" size="small" placeholder="请输入姓名" :prefix-icon="Search"
+                    clearable @clear="handleAlertSearch" @keyup.enter="handleAlertSearch" />
+                <template v-if="activeAlertTab === 1">
+                    <div class="yySearch_left">
+                        <div class="yylf_label">业务类型</div>
+                        <el-select size="small" class="yewuwidth" v-model="alertFilterParams.businessType"
+                            placeholder="请选择" @change="handleAlertSearch" clearable @clear="handleAlertSearch">
+                            <el-option v-for="item in businessTypeOptions" :key="item.value" :label="item.label"
+                                :value="item.value" />
+                        </el-select>
+                    </div>
+                    <div class="yySearch_left">
+                        <div class="yylf_label">当前状态</div>
+                        <el-select size="small" class="yewuwidth" v-model="alertFilterParams.status" placeholder="请选择"
+                            @change="handleAlertSearch" clearable @clear="handleAlertSearch">
+                            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label"
+                                :value="item.value" />
+                        </el-select>
+                    </div>
+                </template>
+                <template v-else-if="activeAlertTab === 3">
+                    <div class="yySearch_left">
+                        <div class="yylf_label">作业票类型</div>
+                        <el-select size="small" class="yewuwidth" v-model="alertFilterParams.ticketType"
+                            placeholder="请选择" @change="handleAlertSearch" clearable @clear="handleAlertSearch">
+                            <el-option v-for="item in ticketTypeOptions" :key="item.value" :label="item.label"
+                                :value="item.value" />
+                        </el-select>
+                    </div>
+                    <div class="yySearch_left">
+                        <div class="yylf_label">是否提交</div>
+                        <el-select size="small" class="yewuwidth" v-model="alertFilterParams.isSubmit" placeholder="请选择"
+                            @change="handleAlertSearch" clearable @clear="handleAlertSearch">
+                            <el-option v-for="item in isSubmitOptions" :key="item.value" :label="item.label"
+                                :value="item.value" />
+                        </el-select>
+                    </div>
+                </template>
             </div>
 
             <div class="yylf">
                 <div class="yylf_left">
-                    <div class="yylf_label">预约来访时间</div>
-                    <el-date-picker v-model="alertFilterParams.visitDate" type="date" placeholder="" size="small" />
+                    <div class="yylf_label">{{ activeAlertTab === 1 ? '预约开始时间' : '计划开始时间' }}</div>
+                    <el-date-picker v-model="alertFilterParams.visitDate" type="date" placeholder="" size="small"
+                        @change="handleAlertSearch" clearable @clear="handleAlertSearch" />
                 </div>
                 <div class="yylf_search">
                     <div class="yylf_search_box" @click="handleAlertSearch">查询</div>
@@ -160,31 +183,49 @@
                 </div>
             </div>
             <div class="change_table">
-                <el-table class="my-spacing-table" ref="tableRef" :data="tableData">
-                    <el-table-column prop="index" label="序号" width="40" />
-                    <el-table-column prop="reservationNo" label="预约号" width="100" show-overflow-tooltip>
-                        <template #default="scope">
-                            <span class="status-normal">{{ scope.row.reservationNo }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="businessType" label="业务类型" width="100" show-overflow-tooltip />
-                    <el-table-column prop="name" label="姓名" width="60" />
-                    <el-table-column prop="licensePlate" label="车牌号" width="100" show-overflow-tooltip>
-                        <template #default="scope">
-                            <span class="status-normal">{{ scope.row.licensePlate }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="loadingPoint" label="装卸点" width="60">
-                        <template #default="scope">
-                            <span class="status-normal2">{{ scope.row.loadingPoint }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="visitTime" label="预约来访时间" width="120" show-overflow-tooltip />
-                </el-table>
+                <transition name="fade" mode="out-in">
+                    <el-table class="my-spacing-table" ref="tableRef" :data="tableData" v-if="activeAlertTab === 1"
+                        v-loading="loading">
+                        <el-table-column prop="index" label="序号" width="60" />
+                        <el-table-column prop="reservationCode" label="预约号" width="100" show-overflow-tooltip>
+                            <template #default="scope">
+                                <span class="status-normal">{{ scope.row.reservationCode }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="billType" label="业务类型" width="100" show-overflow-tooltip />
+                        <el-table-column prop="visitor" label="姓名" width="60" />
+                        <el-table-column prop="carNumber" label="车牌号" width="100" show-overflow-tooltip>
+                            <template #default="scope">
+                                <span class="status-normal">{{ scope.row.carNumber }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="address" label="装卸点" width="60">
+                            <template #default="scope">
+                                <span class="status-normal2">{{ scope.row.address }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="startVisitDate" label="预约开始时间" width="120" show-overflow-tooltip />
+                    </el-table>
+
+                    <el-table class="my-spacing-table" ref="tableRef" :data="tableData" v-else-if="activeAlertTab === 3"
+                        v-loading="loading">
+                        <el-table-column prop="index" label="序号" width="60" />
+                        <el-table-column prop="arrangementCode" label="作业票编码" width="120" show-overflow-tooltip />
+                        <el-table-column prop="visitor" label="来访人" width="70" />
+                        <el-table-column prop="guardian" label="工作负责人" width="85" />
+                        <el-table-column prop="ticketType" label="作业票类型" width="85" />
+                        <el-table-column prop="teams" label="单位和班组" width="100" show-overflow-tooltip />
+                        <el-table-column prop="arriveTime" label="入园时间" width="100" show-overflow-tooltip />
+                        <el-table-column prop="startWorkPlanDate" label="计划开始时间" width="110" show-overflow-tooltip />
+                        <el-table-column prop="endWorkPlanDate" label="计划结束时间" width="110" show-overflow-tooltip />
+                        <el-table-column prop="billType" label="业务类型" width="80" show-overflow-tooltip />
+                        <el-table-column prop="isSubmit" label="当前状态" width="80" />
+                    </el-table>
+                </transition>
             </div>
         </div>
     </div>
-</template>
+</template> 
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, nextTick, watch } from 'vue';
@@ -192,14 +233,100 @@ import { Search } from '@element-plus/icons-vue';
 import * as echarts from 'echarts';
 import {
     queryWarehouseStatusPagination,
+    queryParkReservationListPaginations,
+    queryWarWorkArrangementListPagination
 
 } from "@/api/user";
 
 
-const timeType1 = ref(1);
+const warehouseCode = '0318080';
+const warehouseId = '03180000020822';
 
+const timeType1 = ref(1);
+const loading = ref(false);
+
+const queryParkReservationListPaginationsParams = () => {
+    loading.value = true;
+    queryParkReservationListPaginations({
+        visitor: alertFilterParams.visitor,
+        sendType: alertFilterParams.status, // 当前状态
+        billType: alertFilterParams.businessType, // 业务类型
+        pageNo: 1,
+        pageSize: 99,
+        warehouseCode,
+        warehouseId
+    }).then(res => {
+        if (res && res.code == 0 && res.data) {
+            // 格式化数据：时间戳转换和业务类型转换
+            const typeMap = {};
+            businessTypeOptions.forEach(opt => {
+                typeMap[opt.value] = opt.label;
+            });
+
+            tableData.value = (res.data.list || []).map((item, index) => {
+                return {
+                    ...item,
+                    index: index + 1,
+                    startVisitDate: item.startVisitDate ? formatDate(item.startVisitDate) : '',
+                    billType: typeMap[item.billType] || item.billType
+                };
+            });
+        }
+    }).finally(() => {
+        loading.value = false;
+    });
+};
+
+const queryWarWorkArrangementListPaginationsParams = () => {
+    loading.value = true;
+    queryWarWorkArrangementListPagination({
+        visitor: alertFilterParams.visitor,
+        isSubmit: alertFilterParams.isSubmit,
+        ticketType: alertFilterParams.ticketType,
+        pageNo: 1,
+        pageSize: 99,
+        warehouseCode,
+        warehouseId
+    }).then(res => {
+        if (res && res.code == 0 && res.data) {
+            const ticketMap = {};
+            ticketTypeOptions.forEach(opt => { ticketMap[opt.value] = opt.label; });
+            const submitMap = {};
+            isSubmitOptions.forEach(opt => { submitMap[opt.value] = opt.label; });
+            const bizMap = {};
+            businessTypeOptions.forEach(opt => { bizMap[opt.value] = opt.label; });
+
+            tableData.value = (res.data.list || []).map((item, index) => {
+                return {
+                    ...item,
+                    index: index + 1,
+                    ticketType: ticketMap[item.ticketType] || item.ticketType,
+                    isSubmit: submitMap[item.isSubmit] || item.isSubmit,
+                    billType: bizMap[item.billType] || item.billType,
+                    arriveTime: item.arriveTime ? formatDate(item.arriveTime) : '',
+                    startWorkPlanDate: item.startWorkPlanDate ? formatDate(item.startWorkPlanDate) : '',
+                    endWorkPlanDate: item.endWorkPlanDate ? formatDate(item.endWorkPlanDate) : ''
+                };
+            });
+        }
+    }).finally(() => {
+        loading.value = false;
+    });
+};
+
+// 辅助函数：格式化时间戳
+const formatDate = (timestamp) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+};
 const queryWarehouseStatusPaginations = () => {
-    queryWarehouseStatusPagination({ timeType: timeType1.value }).then(res => {
+    queryWarehouseStatusPagination({ timeType: timeType1.value, warehouseCode, warehouseId }).then(res => {
         if (res && res.code == 0 && res.data) {
             overviewData.safetyBriefings = res.data.E10 || 0;
             overviewData.workPermits = res.data.AB01 || 0;
@@ -271,10 +398,11 @@ const alertFilterParams = reactive({
     keyword: '',
     businessType: '',
     status: '',
-    visitDate: ''
+    visitDate: '',
+    visitor: "",
+    isSubmit: '',
+    ticketType: ''
 });
-
-// 响应式数据
 
 const imageMap3 = {
     active: ngjrw,
@@ -282,14 +410,37 @@ const imageMap3 = {
 };
 
 const businessTypeOptions = [
-    { value: 'delivery', label: '供应商送货' },
-    { value: 'pickup', label: '客户提货' }
+    { value: '0', label: '供应商送货' },
+    { value: '1', label: '访客' },
+    { value: '2', label: '施工' },
+    { value: '3', label: '领料' },
+    { value: '4', label: '承运商提货' }
 ];
 
 const statusOptions = [
-    { value: 'pending', label: '待处理' },
-    { value: 'processing', label: '处理中' },
-    { value: 'completed', label: '已完成' }
+    { value: '0', label: '未下发' },
+    { value: '1', label: '未签到' },
+    { value: '2', label: '部分下发' },
+    { value: '3', label: '已签到' },
+    { value: '4', label: '部分签到' },
+    { value: '5', label: '排队中' },
+    { value: '6', label: '已叫号/装卸货/施工中' },
+    { value: '7', label: '已过号' },
+    { value: '8', label: '安全交底（作业票）' },
+    { value: '9', label: '装卸货' },
+    { value: '10', label: '离园' }
+];
+
+const isSubmitOptions = [
+    { value: '0', label: '新建' },
+    { value: '1', label: '未提交' },
+    { value: '2', label: '已提交' }
+];
+
+const ticketTypeOptions = [
+    { value: '1', label: 'A类' },
+    { value: '2', label: 'B类' },
+    { value: '3', label: 'C类' }
 ];
 
 // 模拟数据 - 实际项目中从接口获取
@@ -311,14 +462,14 @@ const warehouseData = reactive({
     outboundCompleted1: 0
 });
 
-const tableData = reactive([]);
+const tableData = ref([]);
 
 // 初始化数据
 const initData = () => {
     // 模拟从接口获取数据
     Object.assign(overviewData, {
-        safetyBriefings: 5,
-        workPermits: 3
+        safetyBriefings: 0,
+        workPermits: 0
     });
 
     Object.assign(warehouseData, {
@@ -335,19 +486,19 @@ const initData = () => {
     });
 
     // 表格数据
-    tableData.splice(0, tableData.length, ...generateTableData());
+    tableData.value = generateTableData();
 };
 
 // 生成表格数据
 const generateTableData = () => {
     return Array.from({ length: 20 }, (_, index) => ({
         index: index + 1,
-        reservationNo: `RYY0800${(index + 20).toString().padStart(2, '0')}`,
+        reservationCode: `RYY0800${(index + 20).toString().padStart(2, '0')}`,
         businessType: '供应商送货',
-        name: index % 2 === 0 ? '李强' : '叶润林',
-        licensePlate: `粤A123Y${(45 + index).toString().padStart(2, '0')}`,
-        loadingPoint: (index % 4) + 1,
-        visitTime: `2025-04-06 08:${30 + index}`
+        visitor: index % 2 === 0 ? '李强' : '叶润林',
+        carNumber: `粤A123Y${(45 + index).toString().padStart(2, '0')}`,
+        address: (index % 4) + 1,
+        startVisitDate: `2025-04-06 08:${30 + index}`
     }));
 };
 
@@ -441,7 +592,7 @@ const initWarehouseChart = () => {
         },
         series: [
             {
-                name: '',
+                visitor: '',
                 type: 'pie',
                 radius: ['75%', '90%'],
                 center: ['50%', '50%'],
@@ -467,14 +618,14 @@ const initWarehouseChart = () => {
                 data: [
                     {
                         value: warehouseData.inboundCompleted,
-                        name: '',
+                        visitor: '',
                         itemStyle: {
                             color: '#42FFF9'
                         }
                     },
                     {
                         value: warehouseData.outboundCompleted,
-                        name: '',
+                        visitor: '',
                         itemStyle: {
                             color: '#F0B716'
                         }
@@ -490,27 +641,28 @@ const initWarehouseChart = () => {
 // 事件处理函数
 const switchAlertTab = (tabId) => {
     activeAlertTab.value = tabId;
-    // 这里可以添加切换告警tab时的数据加载逻辑
-    loadAlertTabData(tabId);
+    handleAlertReset();
 };
 
 const handleAlertSearch = () => {
-    // 处理告警查询逻辑
-    console.log('告警查询参数:', alertFilterParams);
-    // 调用接口获取数据
-    loadAlertData();
+    if (activeAlertTab.value === 1) {
+        queryParkReservationListPaginationsParams();
+    } else if (activeAlertTab.value === 3) {
+        queryWarWorkArrangementListPaginationsParams();
+    }
 };
 
 const handleAlertReset = () => {
-    // 重置告警筛选条件
     Object.assign(alertFilterParams, {
         keyword: '',
         businessType: '',
         status: '',
-        visitDate: ''
+        visitDate: '',
+        visitor: "",
+        isSubmit: '',
+        ticketType: ''
     });
-    // 重新加载数据
-    loadAlertData();
+    handleAlertSearch();
 };
 
 const handleAction = (actionType) => {
@@ -548,6 +700,7 @@ const handleResize = () => {
 onMounted(() => {
     initData();
     queryWarehouseStatusPaginations();
+    queryParkReservationListPaginationsParams();
     initWarehouseChart();
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
@@ -579,16 +732,16 @@ onUnmounted(() => {
 
 <style scoped>
 ::v-deep(.el-input) {
-    width: 120px !important;
+    width: 100px !important;
 }
 
 ::v-deep(.yewuwidth.el-select--small) {
-    width: 88px !important;
+    width: 90px !important;
 }
 
 ::v-deep(.yewuwidth.el-date-editor.el-input,
     .yewuwidth.el-date-editor.el-input__wrapper) {
-    width: 88px !important;
+    width: 130px !important;
 }
 
 ::v-deep(.el-input__inner) {
@@ -809,9 +962,9 @@ onUnmounted(() => {
 .yySearch {
     display: flex;
     align-items: center;
-    margin: 18px 20px;
-    margin-right: 10px;
+    margin: 15px 10px;
     margin-top: 10px;
+    gap: 8px;
 }
 
 
@@ -819,7 +972,7 @@ onUnmounted(() => {
 .yySearch_left {
     display: flex;
     align-items: center;
-    margin-left: 5px;
+    flex-shrink: 0;
 }
 
 .yySearch_left .yylf_label {
@@ -828,18 +981,20 @@ onUnmounted(() => {
     font-size: 14px;
     color: #FBFBFB;
     margin-right: 5px;
+    white-space: nowrap;
+    line-height: 24px;
 }
 
 .yylf {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin: 10px 20px 10px 20px;
 }
 
 .yylf_left {
     display: flex;
     align-items: center;
-    margin-left: 10px;
 }
 
 .yylf .yylf_label {
@@ -847,7 +1002,9 @@ onUnmounted(() => {
     font-weight: normal;
     font-size: 14px;
     color: #FBFBFB;
-    margin-right: 10px;
+    margin-right: 8px;
+    white-space: nowrap;
+    line-height: 24px;
 }
 
 .yylf .yylf_search {
@@ -1021,5 +1178,15 @@ onUnmounted(() => {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>

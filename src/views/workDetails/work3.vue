@@ -934,40 +934,40 @@ const initChart5 = () => {
 
 
 const alertData = reactive({
-    total: 8,
+    total: 0,
     items: [
-        { label: '高风险', value: 1, unit: '次', color: 'blue', key: 'urgent' },
-        { label: '中风险', value: 2, unit: '次', color: 'yellow', key: 'important' },
-        { label: '低风险', value: 5, unit: '次', color: 'green', key: 'normal' }
+        { label: '高风险', value: 0, unit: '次', color: 'blue', key: 'urgent' },
+        { label: '中风险', value: 0, unit: '次', color: 'yellow', key: 'important' },
+        { label: '低风险', value: 0, unit: '次', color: 'green', key: 'normal' }
     ]
 });
 
 
 const alertData2 = reactive({
-    total: 7,
+    total: 0,
     items: [
-        { label: 'A类', value: 1, unit: '票', color: 'blue', key: 'urgent' },
-        { label: 'B类', value: 2, unit: '票', color: 'yellow', key: 'important' },
-        { label: 'c类', value: 4, unit: '票', color: 'green', key: 'normal' }
+        { label: 'A类', value: 0, unit: '票', color: 'blue', key: 'urgent' },
+        { label: 'B类', value: 0, unit: '票', color: 'yellow', key: 'important' },
+        { label: 'c类', value: 0, unit: '票', color: 'green', key: 'normal' }
     ]
 });
 
 
 const alertData3 = reactive({
-    total: 6,
+    total: 0,
     items: [
-        { label: '紧急告警', value: 1, unit: '个', color: 'blue', key: 'urgent' },
-        { label: '重大告警', value: 2, unit: '个', color: 'yellow', key: 'important' },
-        { label: '一般告警', value: 3, unit: '个', color: 'green', key: 'normal' }
+        { label: '紧急告警', value: 0, unit: '个', color: 'blue', key: 'urgent' },
+        { label: '重大告警', value: 0, unit: '个', color: 'yellow', key: 'important' },
+        { label: '一般告警', value: 0, unit: '个', color: 'green', key: 'normal' }
     ]
 });
 
 const alertData4 = reactive({
-    total: 4,
+    total: 0,
     items: [
-        { label: '仓储作业类', value: 1, unit: '个', color: 'blue', key: 'urgent' },
+        { label: '仓储作业类', value: 0, unit: '个', color: 'blue', key: 'urgent' },
         // { label: '重大告警', value: 2, unit: '个', color: 'yellow', key: 'important' },
-        { label: '施工作业类', value: 3, unit: '个', color: 'green', key: 'normal' }
+        { label: '施工作业类', value: 0, unit: '个', color: 'green', key: 'normal' }
     ]
 });
 
@@ -987,6 +987,7 @@ const fetchWorkArrangementCount = async () => {
 
     try {
         const response = await queryWorkArrangementCountByQY({
+            bureauCode: "0318",
             startTime: startTimeISO,
             endTime: endTimeISO
         });

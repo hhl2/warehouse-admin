@@ -169,7 +169,7 @@
                     <div class="chart_snumber">{{ formatNumber(yardData.percentage) }}</div>
                 </div>
             </div>
-            <div class="right_numbers">
+            <div class="right_numbers yard-numbers">
                 <div v-for="item in yardData.items" :key="item.label" class="card card--urgent">
                     <div class="card__badges" :class="`card__badges--${item.color}`"></div>
                     <div class="card__labels">{{ item.label }}</div>
@@ -289,7 +289,6 @@ const loadingData = reactive({
 const yardData = reactive({
     percentage: '0',
     items: [
-        { label: '待清理', value: 0, unit: '个', color: 'blue', key: 'pendingClean' },
         { label: '空闲', value: 0, unit: '个', color: 'yellow', key: 'idle' },
         { label: '占用', value: 0, unit: '个', color: 'green', key: 'occupied' }
     ]
@@ -532,16 +531,15 @@ const fetchEnvironment = async () => {
 
 const fetchYardRate = async () => {
     try {
-        const res = await queryYardWarehouseRate({       "bureauCode": "0318",
-        "provinceCode": "03",
-        "warehouseCode": "0318080",
-        "warehouseId": "03180000020822"});
+        const res = await queryYardWarehouseRate({
+            "warehouseCode": "0318080",
+            "warehouseId": "03180000020822"
+        });
         if (res.code == 0 && res.data?.[0]) {
             const data = res.data[0];
             yardData.percentage = data.useWarehouseRate;
-            yardData.items[0].value = data.useWarehouseRate;
-            yardData.items[0].value = data.useWarehouseCount;
-            yardData.items[1].value = data.freeWarehouseCount;
+            yardData.items[0].value = data.freeWarehouseCount;  // 空闲
+            yardData.items[1].value = data.useWarehouseCount;   // 占用
         }
     } catch (e) { console.warn('Yard API failed'); }
     updateChart('yard', chartDom4.value, getPieOption(
@@ -552,7 +550,7 @@ const fetchYardRate = async () => {
 
 const getSignInRecordInfos = async () => {
     try {
-        const res = await getSignInRecordInfo({ "bureauCode": "0318" });
+        const res = await getSignInRecordInfo({});
         if (res.code == 0 && res.data) {
             personnelData.cumulativelyUser = Number(res.data.cumulativelyUser) || 0;
             personnelData.stats[0].value = Number(res.data.cumulativelyUser) || 0;  // 今日累计入园人数
@@ -567,13 +565,7 @@ const getSignInRecordInfos = async () => {
 
 const getWorkOffNums = async () => {
     try {
-        const res = await getWorkOffNum(        
-            {
-                "bureauCode": "0318",
-                // "endVisitDate": "2025-11-01",
-                // "startVisitDate": "2025-01-01"
-            }
-        );
+        const res = await getWorkOffNum({ "bureauCode": "0318"});
         if (res.code == 0) {
             const done = Number(res.data.doneNum) || 0;
             const doing = Number(res.data.doingNum) || 0;
@@ -985,6 +977,12 @@ onUnmounted(() => {
     height: 140px;
     margin-right: 10px;
     margin-top: 15px;
+}
+
+/* 堆场作业只有2项，居中显示 */
+.yard-numbers {
+    justify-content: center;
+    gap: 28px;
 }
 
 
