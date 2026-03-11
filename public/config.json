@@ -1,13 +1,13 @@
 {
     "apiBaseURL": "",
     "pixelStreaming": {
-        "ss": "ws://192.168.31.147:88",
-        "websocketURL": "ws://192.168.31.147:88"
+        "ss": "ws://10.151.223.209:88",
+        "websocketURL": "ws://10.151.223.209:88"
     },
     "globalParams": {
         "bureauCode": "0318",
-        "provinceCode": "03",
-        "warehouseCode": "0318080",
-        "warehouseId": "03180000020822"
+        "provinceCode": "03"
+        // "warehouseCode": "0318080",
+        // "warehouseId": "03180000020822"
     }
 }

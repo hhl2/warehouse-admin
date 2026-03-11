@@ -9,12 +9,13 @@ import { ref, provide, onMounted, onUnmounted, readonly, nextTick } from 'vue'
 import { Config, PixelStreaming } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.4'
 import { Application, PixelStreamingApplicationStyle } from '@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.4'
 import { useRouter } from 'vue-router'
+import { globalConfig } from '@/utils/request'
 
 // 默认配置，当外部配置加载失败时使用
 const DEFAULT_CONFIG = {
   pixelStreaming: {
-    websocketURL: 'ws://192.168.31.143:88',
-    ss: 'ws://192.168.31.143:88'
+    websocketURL: 'ws://10.151.223.209:88',
+    ss: 'ws://10.151.223.209:88'
   }
 }
 
@@ -41,27 +42,19 @@ export default {
     let reconnectTimer = null  // 重连定时器
 
     // ========== 初始化 PixelStreaming ==========
-    // 使用外部配置文件，打包后可直接修改 public/config.json 而无需重新编译
-    // 加载配置：优先使用外部配置，失败则使用默认配置
-    const loadConfig = async () => {
-      try {
-        const res = await fetch('/config.json')
-        if (res.ok) {
-          const config = await res.json()
-          console.log('✅ 加载外部配置成功:', config)
-          return config
-        }
-        console.warn('⚠️ 配置文件响应异常，使用默认配置')
-        return DEFAULT_CONFIG
-      } catch {
-        console.error('加载配置失败，使用默认配置')
-        return DEFAULT_CONFIG
+    // 直接使用从 @/utils/request 初始化拿到的全局配置
+    const getPsConfig = () => {
+      if (globalConfig && globalConfig.pixelStreaming) {
+         console.log('✅ 使用全局缓存 pixelStreaming 配置:', globalConfig.pixelStreaming)
+         return globalConfig.pixelStreaming
       }
+      console.warn('⚠️ 缓存配置读取异常，使用默认配置')
+      return DEFAULT_CONFIG.pixelStreaming
     }
 
     const initializePixelStreaming = async () => {
       try {
-        const { pixelStreaming: psConfig } = await loadConfig()
+        const psConfig = getPsConfig()
         console.log('WebSocket配置:', psConfig)
 
         // 应用样式

@@ -4,14 +4,25 @@ import '@/styles/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { loadConfig } from '@/utils/request'
+import { setConfig } from '@/utils/request'
 
 import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 
-// 在应用启动前加载配置
-loadConfig().then(() => {
+const loadAndStartApp = async () => {
+    try {
+        const url = process.env.NODE_ENV === 'production' ? './config.json' : '/config.json'
+        const response = await fetch(url);
+        const config = await response.json();
+
+        // 传递给 request.js 设置 Axios 的配置
+        setConfig(config);
+    } catch (e) {
+        console.warn('⚠️ main.js 加载 config.json 失败，使用默认配置运行:', e);
+        setConfig({}); // 加载失败也会设置一下空配置触发后面的逻辑
+    }
+
     const app = createApp(App);
     app.use(router)
     app.use(ElementPlus)
@@ -19,4 +30,7 @@ loadConfig().then(() => {
         app.component(key, component)
     }
     app.mount('#app')
-});
+};
+
+// 在应用启动前加载配置
+loadAndStartApp();

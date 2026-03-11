@@ -5,6 +5,13 @@
                 <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
                     @keyup.enter="fetchDevices" />
                 <el-button type="primary" class="search-btn" @click="fetchDevices">查询</el-button>
+                <!-- 类别切换 -->
+                <div class="category-switch-list">
+                    <div v-for="(item, index) in categoryItems" :key="index" class="category-switch-item"
+                        :class="{ active: activeCategory === index }" @click="handleCategoryChange(index)">
+                        {{ item.label }}
+                    </div>
+                </div>
             </div>
             <div class="changleft">
                 <el-table class="my-spacing-table" ref="tableRef" :data="deviceData">
@@ -129,6 +136,40 @@
 .my-spacing-table {
     height: 290px;
 }
+
+.category-switch-list {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.category-switch-item {
+    color: #A3D8FF;
+    padding: 6px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.category-switch-item:hover {
+    color: #fff;
+    background: rgba(45, 169, 192, 0.1);
+}
+
+.category-switch-item.active {
+    color: #fff;
+    background: linear-gradient(180deg, rgba(14, 88, 175, 0.8) 0%, rgba(30, 144, 255, 0.9) 100%);
+    border: 1px solid rgba(89, 203, 255, 0.4);
+    box-shadow: inset 0px -4px 10px rgba(0, 255, 255, 0.6);
+}
 </style>
 
 <script setup>
@@ -161,8 +202,31 @@ const MOCK_DEVICES = [
 const showMenus = ref(false);
 const menuRef = ref(null);
 const input3 = ref('');
-const deviceData = ref(MOCK_DEVICES); // Start with mock data
+const allDeviceData = ref(MOCK_DEVICES); // full list
+const deviceData = ref(MOCK_DEVICES); // filtered display
 const ueResponseData = inject('ueResponseData');
+
+// 类别切换
+const activeCategory = ref(0);
+const categoryItems = ref([
+    { label: '全部', type: null },
+    { label: '水表', type: '水表' },
+    { label: '电表', type: '电表' },
+]);
+
+const applyFilter = () => {
+    const selected = categoryItems.value[activeCategory.value];
+    if (!selected.type) {
+        deviceData.value = allDeviceData.value;
+    } else {
+        deviceData.value = allDeviceData.value.filter(d => d.deviceType === selected.type);
+    }
+};
+
+const handleCategoryChange = (index) => {
+    activeCategory.value = index;
+    applyFilter();
+};
 
 // --- Helper Functions ---
 const formatDate = (timestamp) => {
@@ -186,14 +250,15 @@ const fetchDevices = async () => {
         });
 
         if (res?.code === '0' && res.data?.list?.length > 0) {
-            deviceData.value = res.data.list.map(item => ({
+            allDeviceData.value = res.data.list.map(item => ({
                 ...item,
                 deviceType: DEVICE_TYPE_MAP[item.deviceType] || '未知',
                 runStatus: RUN_STATUS_MAP[item.runStatus] || '未知',
                 watchTime: formatDate(item.watchTime)
             }));
+            applyFilter();
         } else if (input3.value) {
-
+            allDeviceData.value = [];
             deviceData.value = [];
         }
     } catch (err) {

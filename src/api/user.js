@@ -1,5 +1,95 @@
 import request from '@/utils/request';
+//获取出库的任务
 
+export const queryIssueTaskInfoPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryIssueTaskInfoPagination',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+//获取入库的任务
+export const queryReceiptTaskInfoPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryReceiptTaskInfoPagination',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+export const queryWarnListPagination = (data) =>
+  request({
+    url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnListPagination',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+
+
+//作业风险统计 、作业票统计 、安全交底单
+export const queryWorkArrangementCountByQY = (data) =>
+  request({
+    url: '/api/qydigital-park-service/qyQueryStorehouse/queryWorkArrangementCountByQY',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+//告警设备统计
+export const queryAlarmDevicelNumCount = (data) =>
+  request({
+    url: '/api/qydigital-park-service/securityAlarmRecord/queryAlarmDevicelNumCount',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+// 告警等级统计
+export const queryAlarmLevelNumCount = (data) =>
+  request({
+    url: '/api/qydigital-park-service/securityAlarmRecord/queryAlarmLevelNumCount',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+
+
+//告警区域统计
+export const queryAlarmAddressNumCount = (data) =>
+  request({
+    url: '/api/qydigital-park-service/securityAlarmRecord/queryAlarmAddressNumCount',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+//作业告警列表接口
+
+export const queryAlarmInfoList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/securityAlarmRecord/queryAlarmInfoList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+
+
+
+
+
+//装卸作业指标接口
+export const getWorkOffNum = (data) =>
+  request({
+    url: '/api/qydigital-park-service/qyQueryPersonInfo/queryWorkOffNum',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
 
 //人员监测指标接口
 
@@ -291,7 +381,8 @@ export const queryYardWarehouseRate = (data) =>
   request({
     url: '/api/qydigital-park-service/queryLargeWarehouse/queryYardWarehouseRate',
     method: 'post',
-    data
+    data,
+    skipGlobalParams: true
   });
 
 // 获取检测工位-工位信息

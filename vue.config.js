@@ -27,7 +27,7 @@ module.exports = defineConfig({
         changeOrigin: true,
         logLevel: "debug",
         pathRewrite: {
-          '/api203': '/api'
+          '^/api203': '/api'
         }
 
         // rewrite: path => path.replace(/^\/api/, ''),

@@ -6,16 +6,20 @@
             <div class="title_txet">指标概览</div>
         </div>
         <div class="yySearch">
-            <div class="yySearch_left">
+            <!-- <div class="yySearch_left">
                 <div class="yylf_label yylf_color">统计周期</div>
                 <el-select size="small" v-model="filterParams.period" placeholder="请选择">
                     <el-option v-for="item in periodOptions" :key="item.value" :label="item.label"
                         :value="item.value" />
                 </el-select>
+            </div> -->
+            <div class="yySearch_left">
+                <div class="yylf_label yylf_color">开始时间</div>
+                <el-date-picker v-model="filterParams.startTime" type="datetime" placeholder="选择开始时间" size="small" />
             </div>
             <div class="yySearch_left">
-                <div class="yylf_label yylf_color">统计时间</div>
-                <el-date-picker v-model="filterParams.date" type="date" placeholder="" size="small" />
+                <div class="yylf_label yylf_color">结束时间</div>
+                <el-date-picker v-model="filterParams.endTime" type="datetime" placeholder="选择结束时间" size="small" />
             </div>
             <div class="yySearch_left">
                 <div class="yylf_search_box" @click="handleSearch">查询</div>
@@ -115,7 +119,7 @@
             <div class="title_txet">告警信息</div>
         </div>
         <div class="sblf">
-            <el-input v-model="input3" style="width: 203px" placeholder="请输入设备名称" :prefix-icon="Search" />
+            <el-input v-model="input3" class="inputwidth2" placeholder="请输入设备名称" :prefix-icon="Search" />
             <div class="sblf_search">
                 <div class="sblf_search_box" @click="handleAlertSearch">查询</div>
                 <div class="sblf_search_box" @click="handleAlertReset">重置</div>
@@ -172,6 +176,10 @@
 </template>
 
 <style scoped>
+.inputwidth2 {
+   width: 203px;
+}
+
 ::v-deep(.el-select--small) {
     width: 105px !important;
 }
@@ -492,7 +500,8 @@ const props = defineProps({
 import * as echarts from 'echarts';
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref, onUnmounted, nextTick, watch } from 'vue'
-const source = [
+import { queryWorkArrangementCountByQY, queryAlarmLevelNumCount, queryAlarmInfoList } from '@/api/user';
+const source = ref([
     {
         deviceCode: '64BC256336654588523369814CVT3',
         alertName: 'ABS22',
@@ -529,13 +538,65 @@ const source = [
         alertRecovery: '已恢复',
         alertDesc: '网络延迟'
     }
-]
+])
 const input3 = ref('')
+
+const fetchAlarmInfoList = async () => {
+    try {
+        const infoRes = await queryAlarmInfoList({
+            bureauCode: "0318",
+            pageNo: 1,
+            pageSize: 25,
+            alarmDevice: input3.value || undefined
+        });
+        
+        if (infoRes && (infoRes.code === '0' || infoRes.code === 0) && infoRes.data && infoRes.data.list) {
+            const levelMap = { '1': '紧急', '2': '重大', '3': '一般' };
+            const typeMap = { '1': '安防告警', '2': '温度告警', '3': '电力告警', '4': '网络告警' }; // Example mapping fallback map
+            
+            const formatDate = (timestamp) => {
+                if (!timestamp) return '';
+                const d = new Date(timestamp);
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+            };
+            
+            source.value = infoRes.data.list.map(item => ({
+                deviceCode: item.alarmCode || item.primaryValue || '未知设备', 
+                alertName: item.alarmName || '未知告警',
+                alertLevel: levelMap[item.alarmLevel?.toString()] || item.alarmLevel || '一般',
+                alertTime: formatDate(item.alarmTime),
+                alertCategory: typeMap[item.alarmType?.toString()] || item.alarmType || '其它告警',
+                alertRecovery: item.alarmStatus || (item.dealState === 1 ? '已处理' : '未恢复'), 
+                alertDesc: item.alarmDescription || ''
+            }));
+        } else {
+             source.value = [];
+        }
+    } catch (error) {
+        console.error('获取作业告警列表失败:', error);
+    }
+};
+
+const handleAlertSearch = () => {
+    fetchAlarmInfoList();
+};
+
+const handleAlertReset = () => {
+    input3.value = '';
+    fetchAlarmInfoList();
+};
+
+const handleSearch = () => {
+    fetchWorkArrangementCount();
+};
+
 onMounted(() => {
     initChart2();
     initChart3();
     initChart4();
     initChart5()
+    fetchWorkArrangementCount();
+    fetchAlarmInfoList();
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
     document.addEventListener('webkitfullscreenchange', handleResize);
@@ -911,25 +972,105 @@ const alertData4 = reactive({
 });
 
 
+const fetchWorkArrangementCount = async () => {
+    // Format times into ISO strings if they exist
+    const formatToISO = (dateVal) => {
+        if (!dateVal) return undefined;
+        // Check if already string or Date object
+        const d = new Date(dateVal);
+        if (isNaN(d.getTime())) return undefined;
+        return d.toISOString();
+    };
+
+    const startTimeISO = formatToISO(filterParams.startTime);
+    const endTimeISO = formatToISO(filterParams.endTime);
+
+    try {
+        const response = await queryWorkArrangementCountByQY({
+            startTime: startTimeISO,
+            endTime: endTimeISO
+        });
+        if (response && (response.code === '0' || response.code === 0) && response.data) {
+            const data = response.data;
+            
+            // 1. 处理高、中、低风险 -> alertData
+            const height = Number(data.heigthQty || 0);
+            const medium = Number(data.mediumQty || 0);
+            const low = Number(data.lowQty || 0);
+            
+            alertData.items[0].value = height;
+            alertData.items[1].value = medium;
+            alertData.items[2].value = low;
+            alertData.total = height + medium + low;
+            
+            // 2. 处理 A、B、C 类作业 -> alertData2
+            const aQty = Number(data.aQty || 0);
+            const bQty = Number(data.bQty || 0);
+            const cQty = Number(data.cQty || 0);
+            
+            alertData2.items[0].value = aQty;
+            alertData2.items[1].value = bQty;
+            alertData2.items[2].value = cQty;
+            alertData2.total = aQty + bQty + cQty;
+            
+            // 3. 处理仓储作业、施工作业 -> alertData4
+            const issueQty = Number(data.issueQty || 0);
+            const workQty = Number(data.workQty || 0);
+            
+            alertData4.items[0].value = issueQty;
+            alertData4.items[1].value = workQty;
+            alertData4.total = issueQty + workQty;
+
+            // Re-render pie charts with new datav
+            initChart2();
+            initChart3();
+            initChart5();
+        }
+    } catch (error) {
+        console.error('获取作业统计数据失败:', error);
+    }
+    
+    // 4. 处理 告警数 -> alertData3
+    try {
+        const alarmRes = await queryAlarmLevelNumCount({
+            bureauCode: "0318",
+            startAlarmTime: startTimeISO,
+            endAlarmTime: endTimeISO
+        });
+        
+        if (alarmRes && (alarmRes.code === '0' || alarmRes.code === 0)) {
+            const list = alarmRes.data || [];
+            let total = 0;
+            // Defaults to 0 correctly when mapping fails
+            const typeMap = { '1': 0, '2': 0, '3': 0 };
+            list.forEach(item => {
+                if (item.alarmLevel) {
+                    typeMap[item.alarmLevel.toString()] = Number(item.numCount || 0);
+                }
+            });
+            
+            alertData3.items[0].value = typeMap['1'];
+            alertData3.items[1].value = typeMap['2'];
+            alertData3.items[2].value = typeMap['3'];
+            alertData3.total = typeMap['1'] + typeMap['2'] + typeMap['3'];
+            initChart4();
+        }
+    } catch (error) {
+         console.error('获取告警数数据失败:', error);
+    }
+};
+
+
 
 
 // 筛选参数
 const filterParams = reactive({
     period: '',
-    date: ''
+    startTime: '',
+    endTime: ''
 });
 
-const sorces =
-    [
-        { text: '智能设备', num: "7/34" },
-        { text: '特种设备', num: "0/2" },
-        { text: '安防设备', num: "2/15" },
-        { text: '巡更设备', num: "0/6" },
-        { text: '环境设备', num: "0/21" },
-        { text: '消防设备', num: "0/21" },
-        { text: '工具器设备', num: "0/1" },
-        { text: '计量设备', num: "0/1" }
-    ]
+
 
 onUnmounted(() => {
 

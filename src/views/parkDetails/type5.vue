@@ -420,11 +420,11 @@ const props = defineProps({
 })
 import { reactive, ref, inject, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts';
-import request from '@/utils/request'
-
-
+import request from '@/utils/request';
 import {
-    querySecurityAlarmCount
+    querySecurityAlarmCount,
+    queryAlarmAddressNumCount,
+    queryAlarmDevicelNumCount
 } from '@/api/user';
 
 const input3 = ref('')
@@ -436,11 +436,11 @@ const formatNumber = (val) => {
 };
 
 const alertData = reactive({
-    total: 17,
+    total: 0,
     items: [
-        { label: '紧急告警', value: 2, unit: '个', color: 'blue', key: 'urgent' },
-        { label: '重要告警', value: 10, unit: '个', color: 'yellow', key: 'important' },
-        { label: '一般告警', value: 5, unit: '个', color: 'green', key: 'normal' }
+        { label: '紧急告警', value: 0, unit: '个', color: 'blue', key: 'urgent' },
+        { label: '重要告警', value: 0, unit: '个', color: 'yellow', key: 'important' },
+        { label: '一般告警', value: 0, unit: '个', color: 'green', key: 'normal' }
     ]
 });
 const warnCode = ref('');
@@ -455,18 +455,11 @@ const fetchSecurityAlarm = async () => {
             alertData.items[2].value = res.data.threeLevelNum;
         }
     } catch (e) { console.warn('Alert API failed'); }
-    // updateChart('alert', chartDom2.value, getPieOption(alertData.items.map(i => i.value)));
 };
-const queryWarnListPagination = async () => {
+const queryWarnListPaginations = async () => {
     try {
-        const res = await request({
-            url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnListPagination',
-            method: 'post',
-            data: {
-                "warnCode": warnCode.value, "watchTime": ""
-            },
-            skipGlobalParams: true
-        });
+
+        const res = await queryWarnListPagination({ "warnCode": warnCode.value, "watchTime": "" });
         if (res.code == 0) {
             warnData.value = res.data?.list || [];
 
@@ -481,20 +474,103 @@ const queryWarnListPagination = async () => {
     }
 }
 const queryWarnGroupCount = async () => {
+    const renderChart = (xAxisData, seriesData) => {
+        if (trendChart2) {
+            trendChart2.setOption({
+                xAxis: [{ data: xAxisData }],
+                series: [{ data: seriesData }]
+            });
+        }
+    };
     try {
         const response = await request({
             url: '/api/qydigital-park-service/qyQueryDeviceInfo/queryWarnGroupCount',
             method: 'post',
             data: {
-                "startDate": "2025-01-01 00:00:00",
-                "endDate": "2026-01-30 23:59:59"
+                "startDate": "2026-01-01 00:00:00",
+                "endDate": "2026-01-01 00:00:00"
             },
             skipGlobalParams: true
         });
-        console.log(response);
-        // visitordata.value=response.data.data.list
+        if (response && (response.code === '0' || response.code === 0)) {
+            const list = response.data || [];
+            if (list.length > 0) {
+                const typeMap = {
+                    '1': '环境监测告警',
+                    '2': '安防监测告警',
+                    '3': '能耗监测告警',
+                    '4': '消防监测告警',
+                    '5': '装卸作业告警',
+                    '6': '人员监测告警'
+                };
+                const types = ['1', '2', '3', '4', '5', '6'];
+                const xAxisData = types.map(t => typeMap[t]);
+                const valueMap = {};
+                list.forEach(item => {
+                    if (item.warnType) {
+                        valueMap[item.warnType] = item.warnNum || 0;
+                    }
+                });
+                const seriesData = types.map(t => valueMap[t] || 0);
+                renderChart(xAxisData, seriesData);
+            }
+        }
     } catch (error) {
-        console.error('获取监控点列表失败:', error);
+        console.error('获取告警分类失败:', error);
+    }
+}
+const fetchAlarmAddressNumCount = async () => {
+    const renderChart = (xAxisData, seriesData) => {
+        if (trendChart1) {
+            trendChart1.setOption({
+                xAxis: [{ data: xAxisData }],
+                series: [{ data: seriesData }]
+            });
+        }
+    };
+    try {
+        const response = await queryAlarmAddressNumCount({
+            "bureauCode": "0318",
+            "startDate": "2026-01-01 00:00:00",
+            "endDate": "2026-01-01 00:00:00"
+        });
+        if (response && (response.code === '0' || response.code === 0)) {
+            const list = response.data || [];
+            if (list.length > 0) {
+                const xAxisData = list.map(item => item.alarmAddress);
+                const seriesData = list.map(item => item.numCount);
+                renderChart(xAxisData, seriesData);
+            }
+        }
+    } catch (error) {
+        console.error('获取告警区域数量失败:', error);
+    }
+}
+const fetchAlarmDevicelNumCount = async () => {
+    const renderChart = (xAxisData, seriesData) => {
+        if (trendChart) {
+            trendChart.setOption({
+                xAxis: [{ data: xAxisData }],
+                series: [{ data: seriesData }]
+            });
+        }
+    };
+    try {
+        const response = await queryAlarmDevicelNumCount({
+            "bureauCode": "0318",
+            "startDate": "2026-01-01 00:00:00",
+            "endDate": "2026-01-01 00:00:00"
+        });
+        if (response && (response.code === '0' || response.code === 0)) {
+            const list = response.data || [];
+            if (list.length > 0) {
+                const xAxisData = list.map(item => item.alarmDevice);
+                const seriesData = list.map(item => item.numCount);
+                renderChart(xAxisData, seriesData);
+            }
+        }
+    } catch (error) {
+        console.error('获取告警设备数量失败:', error);
     }
 }
 
@@ -739,13 +815,15 @@ const warnData = ref([
 ])
 
 const toggleActive = (selected) => {
-    isactive.value = selected
+    isactive.value = selected;
+    queryWarnGroupCount();
 }
 const toggleActive1 = (selected) => {
     isactive1.value = selected
 }
 const toggleActive2 = (selected) => {
-    isactive2.value = selected
+    isactive2.value = selected;
+    fetchAlarmAddressNumCount();
 }
 
 
@@ -837,34 +915,46 @@ const fireData = reactive({
     ]
 });
 
-const statusClassMap = reactive({
-    '紧急告警': 'status-urgent',
-    '重要告警': 'status-important',
-    '一般告警': 'status-normal'
-})
-
-const statusClassMaps = reactive({
-    '1': 'status-urgent',
-    '2': 'status-important',
-    '3': 'status-normal'
-})
-
-
 
 const handleClickOutside = (event) => {
     if (menuRef.value && menuRef.value.contains(event.target)) {
         showMenus.value = false;
     }
 };
+const renderDefaultChartsData = () => {
+    if (trendChart2) {
+        trendChart2.setOption({
+            xAxis: [{ data: ['环境监测告警', '安防监测告警', '能耗监测告警', '消防监测告警', '装卸作业告警', '人员监测告警'] }],
+            series: [{ data: [15, 32, 10, 5, 18, 24] }]
+        });
+    }
+    if (trendChart1) {
+        trendChart1.setOption({
+            xAxis: [{ data: ['立体仓库', '平置仓库', '堆场', '指挥中心'] }],
+            series: [{ data: [2.0, 4.9, 7.0, 3.2] }]
+        });
+    }
+    if (trendChart) {
+        trendChart.setOption({
+            xAxis: [{ data: ['监控摄像头', '烟感探测器', '门禁闸机', '报警按钮', '温湿度计'] }],
+            series: [{ data: [12, 8, 25, 5, 18] }]
+        });
+    }
+};
+
 // 生命周期
 onMounted(() => {
-    fetchSecurityAlarm();//告警等级
-    queryWarnListPagination();
-    queryWarnGroupCount();
     initChart2();
     initTrendChart();
     initTrendChart1();
     initTrendChart2();
+    renderDefaultChartsData(); // 初始化默认图表数据
+    fetchSecurityAlarm();//告警等级
+    queryWarnListPaginations();//告警列表
+    queryWarnGroupCount();
+    fetchAlarmDevicelNumCount();//告警设备统计
+    fetchAlarmAddressNumCount();//告警区域统计
+
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
     document.addEventListener('webkitfullscreenchange', handleResize);

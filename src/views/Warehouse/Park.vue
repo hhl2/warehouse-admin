@@ -196,7 +196,8 @@ import {
     queryMonitoringCount,
     queryEnvironmentCount,
     querySecurityAlarmCount,
-    getSignInRecordInfo
+    getSignInRecordInfo,
+    getWorkOffNum
 } from '@/api/user';
 
 // --- Constants & Config ---
@@ -401,13 +402,14 @@ const renderAllCharts = () => {
 const loadData = async () => {
     try {
         await Promise.allSettled([
-            fetchWeather(),
-            fetchEnergy(),
-            fetchMonitoring(),
-            fetchSecurityAlarm(),
-            fetchYardRate(),
-            fetchEnvironment(),
-            getSignInRecordInfos(),
+            fetchWeather(),         // 环境监测
+            fetchEnergy(),          // 能源监测
+            fetchMonitoring(),      // 安防监测
+            fetchSecurityAlarm(),   // 告警管理
+            fetchYardRate(),        // 堆场作业
+            fetchEnvironment(),     // 消防监测
+            getSignInRecordInfos(), // 人员监测
+            getWorkOffNums(),       // 装卸作业
         ]);
     } catch (err) {
         console.error('Data refreshing failed, showing existing data.', err);
@@ -530,7 +532,10 @@ const fetchEnvironment = async () => {
 
 const fetchYardRate = async () => {
     try {
-        const res = await queryYardWarehouseRate();
+        const res = await queryYardWarehouseRate({       "bureauCode": "0318",
+        "provinceCode": "03",
+        "warehouseCode": "0318080",
+        "warehouseId": "03180000020822"});
         if (res.code == 0 && res.data?.[0]) {
             const data = res.data[0];
             yardData.percentage = data.useWarehouseRate;
@@ -547,20 +552,50 @@ const fetchYardRate = async () => {
 
 const getSignInRecordInfos = async () => {
     try {
+        const res = await getSignInRecordInfo({ "bureauCode": "0318" });
+        if (res.code == 0 && res.data) {
+            personnelData.cumulativelyUser = Number(res.data.cumulativelyUser) || 0;
+            personnelData.stats[0].value = Number(res.data.cumulativelyUser) || 0;  // 今日累计入园人数
+            personnelData.stats[1].value = Number(res.data.cumulativelyTask) || 0;  // 今日累计入园任务量
+            personnelData.stats[2].value = Number(res.data.onlineTask) || 0;        // 当前在园任务量
+        }
+    } catch (e) {
+        console.warn("SignIn API failed", e);
+    }
+};
 
-        const res = await getSignInRecordInfo();
 
+const getWorkOffNums = async () => {
+    try {
+        const res = await getWorkOffNum(        
+            {
+                "bureauCode": "0318",
+                // "endVisitDate": "2025-11-01",
+                // "startVisitDate": "2025-01-01"
+            }
+        );
         if (res.code == 0) {
+            const done = Number(res.data.doneNum) || 0;
+            const doing = Number(res.data.doingNum) || 0;
+            const wait = Number(res.data.waitNum) || 0;
+            const total = done + doing + wait;
 
-            personnelData.cumulativelyUser = res.data.cumulativelyUser;
-            personnelData.stats[0].value = res.data.cumulativelyUser;  // 今日累计入园人数
-            personnelData.stats[1].value = res.data.cumulativelyTask;  // 今日累计入园任务量
-            personnelData.stats[2].value = res.data.onlineTask;        // 当前在园任务量
+            loadingData.items[0].value = done;   // 已完成
+            loadingData.items[1].value = doing;  // 作业中
+            loadingData.items[2].value = wait;   // 等待作业
 
+            // 计算完成率
+            loadingData.percentage = total === 0 ? '0' : Math.round((done / total) * 100).toString();
+
+            // 更新图表
+            updateChart('loading', chartDom3.value, getPieOption(
+                loadingData.items.map(i => i.value),
+                loadingData.items.map(i => i.label)
+            ));
         }
 
     } catch (e) {
-        console.warn("SignIn API failed")
+        console.warn("WorkOff API failed")
     }
 }
 

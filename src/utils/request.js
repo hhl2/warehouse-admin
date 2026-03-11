@@ -2,33 +2,25 @@ import axios from 'axios';
 import { getToken, getStoredToken, hasToken, clearToken } from './token'; // 已注释：禁用token获取
 import { ElMessage } from 'element-plus'
 
-// 从 config.json 加载配置
+// 从外部传入配置
 let configLoaded = false;
 let apiBaseURL = '/'; // 默认值
 let globalParams = {}; // 全局参数
+export let globalConfig = {}; // 存储完整配置对象
 
-// 异步加载配置
-export const loadConfig = async () => {
-  if (configLoaded) return apiBaseURL;
+// 由 App.vue 负责网络请求后，调用此方法注入配置
+export const setConfig = (config) => {
+  if (configLoaded) return;
+  globalConfig = config; // 保存完整配置
 
-  try {
-    const response = await fetch('/config.json');
-    const config = await response.json();
-    apiBaseURL = config.apiBaseURL || '/';
-    globalParams = config.globalParams || {};
-    configLoaded = true;
-    console.log('✅ 配置已从 config.json 加载:', { apiBaseURL, globalParams });
+  apiBaseURL = config.apiBaseURL || '/';
+  globalParams = config.globalParams || {};
+  configLoaded = true;
+  console.log('✅ axios 已接收并应用全局配置:', { apiBaseURL, globalParams });
 
-    // 更新所有 axios 实例的 baseURL
-    serviceWithToken.defaults.baseURL = apiBaseURL;
-    serviceWithoutToken.defaults.baseURL = apiBaseURL;
-
-    return { apiBaseURL, globalParams };
-  } catch (error) {
-    console.warn('⚠️ 加载 config.json 失败，使用默认配置:', error);
-    configLoaded = true;
-    return apiBaseURL;
-  }
+  // 更新所有 axios 实例的 baseURL
+  serviceWithToken.defaults.baseURL = apiBaseURL;
+  serviceWithoutToken.defaults.baseURL = apiBaseURL;
 };
 
 // 基础配置

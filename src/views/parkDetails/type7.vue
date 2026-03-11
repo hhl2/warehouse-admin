@@ -42,7 +42,7 @@
                     <div class="echartp" ref="chartDom1"></div>
 
                     <div class="chart_sum">
-                        <div class="chart_snumber">{{ fireData.total }}</div>
+                        <div class="chart_snumber">{{ loadingData.percentage }}</div>
                     </div>
 
                     <div class="txzy_text">装卸园区</div>
@@ -59,7 +59,7 @@
 
                     <div class="txzyimg">
                         <img src="@/assets/tubiao.png" alt="">
-                        <div class="txzyimg_text">2</div>
+                        <div class="txzyimg_text">{{ loadingData.items[0].value }}</div>
                     </div>
                     <div class="txzy_text">等待作业</div>
                 </div>
@@ -70,7 +70,7 @@
 
                     <div class="txzyimg">
                         <img src="@/assets/tubiao2.png" alt="">
-                        <div class="txzyimg_text green_label">10</div>
+                        <div class="txzyimg_text green_label">{{ loadingData.items[1].value }}</div>
                     </div>
                     <div class="txzy_text">作业中</div>
                 </div>
@@ -79,7 +79,7 @@
                 <div class="txzyList_box">
                     <div class="txzyimg">
                         <img src="@/assets/tubiao1.png" alt="">
-                        <div class="txzyimg_text yellow_label">5</div>
+                        <div class="txzyimg_text yellow_label">{{ loadingData.items[2].value }}</div>
                     </div>
                     <div class="txzy_text">已完成</div>
                 </div>
@@ -315,6 +315,7 @@ const props = defineProps({
 import { Search } from '@element-plus/icons-vue'
 import { reactive, ref, inject, watch, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts';
+import { getWorkOffNum } from '@/api/user';
 const showMenus = ref(false);
 const menuRef = ref(null);
 const ueResponseData = inject('ueResponseData')
@@ -492,19 +493,19 @@ const initChart2 = () => {
                 },
                 data: [
                     {
-                        value: fireData.items[0].value, name: '',
+                        value: loadingData.items[1].value, name: '',
                         itemStyle: {
                             color: '#42FFF9'
                         }
                     },
                     {
-                        value: fireData.items[1].value, name: '',
+                        value: loadingData.items[2].value, name: '',
                         itemStyle: {
                             color: '#F0B716'
                         }
                     },
                     {
-                        value: fireData.items[2].value, name: '',
+                        value: loadingData.items[0].value, name: '',
                         itemStyle: {
                             color: '#16B4F0'
                         }
@@ -524,19 +525,43 @@ const handleResize = () => {
 
 };
 
-const fireData = reactive({
-    total: 17,
+const loadingData = reactive({
+    percentage: '0',
+    total: 0,
     items: [
-        { label: '在线设备', value: 10, unit: '个', color: 'blue', key: 'online' },
-        { label: '离线设备', value: 1, unit: '个', color: 'yellow', key: 'offline' },
-        { label: '离线设备', value: 6, unit: '个', color: 'yellow', key: 'offline' }
+        { label: '等待作业', value: 0 },
+        { label: '作业中', value: 0 },
+        { label: '已完成', value: 0 }
     ]
 });
+
+const getWorkOffNums = async () => {
+    try {
+        const res = await getWorkOffNum({ "bureauCode": "0318" });
+        if (res.code == 0) {
+            const done = Number(res.data.doneNum) || 0;
+            const doing = Number(res.data.doingNum) || 0;
+            const wait = Number(res.data.waitNum) || 0;
+            const total = done + doing + wait;
+
+            loadingData.items[0].value = wait;    // 等待作业
+            loadingData.items[1].value = doing;   // 作业中
+            loadingData.items[2].value = done;    // 已完成
+            loadingData.total = total;
+            loadingData.percentage = total === 0 ? '0' : Math.round((done / total) * 100).toString();
+
+            initChart2();
+        }
+    } catch (e) {
+        console.warn("WorkOff API failed", e);
+    }
+};
 
 // 生命周期
 onMounted(() => {
 
     initChart2();
+    getWorkOffNums();
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
     document.addEventListener('webkitfullscreenchange', handleResize);

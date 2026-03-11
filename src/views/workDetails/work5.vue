@@ -16,17 +16,25 @@
                 <div class="shelf-switch-list">
                     <div class="shelf-switch-label">货架切换</div>
                     <div v-for="(item, index) in shelfItems" :key="index" class="shelf-switch-item"
-                        :class="{ active: activeShelf === index }" @click="activeShelf = index">
+                        :class="{ active: activeShelf === index }" @click="activeShelfChange(index)">
                         {{ item }}
                     </div>
                 </div>
             </div>
 
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
+                <el-input v-model="input3" class="inputwidth inputwidth2" placeholder="请输入关键字" :prefix-icon="Search" />
+                <!-- 类别切换栏与搜索框同一行 -->
+                <div class="category-switch-list">
+                    <div v-for="(item, index) in categoryItems" :key="index" class="category-switch-item"
+                        :class="{ active: activeCategory === index }" @click="activeCategorys(index)">
+                        {{ item }}
+                    </div>
+                </div>
             </div>
             <div class="changleft">
-                <el-table class="my-spacing-table" ref="tableRef" :data="workdata">
+                <el-table class="my-spacing-table" ref="tableRef" :data="workdata" style="cursor: pointer;"
+                    @row-click="handleInventoryRowClick">
                     <el-table-column prop="receiptCode" label="入库单号" show-overflow-tooltip />
                     <el-table-column prop="receiptTime" label="入库时间" />
                     <el-table-column prop="warehouseCode" label="货位编码" show-overflow-tooltip />
@@ -368,12 +376,12 @@
 
 .shelf-switch-container {
     position: absolute;
-    top: -50px;
+    top: -45px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    background: #1A67BF;
+    background: rgba(26, 103, 191, 0.8);
     border: 1px solid rgba(45, 169, 192, 0.5);
     border-radius: 4px;
     padding: 2px 10px;
@@ -413,7 +421,7 @@
     cursor: pointer;
     border-radius: 0px;
     transition: all 0.2s;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 400;
     display: flex;
     align-items: center;
@@ -431,6 +439,49 @@
     background: #093C85;
     font-weight: bold;
     box-shadow: inset 0 0 8px rgba(78, 213, 255, 0.5);
+}
+
+.changewidth {
+    margin-bottom: 10px;
+    margin-top: 0px; 
+    margin-left: 10px; 
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.category-switch-list {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.category-switch-item {
+    color: #A3D8FF;
+    padding: 6px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.category-switch-item:hover {
+    color: #fff;
+    background: rgba(45, 169, 192, 0.1);
+}
+
+.category-switch-item.active {
+    color: #fff;
+    background: linear-gradient(180deg, rgba(14, 88, 175, 0.8) 0%, rgba(30, 144, 255, 0.9) 100%);
+    border: 1px solid rgba(89, 203, 255, 0.4);
+    box-shadow: inset 0px -4px 10px rgba(0, 255, 255, 0.6); 
 }
 </style>
 
@@ -459,9 +510,47 @@ const showMenus = ref(false);
 const input3 = ref("");
 const menuRef = ref(null);
 
+const playerMethods = inject('playerMethods')
+// 封装调用逻辑
+const callParentMethod = (message) => {
+    if (playerMethods?.sendMessage) {
+        playerMethods.sendMessage(message)
+    } else {
+        console.error('方法未成功注入')
+    }
+}
+
+const ckcodeMap = ['QLK', 'ZLK', 'PK'];
+
+const activeCategorys = (index) => {
+    activeCategory.value = index;
+    const ckcode = ckcodeMap[index] || '';
+    console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": index, "ckcode": ckcode } });
+    callParentMethod({ "code": 1, "type": "btn", "data": { "id": index, "ckcode": ckcode } });
+}
+
 // 货架切换数据
 const activeShelf = ref(0);
 const shelfItems = ref(['第一排', '第二排', '第三排', '第四排', '第五排', '第六排','第七排','第八排','第九排','第十排']    );
+
+const activeShelfChange = (index) => {
+    activeShelf.value = index;
+    console.log('点击触发', { "code": 1, "type": "huojia", "data": { "id": index + 1 } });
+    callParentMethod({ "code": 1, "type": "huojia", "data": { "id": index + 1 } });
+};
+
+// 实时库存表格点击行事件
+const handleInventoryRowClick = (row) => {
+    if (!row) return;
+    const id = row.materialId || '';
+    const warehouseCode = row.warehouseCode || '';
+    console.log('库存行点击', { "code": 1, "type": "goods", "data": { "id": id, "warehouseCode": warehouseCode } });
+    callParentMethod({ "code": 1, "type": "goods", "data": { "id": id, "warehouseCode": warehouseCode } });
+};
+
+// 新增分类切换数据 (与搜索框同级)
+const activeCategory = ref(0);
+const categoryItems = ref(['轻载立库', '重载立库', '智能平库',]);
 const ueResponseData = inject('ueResponseData')
 watch(ueResponseData, async (newVal, oldVal) => {
     if (newVal) {
