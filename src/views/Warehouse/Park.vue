@@ -234,12 +234,12 @@ const instances = {
 
 // --- Reactive Data (Initialized with Default/Mock values for Fault Tolerance) ---
 const environmentData = reactive([
-    { icon: require('@/assets/温度.png'), label: '温度', value: '22', unit: '°C', key: 'temperature' },
-    { icon: require('@/assets/多云.png'), label: 'PM10', value: '116', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm10' },
-    { icon: require('@/assets/C02.png'), label: '风向', value: '116', unit: '°', colorClass: 'gjyellow', key: 'windPower' },
-    { icon: require('@/assets/湿度.png'), label: '湿度', value: '75', unit: '%', key: 'humidity' },
-    { icon: require('@/assets/多云.png'), label: 'PM2.5', value: '116', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm25' },
-    { icon: require('@/assets/C02.png'), label: '大气压', value: '116', unit: 'Pa', colorClass: 'gjyellow', key: 'atmospheric' }
+    { icon: require('@/assets/温度.png'), label: '温度', value: '0', unit: '°C', key: 'temperature' },
+    { icon: require('@/assets/多云.png'), label: 'PM10', value: '0', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm10' },
+    { icon: require('@/assets/C02.png'), label: '风向', value: '0', unit: '°', colorClass: 'gjyellow', key: 'windPower' },
+    { icon: require('@/assets/湿度.png'), label: '湿度', value: '0', unit: '%', key: 'humidity' },
+    { icon: require('@/assets/多云.png'), label: 'PM2.5', value: '0', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm25' },
+    { icon: require('@/assets/C02.png'), label: '大气压', value: '0', unit: 'Pa', colorClass: 'gjyellow', key: 'atmospheric' }
 ]);
 
 const securityData = reactive({
@@ -460,8 +460,9 @@ const getEnergyOption = (water, electricity) => ({
 const fetchEnergy = async () => {
     try {
         const year = new Date().getFullYear();
-        const res = await queryEnergyNumCount({ queryDate: "2025" });
-        // queryDate: year.toString()
+           // queryDate: year.toString()
+        const res = await queryEnergyNumCount({ queryDate:  year.toString()});
+     
         if (res.code === '0' && res?.data?.length > 0) {
             const newData = { water: new Array(12).fill(0), electricity: new Array(12).fill(0) };
             res.data.forEach(item => {
@@ -534,8 +535,8 @@ const fetchYardRate = async () => {
             const data = res.data[0];
             yardData.percentage = data.useWarehouseRate;
             yardData.items[0].value = data.useWarehouseRate;
-            yardData.items[1].value = data.useWarehouseCount;
-            yardData.items[2].value = data.freeWarehouseCount;
+            yardData.items[0].value = data.useWarehouseCount;
+            yardData.items[1].value = data.freeWarehouseCount;
         }
     } catch (e) { console.warn('Yard API failed'); }
     updateChart('yard', chartDom4.value, getPieOption(
@@ -950,6 +951,7 @@ onUnmounted(() => {
     margin-right: 10px;
     margin-top: 15px;
 }
+
 
 .card {
     display: flex;

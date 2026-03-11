@@ -103,7 +103,7 @@ watch(ueResponseData, (newVal) => {
     if (newVal) {
         console.log('接收到新数据:', newVal)
         if (newVal?.json.type === 'hjjc') {
-            showMenus.value = true
+            // showMenus.value = true
         }
     }
 })

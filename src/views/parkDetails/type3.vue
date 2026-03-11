@@ -738,7 +738,7 @@ watch(ueResponseData, async (newVal, oldVal) => {
         console.log('接收到新数据:', newVal)
 
         if (newVal?.json.type == 'afjc' || newVal?.json.type == 'poi') {
-            showMenus.value = true
+            // showMenus.value = true
         }
 
         // 如果接收到的数据包含id，调用API获取视频URL并打开弹窗

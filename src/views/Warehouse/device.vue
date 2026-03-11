@@ -100,30 +100,58 @@ const queryAlarmCurrents = () => {
     })
 }
 
-const queryMaintainDataLists = () => {
-    queryMaintainDataList({
-        "pageSize": 100,
-        "pageNo": 1,
-        "deviceName": input3.value
-    }).then(res => {
-        if (res.code == 0) {
-            // source.value = res.data.records
-        }
-    })
-}
+const queryDeviceDataLists = async () => {
+    try {
+        // 并行请求两个接口
+        const [maintainRes, manageRes] = await Promise.all([
+            queryMaintainDataList({
+                "pageSize": 999,
+                "pageNo": 1,
+                "deviceName": input3.value
+            }),
+            queryManageList({
+                "pageSize": 999,
+                "pageNo": 1,
+                "deviceName": input3.value
+            })
+        ]);
 
-const queryManageLists = () => {
-    queryManageList({
-        "pageSize": 999,
-        "pageNo": 1,
-        "deviceName": input3.value
-    }).then(res => {
-        if (res.code == 0) {
-            source.value = res.data?.records || []
+        if (manageRes.code == 0) {
+            let baseList = manageRes.data?.records || [];
+            let maintainList = (maintainRes.code == 0) ? (maintainRes.data?.records || []) : [];
+
+            // 将 maintainList 转为以 code 为 key 的 map，方便快速查找
+            const maintainMap = {};
+            maintainList.forEach(item => {
+                if (item.code) {
+                    maintainMap[item.code] = {
+                        lastMaintainDate: item.lastMaintainDate,
+                        nextMaintainDate: item.nextMaintainDate
+                    };
+                }
+            });
+
+            // 拼装数据
+            source.value = baseList.map(item => {
+                const maintainInfo = maintainMap[item.code] || {};
+                return {
+                    ...item,
+                    lastMaintainDate: maintainInfo.lastMaintainDate || null,
+                    nextMaintainDate: maintainInfo.nextMaintainDate || null
+                };
+            });
+            
+            // 如果列表有数据且没有选中项，自动选中第一项
+            if (source.value.length > 0 && (!selectedRow.value || !selectedRow.value.code)) {
+                selectedRow.value = source.value[0];
+            }
         } else {
-            source.value = []
+            source.value = [];
         }
-    })
+    } catch (error) {
+        console.error("获取设备列表失败:", error);
+        source.value = [];
+    }
 }
 const source2 = ref([
     // {
@@ -211,21 +239,18 @@ const handleRowClick = (row) => {
 };
 
 const handleAlertSearch = () => {
-    queryManageLists();
-    queryMaintainDataLists();
+    queryDeviceDataLists();
 }
 const handleAlertReset = () => {
     input3.value = '';
-    queryManageLists();
-    queryMaintainDataLists();
+    queryDeviceDataLists();
 }
 
 onMounted(() => {
     // 页面逻辑初始化
-    queryMaintainDataLists();
+    queryDeviceDataLists();
+    
     queryAlarmCurrents();
-
-    queryManageLists();
 });
 
 onUnmounted(() => {

@@ -204,14 +204,14 @@ const deviceType = {
 }
 
 const MOCK_DATA = [
-    { deviceName: "烟感#1", deviceType: "烟雾传感器", countNums3: "大厅1号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 2 },
-    { deviceName: "烟感#2", deviceType: "烟雾传感器", countNums3: "大厅2号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 1 },
-    { deviceName: "烟感#3", deviceType: "烟雾传感器", countNums3: "大厅3号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "一般告警", countNums8: "烟雾浓度每米>3%", type: 1 }
+    // { deviceName: "烟感#1", deviceType: "烟雾传感器", countNums3: "大厅1号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 2 },
+    // { deviceName: "烟感#2", deviceType: "烟雾传感器", countNums3: "大厅2号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "", type: 1 },
+    // { deviceName: "烟感#3", deviceType: "烟雾传感器", countNums3: "大厅3号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "一般告警", countNums8: "烟雾浓度每米>3%", type: 1 }
 ];
 
 const MOCK_DATA2 = [
-    { deviceName: "火灾预警器#1", deviceType: "消防检测", countNums3: "大厅4号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "一号区域火灾报警", type: 1 },
-    { deviceName: "声光预警器#1", deviceType: "消防检测", countNums3: "大厅7号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "二号区域警报", type: 1 }
+    // { deviceName: "火灾预警器#1", deviceType: "消防检测", countNums3: "大厅4号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "一号区域火灾报警", type: 1 },
+    // { deviceName: "声光预警器#1", deviceType: "消防检测", countNums3: "大厅7号监测点", countNums4: "65°C", countNums5: "2025-04-12 10:24:15", countNums6: "在线", countNums7: "", countNums8: "二号区域警报", type: 1 }
 ];
 
 // --- State ---

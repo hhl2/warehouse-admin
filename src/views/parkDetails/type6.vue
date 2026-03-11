@@ -508,7 +508,7 @@ const formatDate = (timestamp) => {
 
 const fetchVisitorData = async () => {
     try {
-        const response = await request({
+        const res = await request({
             url: '/api/qydigital-park-service/qyQueryPersonInfo/queryWatchPersonInfoPagination',
             method: 'post',
             data: {
@@ -519,7 +519,16 @@ const fetchVisitorData = async () => {
             skipGlobalParams: true
         });
         if (res.code == 0) {
-            visitordata.value = res.data.list
+            visitordata.value = res.data.list.map(item => {
+        return {
+            ...item,
+            sendType: RUN_STATUS_MAP[item.sendType] || '未知',
+
+            arriveTime: formatDate(item.arriveTime),
+            leaceTime: formatDate(item.arriveTime)
+
+        }
+    });
 
         }
     } catch (error) {
@@ -540,7 +549,7 @@ watch(ueResponseData, async (newVal, oldVal) => {
         console.log('接收到新数据:', newVal)
 
         if (newVal?.json.type && newVal?.json.type == 'ryjc') {
-            showMenus.value = true
+            // showMenus.value = true
 
         }
 
@@ -1032,16 +1041,17 @@ const visitordata = ref([
 const RUN_STATUS_MAP = { 0: "离园", 1: "在园" };
 // 生命周期
 onMounted(() => {
-    visitordata.value = visitordata.value.map(item => {
-        return {
-            ...item,
-            sendType: RUN_STATUS_MAP[item.sendType] || '未知',
+    // visitordata.value = visitordata.value.map(item => {
+    //     return {
+    //         ...item,
+    //         sendType: RUN_STATUS_MAP[item.sendType] || '未知',
 
-            arriveTime: formatDate(item.arriveTime),
-            leaceTime: formatDate(item.arriveTime)
+    //         arriveTime: formatDate(item.arriveTime),
+    //         leaceTime: formatDate(item.arriveTime)
 
-        }
-    });
+    //     }
+    // });
+    fetchVisitorData();
 
     document.addEventListener("click", handleClickOutside);
 

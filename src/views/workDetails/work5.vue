@@ -1,6 +1,6 @@
 <template>
 
-    <div class="lefts" :class="{ 'panel-collapsed': !isPanelVisible }">
+    <!-- <div class="lefts" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title" style="margin-top: 10px;">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">货物模型</div>
@@ -8,22 +8,20 @@
         <div class="imgbox2">
             <img :src="lstPicture" alt="">
         </div>
-    </div>
-
-    <!-- 货架切换栏 -->
-    <div class="shelf-switch-container"
-        :class="{ 'panel-collapsed': !isPanelVisible, 'is-centered': shelfItems.length < 9 }">
-
-        <div class="shelf-switch-list">
-            <div class="shelf-switch-label">货架切换</div>
-            <div v-for="(item, index) in shelfItems" :key="index" class="shelf-switch-item"
-                :class="{ active: activeShelf === index }" @click="activeShelf = index">
-                {{ item }}
-            </div>
-        </div>
-    </div>
+    <!-- </div> -->
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
+            <!-- 货架切换栏 -->
+            <div class="shelf-switch-container">
+                <div class="shelf-switch-list">
+                    <div class="shelf-switch-label">货架切换</div>
+                    <div v-for="(item, index) in shelfItems" :key="index" class="shelf-switch-item"
+                        :class="{ active: activeShelf === index }" @click="activeShelf = index">
+                        {{ item }}
+                    </div>
+                </div>
+            </div>
+
             <div class="changewidth">
                 <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" />
             </div>
@@ -112,16 +110,17 @@
 </template>
 
 <style scoped>
-.testmians.panel-collapsed {
-    transform: translateX(-50%) translateY(100%);
-    opacity: 0;
-    pointer-events: none;
-}
-
-.lefts.panel-collapsed {
-    transform: translateX(-100%);
-    opacity: 0;
-    pointer-events: none;
+.testmian {
+    position: relative;
+    padding: 25px 20px;
+    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background-size: 100% 100%;
+    width: 1250px;
+    height: 330px;
+    position: fixed;
+    bottom: 80px;
+    z-index: 999;
+    left: calc(100% - 1170px);
 }
 
 .right {
@@ -357,79 +356,30 @@
     height: 100%;
 }
 
-.lefts {
-    width: 485px;
-    height: 354px;
-    position: absolute;
-    z-index: 31;
-    background: url('@/assets/try/小框左.png') no-repeat right top;
-    background-size: 100% 100%;
-    left: 15px;
-    bottom: 80px;
-    padding: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: #c1c1c1 transparent;
-
-
+.imgbox2 img {
+    width: 100%;
+    height: 100%;
 }
 
 
 
 
 
-
-.testmians {
-    margin: 0 auto;
-}
-
-.testmian {
-    padding: 20px 15px;
-    background: url('@/assets/框中间.png') no-repeat 0 0;
-    background-size: 100% 100%;
-    width: 855px;
-    height: 335px;
-    position: fixed;
-    left: 50%;
-    bottom: 80px;
-    transform: translateX(-50%);
-    z-index: 999;
-
-}
 
 .shelf-switch-container {
-    position: fixed;
-    bottom: 460px;
-    right: 15px;
-    /* 默认靠右，防止多排时挡住中间 */
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     background: #1A67BF;
-    /* 采用项目中常用的深蓝色 */
     border: 1px solid rgba(45, 169, 192, 0.5);
     border-radius: 4px;
     padding: 2px 10px;
     z-index: 1000;
     transition: all 0.3s ease;
     white-space: nowrap;
-}
-
-/* 小于9排时居中 */
-.shelf-switch-container.is-centered {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.shelf-switch-container.panel-collapsed {
-    transform: translateY(100px);
-    opacity: 0;
-    pointer-events: none;
-}
-
-.shelf-switch-container.is-centered.panel-collapsed {
-    transform: translateX(-50%) translateY(100px);
 }
 
 .shelf-switch-label {
@@ -511,14 +461,14 @@ const menuRef = ref(null);
 
 // 货架切换数据
 const activeShelf = ref(0);
-const shelfItems = ref(['第一排', '第二排', '第三排', '第四排', '第五排', '第六排',]);
+const shelfItems = ref(['第一排', '第二排', '第三排', '第四排', '第五排', '第六排','第七排','第八排','第九排','第十排']    );
 const ueResponseData = inject('ueResponseData')
 watch(ueResponseData, async (newVal, oldVal) => {
     if (newVal) {
         console.log('接收到新数据:', newVal)
 
         if (newVal?.json.type && newVal?.json.type == 'poi') {
-            showMenus.value = true
+            // showMenus.value = true
 
         }
 

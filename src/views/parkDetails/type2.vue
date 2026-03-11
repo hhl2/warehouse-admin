@@ -11,7 +11,7 @@
                     <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="deviceType" label="设备类型" />
                     <el-table-column prop="location" label="监测点位置" show-overflow-tooltip />
-                    <el-table-column prop="countNums4" label="检测数值" />
+                    <el-table-column prop="readNum" label="检测数值" />
                     <el-table-column prop="watchTime" label="检查时间" show-overflow-tooltip />
                     <el-table-column prop="runStatus" label="状态" width="60">
                         <template #default="scope">
@@ -211,7 +211,7 @@ const handleClickOutside = (event) => {
 // --- Watchers ---
 watch(ueResponseData, (newVal) => {
     if (newVal?.json?.type === 'nyjc') {
-        showMenus.value = true;
+        // showMenus.value = true;
     }
 });
 

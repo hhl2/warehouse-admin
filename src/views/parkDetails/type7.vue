@@ -323,7 +323,7 @@ watch(ueResponseData, async (newVal, oldVal) => {
         console.log('接收到新数据:', newVal)
 
         if (newVal?.json.type && newVal?.json.type == 'zxzy') {
-            showMenus.value = true
+            // showMenus.value = true
 
         }
 

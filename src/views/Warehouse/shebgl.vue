@@ -14,8 +14,8 @@
 
             <div class="sbglx_boxs">
                 <template v-for="value in sorces">
-                    <div class="sbglx_box">
-                        <img :src="value.icon" alt="">
+                    <div class="sbglx_box"  @click="changelist(value)">
+                        <img :src="value.icon" alt=""   @click.stop="changelist(value)">
                         <div class="sbglx_label">{{ value.text }}</div>
                         <div class="sbglx_text">{{ value.num }}</div>
                     </div>
@@ -35,7 +35,7 @@
     <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
-            <div class="title_txet">智能设备</div>
+            <div class="title_txet">{{ activeCategory || '园区设备' }}</div>
         </div>
 
         <div class="sblf">
@@ -57,13 +57,16 @@
                     <div class="margin_sb_box">
                         <div class="sb_box_label">
                             <span>设备名称</span>
-                            <span>下次检验日期</span>
+                            <span>下次检验时间</span>
                             <span>设备类型</span>
                             <span>子设备类型</span>
                         </div>
 
                         <div class="sb_box_label2">
-                            <span>{{ value.deviceName }}</span>
+                            <el-tooltip :content="value.deviceName" placement="top" :show-after="300" 
+                                popper-class="custom-tooltip" effect="dark">
+                                <span class="ellipsis-text">{{ value.deviceName }}</span>
+                            </el-tooltip>
                             <span>{{ value.nextInspectionDate }}</span>
                             <span>{{ value.deviceType }}</span>
                             <span>{{ value.subDeviceType }}</span>
@@ -77,7 +80,11 @@
                         </div>
 
                         <div class="sb_box_label2">
-                            <span>{{ value.manufacturer }}</span>
+                            <el-tooltip :content="value.manufacturer" placement="top" :show-after="300"
+                                popper-class="custom-tooltip" effect="dark" v-if="value.manufacturer">
+                                <span class="ellipsis-text">{{ value.manufacturer }}</span>
+                            </el-tooltip>
+                            <span v-else></span>
                             <span>{{ value.modelSpec }}</span>
                             <span>{{ value.status }}</span>
                             <span>{{ value.quantity || '' }}</span>
@@ -309,6 +316,12 @@
     text-align: center;
 }
 
+.ellipsis-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .sblf_search {
     display: flex;
     align-items: center;
@@ -342,7 +355,7 @@
 <script setup>
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
-import { getDeviceList } from '@/api/user'
+import { getDeviceList,getCountOnlinSum,getEnergyDeviceList,getParkWeatherStationList,getVideoPointList,getDisplayDeviceList,getBuildingDeviceList} from '@/api/user'
 
 import sb2 from '@/assets/shebei/智能设备.png';
 import sb3 from '@/assets/shebei/特种设备.png';
@@ -408,12 +421,41 @@ const props = defineProps({
 });
 
 const input3 = ref('');
+const activeCategory = ref('');
 
-const fetchCountOnlinSums = () => {
+const fetchCurrentCategoryList = () => {
+    const category = activeCategory.value;
+    let apiMethod = getDeviceList; // 默认查询园区设备
+
+    if (category.includes('环境')) {
+        apiMethod = getParkWeatherStationList;
+    } else if (category.includes('安防') || category.includes('消防') || category.includes('视频')) {
+        apiMethod = getVideoPointList;
+    } else if (category.includes('能耗') || category.includes('水浸') || category.includes('火灾')) {
+        apiMethod = getEnergyDeviceList;
+    } else if (category.includes('智能')) {
+        apiMethod = getDisplayDeviceList;
+    } else if (category.includes('建筑')) {
+        apiMethod = getBuildingDeviceList;
+    }
+    
+    fetchDeviceData(apiMethod, category || '园区设备');
+};
+
+const changelist = (value) => {
+    if (!value || !value.text) return;
+    console.log('点击设备分类:', value.text);
+
+    activeCategory.value = value.text;
+    input3.value = ''; // 清空搜索框
+
+    fetchCurrentCategoryList();
+};
+
+const fetchCountOnlinSums =async () => {
     // 图标数组
     const icons = [sb1, sb2, sb3, sb4, sb5, sb6, sb7, sb8];
-
-    // 模拟数据测试（根据用户要求添加）
+        // 模拟数据测试（根据用户要求添加）
     const mockRes = {
         code: "0",
         data: {
@@ -427,6 +469,18 @@ const fetchCountOnlinSums = () => {
             }]
         }
     };
+
+
+    await getCountOnlinSum().then(res => {
+        if (res.code == 0) {
+            mockRes.data=res.data
+            // 将 API 返回的字段映射到组件需要的字段
+
+        }
+    }).catch(err => {
+        console.error('获取设备列表失败:', err);
+    });
+
 
     if (mockRes.code == "0" && mockRes.data.sum && mockRes.data.sum.length > 0) {
         const sumData = mockRes.data.sum[0];
@@ -445,20 +499,21 @@ const fetchCountOnlinSums = () => {
     }
 }
 
-// API 请求函数
-const queryManageLists = () => {
-    getDeviceList({
+// 通用的获取设备列表数据方法
+const fetchDeviceData = (apiMethod, categoryName) => {
+    apiMethod({
         "pageSize": 100,
         "pageNo": 1,
         "name": input3.value
     }).then(res => {
         if (res.code == 0) {
             // 将 API 返回的字段映射到组件需要的字段
-            source.value = res.data.records.map(item => ({
+            source.value = res.data.map(item => ({
                 deviceCode: item.deviceCode,
                 deviceName: item.name,
                 nextInspectionDate: item.nextMaintainDate,
-                deviceType: item.deviceType || '智能设备',
+                // 根据当前的分类指定没有返回时的默认设备类型
+                deviceType: item.deviceType || categoryName,
                 subDeviceType: item.subDeviceType || '',
                 manufacturer: item.manufacturer || '',
                 modelSpec: item.spec || '',
@@ -467,33 +522,33 @@ const queryManageLists = () => {
             }));
         }
     }).catch(err => {
-        console.error('获取设备列表失败:', err);
+        console.error(`获取${categoryName}列表失败:`, err);
     });
 };
 
 const handleAlertSearch = () => {
-    queryManageLists();
+    fetchCurrentCategoryList();
 };
 
 const handleAlertReset = () => {
     input3.value = '';
-    queryManageLists();
+    fetchCurrentCategoryList();
 };
 
 const sorces = ref([
-    { text: '智能设备', num: "7/34", icon: sb1 },
-    { text: '特种设备', num: "0/2", icon: sb2 },
-    { text: '安防设备', num: "2/15", icon: sb3 },
-    { text: '巡更设备', num: "0/6", icon: sb4 },
-    { text: '环境设备', num: "0/21", icon: sb5 },
-    { text: '消防设备', num: "0/21", icon: sb6 },
+    { text: '智能设备', num: "0/34", icon: sb1 },
+    { text: '环境设备', num: "0/15", icon: sb2 },
+    { text: '安防设备', num: "0/15", icon: sb3 },
+    { text: '能耗设备', num: "0/6", icon: sb4 },
+    { text: '园区设备', num: "0/21", icon: sb5 },
+    { text: '建筑设备', num: "0/21", icon: sb6 },
     // { text: '工具器设备', num: "0/1", icon: sb7 },
     // { text: '计量设备', num: "0/1", icon: sb8 }
 ]);
 
 onMounted(() => {
-    queryManageLists();
     fetchCountOnlinSums();
+    fetchCurrentCategoryList(); // 默认加载列表，可以通过 activeCategory 指定初始展示的分类
 });
 
 

@@ -39,6 +39,22 @@ export const getIntelligentToolList = (data) =>
     data,
     skipGlobalParams: true
   });
+//设备管理(获取建筑设备列表)
+export const getBuildingDeviceList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getBuildingDeviceList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
+//设备管理(获取智能设备列表)
+export const getDisplayDeviceList = (data) =>
+  request({
+    url: '/api/qydigital-park-service/deviceStatistics/getDisplayDeviceList',
+    method: 'post',
+    data,
+    skipGlobalParams: true
+  });
 
 //设备管理(获取能耗设备列表)
 export const getEnergyDeviceList = (data) =>
