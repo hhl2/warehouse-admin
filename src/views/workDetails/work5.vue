@@ -509,7 +509,11 @@ import defaultImg from '@/assets/try/work5.png'
 const showMenus = ref(false);
 const input3 = ref("");
 const menuRef = ref(null);
+const warehouseCode=ref("")
+const wareouseId=ref("")
 
+// @。 四向车库：八排；轻库：十二排；重库；六排
+//  重型立库：code :0318080022 03180800PL id:67901a31e08a49f98dab0240fc8f1282   立库：03180800KS id;aebf01bd6fae4f63a1d2bbb4c8208e0c  穿梭车库：code :0318080022    id:b9fe3b7bf47847ce8ccc5fb69a889d90
 const playerMethods = inject('playerMethods')
 // 封装调用逻辑
 const callParentMethod = (message) => {
@@ -525,6 +529,20 @@ const ckcodeMap = ['QLK', 'ZLK', 'PK'];
 const activeCategorys = (index) => {
     activeCategory.value = index;
     const ckcode = ckcodeMap[index] || '';
+    if(ckcode=='QLK'){
+        warehouseCode.value="03180800KS"
+        wareouseId.value="aebf01bd6fae4f63a1d2bbb4c8208e0c"
+
+    }else if(ckcode=='ZLK'){
+        warehouseCode.value="03180800PL"
+        wareouseId.value="67901a31e08a49f98dab0240fc8f1282 "
+
+    }else{
+        warehouseCode.value="0318080022"
+        wareouseId.value="b9fe3b7bf47847ce8ccc5fb69a889d90 "
+
+    }
+    queryDistributionInfoPaginations();
     console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": index, "ckcode": ckcode } });
     callParentMethod({ "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
 }
@@ -774,7 +792,12 @@ const queryDistributionPictures = (id) => {
 
 const queryDistributionInfoPaginations = () => {
 
-    queryDistributionInfoPagination({ "pageNo": 1,
+    queryDistributionInfoPagination({
+    "bureauCode": "0318",
+    "provinceCode": "03",
+    "warehouseCode": warehouseCode.value,
+    wareouseId:wareouseId.value,
+       "pageNo": 1,
         "pageSize": 999,}).then(res => {
 
         // 因为 request.js 拦截器已经返回了 response.data，所以这里直接判断 res.code

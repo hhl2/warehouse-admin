@@ -172,8 +172,8 @@ const props = defineProps({
 
 const data1 = ref([]);
 
-const warehouseCode = '0318080';
-const warehouseId = '03180000020822';
+const warehouseCode = '0318080022';
+const warehouseId = '';
 
 const timeType1 = ref(3);
 const timeType2 = ref(3);

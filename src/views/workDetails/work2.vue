@@ -141,10 +141,10 @@
         <div class="changleft">
             <el-table class="my-spacing-table" ref="tableRef" :data="fetchData2">
                 <el-table-column prop="receiptCode" label="单号" show-overflow-tooltip />
-                <el-table-column prop="countNums2" label="入库货位" />
-                <el-table-column prop="createTime" label="开始时间" show-overflow-tooltip />
-                <el-table-column prop="countNums3" label="结束时间" />
-                <el-table-column prop="countNums5" label="状态" width="60">
+                <el-table-column prop="countNums2" label="入库货位" show-overflow-tooltip/>
+                <!-- <el-table-column prop="createTime" label="入库单创建时间" show-overflow-tooltip /> -->
+                <el-table-column prop="countNums3" label="入库类型" />
+                <el-table-column prop="countNums5" label="预计作业时长" show-overflow-tooltip>
                 </el-table-column>
             </el-table>
         </div>
@@ -158,10 +158,10 @@
         <div class="changleft">
             <el-table class="my-spacing-table" ref="tableRef" :data="fetchData1">
                 <el-table-column prop="IssueCode" label="单号" show-overflow-tooltip />
-                <el-table-column prop="countNums2" label="入库货位" />
-                <el-table-column prop="createTime" label="开始时间" show-overflow-tooltip />
-                <el-table-column prop="countNums3" label="结束时间" />
-                <el-table-column prop="countNums5" label="状态" width="60">
+                <el-table-column prop="countNums2" label="出库货位" show-overflow-tooltip />
+                <!-- <el-table-column prop="createTime" label="出库单创建时间" show-overflow-tooltip /> -->
+                <el-table-column prop="countNums3" label="出库类型" />
+                <el-table-column prop="countNums5" label="预计作业时长" show-overflow-tooltip >
                 </el-table-column>
             </el-table>
         </div>

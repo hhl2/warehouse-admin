@@ -180,7 +180,12 @@ onMounted(() => {
 
 
 const queryYardWarehouseInfos = () => {
-    queryYardWarehouseInfo().then(res => {
+    queryYardWarehouseInfo({
+            "warehouseCode": "0318080",
+            page:1,
+            pagesize:999,
+            // "warehouseId": "03180000020822"
+        }).then(res => {
 
         if (res?.code == 0) {
             hwboxs.value = res.data?.list || []

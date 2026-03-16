@@ -239,8 +239,8 @@ import {
 } from "@/api/user";
 
 
-const warehouseCode = '0318080';
-const warehouseId = '03180000020822';
+const warehouseCode = '0318080022';
+const warehouseId = '';
 
 const timeType1 = ref(1);
 const loading = ref(false);
@@ -326,7 +326,7 @@ const formatDate = (timestamp) => {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 const queryWarehouseStatusPaginations = () => {
-    queryWarehouseStatusPagination({ timeType: timeType1.value, warehouseCode, warehouseId }).then(res => {
+    queryWarehouseStatusPagination({ timeType: timeType1.value, warehouseCode, }).then(res => {
         if (res && res.code == 0 && res.data) {
             overviewData.safetyBriefings = res.data.E10 || 0;
             overviewData.workPermits = res.data.AB01 || 0;
@@ -473,16 +473,16 @@ const initData = () => {
     });
 
     Object.assign(warehouseData, {
-        AB12: 65,
-        AB11: 75,
-        inboundRate: 45,
-        outboundRate: 40,
-        inboundCompleted: 90,
-        outboundCompleted: 80,
-        inboundRate1: 46,
-        outboundRate1: 41,
-        inboundCompleted1: 91,
-        outboundCompleted1: 81
+        AB12: 0,
+        AB11: 0,
+        inboundRate: 0,
+        outboundRate: 0,
+        inboundCompleted: 0,
+        outboundCompleted: 0,
+        inboundRate1: 0,
+        outboundRate1: 0,
+        inboundCompleted1: 0,
+        outboundCompleted1: 0
     });
 
     // 表格数据
@@ -750,6 +750,11 @@ onUnmounted(() => {
 }
 
 
+
+
+::v-deep(.el-loading-mask) {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
 
 .changeTimeTypes {
     display: flex;

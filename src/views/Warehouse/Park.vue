@@ -500,7 +500,8 @@ const fetchMonitoring = async () => {
 
 const fetchSecurityAlarm = async () => {
     try {
-        const res = await querySecurityAlarmCount({ dealState: "2" });
+        const res = await querySecurityAlarmCount({       "bureauCode": "0318",
+        "provinceCode": "03",dealState: "2" });
         if (res.code == 0) {
             alertData.total = res.data.alramTotal;
             alertData.items[0].value = res.data.oneLevelNum;
@@ -533,7 +534,7 @@ const fetchYardRate = async () => {
     try {
         const res = await queryYardWarehouseRate({
             "warehouseCode": "0318080",
-            "warehouseId": "03180000020822"
+            // "warehouseId": "03180000020822"
         });
         if (res.code == 0 && res.data?.[0]) {
             const data = res.data[0];
