@@ -319,9 +319,9 @@ export const queryParkWeatherListPagination = (data) => request({
 });
 
 // 作业指标概况
-export const queryWarehouseStatusPagination = (data) =>
+export const queryWarehouseJobNum = (data) =>
   request({
-    url: '/api/qydigital-park-service/queryLargeWarehouse/queryWarehouseStatusPagination',
+    url: '/api/qydigital-park-service/queryLargeWarehouse/queryWarehouseJobNum',
     method: 'post',
     data
   });

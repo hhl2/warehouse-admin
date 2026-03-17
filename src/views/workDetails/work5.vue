@@ -443,8 +443,8 @@
 
 .changewidth {
     margin-bottom: 10px;
-    margin-top: 0px; 
-    margin-left: 10px; 
+    margin-top: 0px;
+    margin-left: 10px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -481,7 +481,7 @@
     color: #fff;
     background: linear-gradient(180deg, rgba(14, 88, 175, 0.8) 0%, rgba(30, 144, 255, 0.9) 100%);
     border: 1px solid rgba(89, 203, 255, 0.4);
-    box-shadow: inset 0px -4px 10px rgba(0, 255, 255, 0.6); 
+    box-shadow: inset 0px -4px 10px rgba(0, 255, 255, 0.6);
 }
 </style>
 
@@ -509,8 +509,8 @@ import defaultImg from '@/assets/try/work5.png'
 const showMenus = ref(false);
 const input3 = ref("");
 const menuRef = ref(null);
-const warehouseCode=ref("")
-const wareouseId=ref("")
+const warehouseCode = ref("")
+const wareouseId = ref("")
 
 // @。 四向车库：八排；轻库：十二排；重库；六排
 //  重型立库：code :0318080022 03180800PL id:67901a31e08a49f98dab0240fc8f1282   立库：03180800KS id;aebf01bd6fae4f63a1d2bbb4c8208e0c  穿梭车库：code :0318080022    id:b9fe3b7bf47847ce8ccc5fb69a889d90
@@ -529,32 +529,33 @@ const ckcodeMap = ['QLK', 'ZLK', 'PK'];
 const activeCategorys = (index) => {
     activeCategory.value = index;
     const ckcode = ckcodeMap[index] || '';
-    if(ckcode=='QLK'){
-        warehouseCode.value="03180800KS"
-        wareouseId.value="aebf01bd6fae4f63a1d2bbb4c8208e0c"
-
-    }else if(ckcode=='ZLK'){
-        warehouseCode.value="03180800PL"
-        wareouseId.value="67901a31e08a49f98dab0240fc8f1282 "
-
-    }else{
-        warehouseCode.value="0318080022"
-        wareouseId.value="b9fe3b7bf47847ce8ccc5fb69a889d90 "
-
+    if (ckcode == 'QLK') {
+        warehouseCode.value = "03180800KS"
+        wareouseId.value = "aebf01bd6fae4f63a1d2bbb4c8208e0c"
+        shelfItems.value = ['全部', '第一排', '第二排', '第三排', '第四排', '第五排', '第六排', '第七排', '第八排', '第九排', '第十排', '第十一排', '第十二排']
+    } else if (ckcode == 'ZLK') {
+        warehouseCode.value = "03180800PL"
+        wareouseId.value = "67901a31e08a49f98dab0240fc8f1282 "
+        shelfItems.value = ['全部', '第一排', '第二排', '第三排', '第四排', '第五排', '第六排']
+    } else {
+        warehouseCode.value = "0318080022"
+        wareouseId.value = "b9fe3b7bf47847ce8ccc5fb69a889d90 "
+        shelfItems.value = ['全部', '第一排', '第二排', '第三排', '第四排', '第五排', '第六排', '第七排', '第八排']
     }
+    activeShelf.value = 0;
     queryDistributionInfoPaginations();
-    console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": index, "ckcode": ckcode } });
+    console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
     callParentMethod({ "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
 }
 
 // 货架切换数据
-const activeShelf = ref();
-const shelfItems = ref(['第一排', '第二排', '第三排', '第四排', '第五排', '第六排','第七排','第八排','第九排','第十排']    );
+const activeShelf = ref(0);
+const shelfItems = ref(['全部', '第一排', '第二排', '第三排', '第四排', '第五排', '第六排', '第七排', '第八排', '第九排', '第十排', '第十一排', '第十二排']);
 
 const activeShelfChange = (index) => {
     activeShelf.value = index;
-    console.log('点击触发', { "code": 1, "type": "huojia", "data": { "id": index + 1 } });
-    callParentMethod({ "code": 1, "type": "huojia", "data": { "id": index + 1 } });
+    console.log('点击触发', { "code": 1, "type": "huojia", "data": { "id": index } });
+    callParentMethod({ "code": 1, "type": "huojia", "data": { "id": index } });
 };
 
 // 实时库存表格点击行事件
@@ -562,8 +563,8 @@ const handleInventoryRowClick = (row) => {
     if (!row) return;
     const id = row.materialId || '';
     const warehouseCode = row.warehouseCode || '';
-    console.log('库存行点击', { "code": 1, "type": "goods", "data": { "id": id, "warehouseCode": warehouseCode } });
-    callParentMethod({ "code": 1, "type": "goods", "data": { "id": id, "warehouseCode": warehouseCode } });
+    console.log('库存行点击', { "code": 1, "type": "goods", "data": { "id": warehouseCode, "warehouseCode": warehouseCode } });
+    callParentMethod({ "code": 1, "type": "goods", "data": { "id": warehouseCode, "warehouseCode": warehouseCode } });
 };
 
 // 新增分类切换数据 (与搜索框同级)
@@ -793,12 +794,13 @@ const queryDistributionPictures = (id) => {
 const queryDistributionInfoPaginations = () => {
 
     queryDistributionInfoPagination({
-    "bureauCode": "0318",
-    "provinceCode": "03",
-    "warehouseCode": warehouseCode.value,
-    wareouseId:wareouseId.value,
-       "pageNo": 1,
-        "pageSize": 999,}).then(res => {
+        "bureauCode": "0318",
+        "provinceCode": "03",
+        "warehouseCode": warehouseCode.value,
+        wareouseId: wareouseId.value,
+        "pageNo": 1,
+        "pageSize": 999,
+    }).then(res => {
 
         // 因为 request.js 拦截器已经返回了 response.data，所以这里直接判断 res.code
         if (res?.code == 0) {
@@ -836,7 +838,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03182026010029",
         "materialId": "080200100000004",
         "actualQty": 0.02,
-        "warehouseCode": "031864T64T006001001001"
+        "warehouseCode": "014010927H11"
     },
     {
         "materialName": "电缆",
@@ -846,7 +848,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03182026010031",
         "materialId": "080200100000004",
         "actualQty": 0.02,
-        "warehouseCode": "031864T64T006001001001"
+        "warehouseCode": "014010521B11"
     },
     {
         "materialName": "电动电缆剪",
@@ -856,7 +858,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03002026010002",
         "materialId": "200501500000004",
         "actualQty": 2.0,
-        "warehouseCode": "031864T64T003001001001"
+        "warehouseCode": "014010422A11"
     },
     {
         "materialName": "电动滑板车",
@@ -866,7 +868,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03002026010002",
         "materialId": "210200300000014",
         "actualQty": 2.0,
-        "warehouseCode": "031864T64T003001001001"
+        "warehouseCode": "014010326F11"
     },
     {
         "materialName": "电缆",
@@ -876,7 +878,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03182026010031",
         "materialId": "080200100000004",
         "actualQty": 0.01,
-        "warehouseCode": "031864T64T006001001001"
+        "warehouseCode": "014010224F11"
     },
     {
         "materialName": " 叶轮给煤机",
@@ -886,7 +888,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03182026010031",
         "materialId": "010200100060001",
         "actualQty": 10.0,
-        "warehouseCode": "031864T64R64R001001023"
+        "warehouseCode": "014010622H11"
     },
     {
         "materialName": "电缆",
@@ -896,7 +898,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03182026010031",
         "materialId": "080200100000004",
         "actualQty": 9.97,
-        "warehouseCode": "031864T64T003001001001"
+        "warehouseCode": "014011227A11"
     },
     {
         "materialName": "电缆",
@@ -906,7 +908,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03182026010030",
         "materialId": "080200100000004",
         "actualQty": 0.02,
-        "warehouseCode": "031864T64T006001001001"
+        "warehouseCode": "014010127A11"
     },
     {
         "materialName": "110kV备自投装置屏",
@@ -916,7 +918,7 @@ const workdata = ref([
         "receiptCode": "SGMPR03182025110025",
         "materialId": "033700500010004",
         "actualQty": 1.0,
-        "warehouseCode": "031864T64T006001001003"
+        "warehouseCode": "014010227A11"
     },
 
 ]);

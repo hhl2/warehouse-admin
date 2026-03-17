@@ -225,14 +225,14 @@
             </div>
         </div>
     </div>
-</template> 
+</template>
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import * as echarts from 'echarts';
 import {
-    queryWarehouseStatusPagination,
+    queryWarehouseJobNum,
     queryParkReservationListPaginations,
     queryWarWorkArrangementListPagination
 
@@ -326,7 +326,7 @@ const formatDate = (timestamp) => {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 const queryWarehouseStatusPaginations = () => {
-    queryWarehouseStatusPagination({ timeType: timeType1.value, warehouseCode, }).then(res => {
+    queryWarehouseJobNum({ timeType: timeType1.value, warehouseCode, }).then(res => {
         if (res && res.code == 0 && res.data) {
             overviewData.safetyBriefings = res.data.E10 || 0;
             overviewData.workPermits = res.data.AB01 || 0;

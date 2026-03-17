@@ -14,8 +14,8 @@
 
             <div class="sbglx_boxs">
                 <template v-for="value in sorces">
-                    <div class="sbglx_box"  @click="changelist(value)">
-                        <img :src="value.icon" alt=""   @click.stop="changelist(value)">
+                    <div class="sbglx_box" @click="changelist(value)">
+                        <img :src="value.icon" alt="" @click.stop="changelist(value)">
                         <div class="sbglx_label">{{ value.text }}</div>
                         <div class="sbglx_text">{{ value.num }}</div>
                     </div>
@@ -63,7 +63,7 @@
                         </div>
 
                         <div class="sb_box_label2">
-                            <el-tooltip :content="value.deviceName" placement="top" :show-after="300" 
+                            <el-tooltip :content="value.deviceName" placement="top" :show-after="300"
                                 popper-class="custom-tooltip" effect="dark">
                                 <span class="ellipsis-text">{{ value.deviceName }}</span>
                             </el-tooltip>
@@ -76,7 +76,7 @@
                             <span>生产厂家</span>
                             <span>规格型号</span>
                             <span>运行状态</span>
-                            <span>领用数量</span>
+                            <span></span>
                         </div>
 
                         <div class="sb_box_label2">
@@ -87,7 +87,7 @@
                             <span v-else></span>
                             <span>{{ value.modelSpec }}</span>
                             <span>{{ value.status }}</span>
-                            <span>{{ value.quantity || '' }}</span>
+                            <span></span>
                         </div>
 
                     </div>
@@ -355,7 +355,7 @@
 <script setup>
 import { Search } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
-import { getDeviceList,getCountOnlinSum,getEnergyDeviceList,getParkWeatherStationList,getVideoPointList,getDisplayDeviceList,getBuildingDeviceList} from '@/api/user'
+import { getDeviceList, getCountOnlinSum, getEnergyDeviceList, getParkWeatherStationList, getVideoPointList, getDisplayDeviceList, getBuildingDeviceList } from '@/api/user'
 
 import sb2 from '@/assets/shebei/智能设备.png';
 import sb3 from '@/assets/shebei/特种设备.png';
@@ -438,7 +438,7 @@ const fetchCurrentCategoryList = () => {
     } else if (category.includes('建筑')) {
         apiMethod = getBuildingDeviceList;
     }
-    
+
     fetchDeviceData(apiMethod, category || '园区设备');
 };
 
@@ -452,10 +452,10 @@ const changelist = (value) => {
     fetchCurrentCategoryList();
 };
 
-const fetchCountOnlinSums =async () => {
+const fetchCountOnlinSums = async () => {
     // 图标数组
     const icons = [sb1, sb2, sb3, sb4, sb5, sb6, sb7, sb8];
-        // 模拟数据测试（根据用户要求添加）
+    // 模拟数据测试（根据用户要求添加）
     const mockRes = {
         code: "0",
         data: {
@@ -473,7 +473,7 @@ const fetchCountOnlinSums =async () => {
 
     await getCountOnlinSum().then(res => {
         if (res.code == 0) {
-            mockRes.data=res.data
+            mockRes.data = res.data
             // 将 API 返回的字段映射到组件需要的字段
 
         }

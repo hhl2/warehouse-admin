@@ -7,18 +7,11 @@
         </div>
         <div class="spjkLists">
             <template v-for="(value, index) in sorces" :key="index">
-                <div class="spjkList" @click="handleRowClick(value)" :data-index="index"
-                    :ref="el => setSpjkListRef(el, index)">
+                <div class="spjkList" @click="handleRowClick(value)">
                     <div class="spjkListbox">
-                        <!-- 加载中显示转圈 -->
-                        <div v-if="value.loading" class="mini-loader"></div>
-
-                        <!-- 加载完成显示图片 -->
-                        <img v-else-if="value.imageUrl" :src="value.imageUrl" alt=""
+                        <!-- 显示图片 -->
+                        <img :src="value.imageUrl || require('@/assets/camera/图.png')" alt=""
                             style="width: 100%; height: 100%; object-fit: cover;">
-
-                        <!-- 无图片也无加载显示暂无信号 -->
-                        <div v-else class="fetch-error">暂无信号</div>
                     </div>
                     <div class="spjkList_label">{{ value.cn || '摄像头' + (index + 1) }}</div>
                 </div>
@@ -65,22 +58,20 @@
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">摄像头监控列表</div>
         </div>
-        <div class="title_text_box_custom">
-            <div v-for="tag in regions" :key="tag" class="title_txets_custom"
-                :class="{ 'active_tag': currentRegion === tag }" @click="handleRegionChange(tag)">
-                {{ tag }}
-            </div>
-        </div>
+        <!-- <div class="title_text_box">
+                <div class="title_txets">立体仓库</div>
+                <div class="title_txets">平置仓库</div>
+                <div class="title_txets">堆场</div>
+            </div> -->
 
         <div class="inputbox">
             <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
-                @keyup.enter="triggerSearch" />
-            <el-button type="primary" class="search-btn" @click="triggerSearch">查询</el-button>
+                @keyup.enter="fetchData2" />
+            <el-button type="primary" class="search-btn" @click="fetchData2">查询</el-button>
         </div>
 
-        <div class="device-table-wrapper" style="height: calc(100% - 140px); margin-bottom: 10px;">
-            <el-table class="device-custom-table" ref="tableRef" :data="cameraListData" @row-click="handleRowClick"
-                height="100%">
+        <div class="device-table-wrapper">
+            <el-table class="device-custom-table" ref="tableRef" :data="data" @row-click="handleRowClick" height="100%">
                 <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="manufacturer" label="设备类型" />
                 <el-table-column prop="cn" label="监测点位置" show-overflow-tooltip />
@@ -91,11 +82,6 @@
                     </template>
                 </el-table-column>
             </el-table>
-        </div>
-        <div class="pagination-container">
-            <el-pagination v-model:current-page="pageNo" v-model:page-size="pageSize" :page-sizes="[10, 20, 30]"
-                layout="total, sizes, prev, pager, next" :total="total" @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" :small="true" background />
         </div>
     </div>
 
@@ -135,13 +121,6 @@
 </template>
 
 <style scoped>
-.pagination-container {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 15px;
-
-}
-
 /* 背景遮罩层（已禁用，如需启用请取消注释） */
 /*
 .popup-overlay {
@@ -411,30 +390,8 @@
 .spjkLists .spjkListbox {
     width: 200px;
     height: 160px;
-    background: rgba(16, 24, 48, 0.5);
-    /* 暗色背景 */
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border: 1px solid rgba(97, 179, 255, 0.1);
+    background: #fff;
 }
-
-.mini-loader {
-    width: 30px;
-    height: 30px;
-    border: 3px solid rgba(97, 179, 255, 0.1);
-    border-top-color: #61B3FF;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.fetch-error {
-    color: #4a5a6a;
-    font-size: 14px;
-}
-
 
 .spjkList_label {
     margin-top: 10px;
@@ -474,35 +431,6 @@
     margin-bottom: 30px;
 }
 
-.title_text_box_custom {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 10px 15px 5px 15px;
-    gap: 15px;
-}
-
-.title_txets_custom {
-    font-size: 16px;
-    font-family: Adobe Heiti Std;
-    font-weight: bold;
-    color: #8ed0ff;
-    cursor: pointer;
-    padding: 2px 10px;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s;
-}
-
-.title_txets_custom:hover {
-    color: #00f0ff;
-}
-
-.title_txets_custom.active_tag {
-    color: #00f0ff;
-    border-bottom: 2px solid #00f0ff;
-    background: linear-gradient(to top, rgba(0, 240, 255, 0.1), transparent);
-}
-
 .title_text_box {
     position: absolute;
     top: -5px;
@@ -521,121 +449,9 @@
     font-weight: bold;
     color: #FFFFFF;
     background: linear-gradient(0deg, #6CB0FD 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 
-}
-
-/* 分页器科技风样式 */
-::v-deep(.pagination-container .el-pagination) {
-    --el-pagination-bg-color: transparent;
-    --el-pagination-text-color: #8ed0ff;
-    --el-pagination-button-color: #8ed0ff;
-    --el-pagination-button-disabled-bg-color: transparent;
-    --el-pagination-button-disabled-color: rgba(142, 208, 255, 0.3);
-    --el-pagination-hover-color: #00f0ff;
-    padding: 0;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-    background-color: rgba(0, 240, 255, 0.2);
-    border: 1px solid #00f0ff;
-    color: #ffffff;
-    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.6);
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li) {
-    background-color: rgba(16, 55, 98, 0.6);
-    border: 1px solid rgba(81, 169, 255, 0.4);
-    color: #8ed0ff;
-    border-radius: 4px;
-    margin: 0 4px;
-    transition: all 0.3s;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:hover) {
-    background-color: rgba(0, 240, 255, 0.1);
-    border-color: #00f0ff;
-    color: #00f0ff;
-}
-
-/* 分页容器布局复位，确保总计文本被正常显示不被遮挡 */
-.pagination-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 5px;
-    margin-top: 10px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-::v-deep(.pagination-container .el-pagination) {
-    --el-pagination-bg-color: transparent;
-    --el-pagination-text-color: #8ed0ff;
-    --el-pagination-button-color: #8ed0ff;
-    --el-pagination-button-disabled-bg-color: transparent;
-    --el-pagination-button-disabled-color: rgba(142, 208, 255, 0.3);
-    --el-pagination-hover-color: #00f0ff;
-    padding: 0;
-    display: flex;
-    flex-wrap: nowrap;
-}
-
-/* 使下拉框变窄，避免撑出屏幕 */
-::v-deep(.pagination-container .el-pagination .el-select) {
-    width: 78px;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-    background-color: rgba(0, 240, 255, 0.2);
-    border: 1px solid #00f0ff;
-    color: #ffffff;
-    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.6);
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li) {
-    background-color: rgba(16, 55, 98, 0.6);
-    border: 1px solid rgba(81, 169, 255, 0.4);
-    color: #8ed0ff;
-    border-radius: 4px;
-    margin: 0 4px;
-    transition: all 0.3s;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:hover) {
-    background-color: rgba(0, 240, 255, 0.1);
-    border-color: #00f0ff;
-    color: #00f0ff;
-}
-
-::v-deep(.pagination-container .el-pagination__total),
-::v-deep(.pagination-container .el-pagination__classifier),
-::v-deep(.pagination-container .el-pagination__rightwrapper),
-::v-deep(.pagination-container .el-pagination__jump) {
-    color: #8ed0ff !important;
-    /* margin-right: 10px; */
-    font-size: 13px;
-}
-
-::v-deep(.pagination-container .el-select .el-input__wrapper) {
-    background-color: rgba(16, 55, 98, 0.6);
-    box-shadow: inset 0 0 0 1px rgba(81, 169, 255, 0.4);
-}
-
-::v-deep(.pagination-container .el-select:hover .el-input__wrapper) {
-    box-shadow: inset 0 0 0 1px #00f0ff;
-}
-
-::v-deep(.pagination-container .el-select .el-input__inner) {
-    color: #8ed0ff;
 }
 </style>
 
@@ -943,19 +759,17 @@ const handleClickOutside = (event) => {
     }
 };
 
-// 视频网格数据 - 初始为空，由接口填充
+// 视频网格数据 - 默认显示8张图片
 const sorces = ref([
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false },
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false },
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false },
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false },
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false },
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false },
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false },
-    { id: '', cn: '暂无数据', imageUrl: '', loading: false }
+    { id: '', cn: '指挥中心四楼档案室南面走廊-半球', imageUrl: require('@/assets/camera/图.png') },
+    { id: '', cn: '摄像头2', imageUrl: require('@/assets/camera/图1.png') },
+    { id: '', cn: '摄像头3', imageUrl: require('@/assets/camera/图2.png') },
+    { id: '', cn: '摄像头4', imageUrl: require('@/assets/camera/图3.png') },
+    { id: '', cn: '摄像头5', imageUrl: require('@/assets/camera/图4.png') },
+    { id: '', cn: '摄像头6', imageUrl: require('@/assets/camera/图5.png') },
+    { id: '', cn: '摄像头7', imageUrl: require('@/assets/camera/图6.png') },
+    { id: '', cn: '摄像头8', imageUrl: require('@/assets/camera/图7.png') }
 ]);
-
-
 
 // 视频网格播放器管理
 const videoElementRefs = ref([]);
@@ -968,19 +782,55 @@ const setVideoRef = (el, index) => {
     }
 };
 
-// 网格播放器逻辑已移除，改为显示抓拍图
-/*
+// 初始化单个网格播放器
 const initGridPlayer = async (index, videoUrl) => {
-    // ...
-};
-*/
+    if (!videoElementRefs.value[index] || !videoUrl) {
+        console.warn(`网格播放器 ${index}: 元素或URL不存在`);
+        return;
+    }
 
-// 销毁所有网格播放器（已不再使用实时视频流）
+    try {
+        // 如果已存在播放器实例，先销毁
+        if (gridPlayerInstances.value[index]) {
+            try {
+                gridPlayerInstances.value[index].destroy();
+            } catch (e) {
+                console.warn(`销毁网格播放器 ${index} 失败:`, e);
+            }
+        }
+
+        let absoluteUrl = videoUrl;
+        if (videoUrl && !videoUrl.match(/^(http|https|ws|wss|webrtc|wt|artc):/)) {
+            absoluteUrl = window.location.origin + videoUrl;
+        }
+
+        if (!window.EasyPlayerPro) {
+            console.error('EasyPlayer Pro 库未加载');
+            return;
+        }
+
+        gridPlayerInstances.value[index] = new window.EasyPlayerPro(videoElementRefs.value[index], {
+            stretch: true,
+            hasAudio: true,
+            autoplay: true,
+            live: false,
+            object_fit: "fill",
+        });
+
+        gridPlayerInstances.value[index].play(absoluteUrl);
+        console.log(`✅ 网格播放器 ${index} 初始化成功`);
+    } catch (error) {
+        console.error(`网格播放器 ${index} 初始化失败:`, error);
+    }
+};
+
+// 销毁所有网格播放器
 const destroyGridPlayers = () => {
     gridPlayerInstances.value.forEach((player, index) => {
         if (player) {
             try {
                 player.destroy();
+                console.log(`✅ 网格播放器 ${index} 已销毁`);
             } catch (error) {
                 console.error(`销毁网格播放器 ${index} 失败:`, error);
             }
@@ -990,366 +840,74 @@ const destroyGridPlayers = () => {
     videoElementRefs.value = [];
 };
 
-// --- 可视区域懒加载 ---
-const spjkListRefs = ref([]);
-const setSpjkListRef = (el, index) => {
-    if (el) {
-        spjkListRefs.value[index] = el;
-    }
-};
-
-let lazyObserver = null;
-const initObserver = () => {
-    if (lazyObserver) lazyObserver.disconnect();
-
-    // 监听 dom，在可视区域的才去加载
-    lazyObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const index = entry.target.dataset.index;
-                const item = sorces.value[index];
-                // 如果在可视区域且还没有去请求过，放入抓拍队列
-                if (item && item.loading && !item.inQueue) {
-                    item.inQueue = true; // 标记防止重复加载
-                    fetchSnapshot(item, index);
-                }
-            }
-        });
-    }, {
-        root: null, // 监听视口
-        rootMargin: '100px', // 提前 100px 预加载
-        threshold: 0.1
-    });
-
-    // 开始绑定监听
-    nextTick(() => {
-        spjkListRefs.value.forEach(el => {
-            if (el) lazyObserver.observe(el);
-        });
-    });
-};
-
-// --- 隐藏播放器截取画面逻辑队列 ---
-let isCapturingActive = true;
-const captureQueue = [];
-const maxConcurrent = 4; // 并发抓拍数量
-let activeCount = 0;
-
-const processSnapshotQueue = async () => {
-    if (activeCount >= maxConcurrent || captureQueue.length === 0 || !isCapturingActive) return;
-
-    while (activeCount < maxConcurrent && captureQueue.length > 0 && isCapturingActive) {
-        activeCount++;
-        const task = captureQueue.shift();
-        executeSnapshot(task.item, task.index).finally(() => {
-            activeCount--;
-            processSnapshotQueue();
-        });
-    }
-};
-
-const executeSnapshot = (item, index) => {
-    return new Promise(async (resolve) => {
-        if (!isCapturingActive) return resolve();
-
-        if (!item.id) {
-            if (sorces.value[index]) sorces.value[index].loading = false;
-            return resolve();
-        }
-
-        try {
-            const response = await request({
-                url: '/api/qydigital-park-service/qyVideoPoint/previewURLs',
-                method: 'post',
-                data: {
-                    cameraIndexCode: item.id
-                },
-                skipGlobalParams: true
-            });
-
-            if (response && response.code === '0' && response.data && response.data.url) {
-                await capturePlayerFrame(response.data.url, index);
-            } else {
-                if (sorces.value[index]) sorces.value[index].loading = false;
-            }
-        } catch (error) {
-            console.error(`获取摄像头 ${item.id} 播放地址失败:`, error);
-            if (sorces.value[index]) sorces.value[index].loading = false;
-        }
-        resolve();
-    });
-};
-
-const capturePlayerFrame = (videoUrl, index) => {
-    return new Promise((resolve) => {
-        if (!isCapturingActive || !sorces.value[index]) return resolve();
-
-        // 创建临时隐藏容器，确保有充足宽高来渲染画面
-        const tempContainer = document.createElement('div');
-        tempContainer.style.position = 'fixed';
-        tempContainer.style.top = '-9999px';
-        tempContainer.style.left = '-9999px';
-        tempContainer.style.width = '640px';
-        tempContainer.style.height = '360px';
-        document.body.appendChild(tempContainer);
-
-        let absoluteUrl = videoUrl;
-        if (videoUrl && !videoUrl.match(/^(http|https|ws|wss|webrtc|wt|artc):/)) {
-            absoluteUrl = window.location.origin + videoUrl;
-        }
-
-        let player = null;
-        try {
-            player = new window.EasyPlayerPro(tempContainer, {
-                stretch: true,
-                hasAudio: false,
-                autoplay: true,
-                live: false,
-                muted: true
-            });
-        } catch (e) {
-            if (document.body.contains(tempContainer)) document.body.removeChild(tempContainer);
-            if (sorces.value[index]) sorces.value[index].loading = false;
-            return resolve();
-        }
-
-        let attempts = 0;
-        let snapshotInterval = setInterval(() => {
-            attempts++;
-            // 设置超时时间 (约 8 秒)
-            if (attempts > 80 || !isCapturingActive) {
-                clearInterval(snapshotInterval);
-                cleanUpTempPlayer(player, tempContainer);
-                if (sorces.value[index]) sorces.value[index].loading = false;
-                return resolve();
-            }
-
-            try {
-                // 轮询播放器的 canvas 并生成图片
-                const canvas = tempContainer.querySelector('canvas');
-                if (canvas) {
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                    // 数据长度>3000说明不是纯黑(透明)占位帧
-                    if (dataUrl && dataUrl.length > 3000) {
-                        clearInterval(snapshotInterval);
-                        if (sorces.value[index]) {
-                            sorces.value[index].imageUrl = dataUrl;
-                            sorces.value[index].loading = false;
-                        }
-                        cleanUpTempPlayer(player, tempContainer);
-                        return resolve();
-                    }
-                }
-            } catch (err) { }
-        }, 100);
-
-        player.play(absoluteUrl).catch(e => {
-            clearInterval(snapshotInterval);
-            cleanUpTempPlayer(player, tempContainer);
-            if (sorces.value[index]) sorces.value[index].loading = false;
-            resolve();
-        });
-    });
-};
-
-const cleanUpTempPlayer = (player, container) => {
-    try { if (player) player.destroy(); } catch (e) { }
-    try { if (document.body.contains(container)) document.body.removeChild(container); } catch (e) { }
-};
-
-// 抓拍入口函数：放入队列执行避免浏览器卡死
-const fetchSnapshot = (item, index) => {
-    if (sorces.value[index]) sorces.value[index].loading = true;
-    captureQueue.push({ item, index });
-    processSnapshotQueue();
-}
-
-// 初始化视频网格数据 - 调取接口获取抓拍图，不播放实时视频
+// 初始化视频网格数据 - 只显示图片，不加载视频
 const initializeVideoGrids = async () => {
-    if (!cameraListData.value || cameraListData.value.length === 0) {
-        console.warn('cameraListData 为空，无法初始化视频网格');
+    if (!data.value || data.value.length === 0) {
+        console.warn('data 为空，无法初始化视频网格');
         return;
     }
 
-    // 取数据
-    // const first8Items = cameraListData.value.slice(0, 8);
-    const first8Items = cameraListData.value
+    // 定义8张默认图片
+    const defaultImages = [
+        require('@/assets/camera/图.png'),
+        require('@/assets/camera/图1.png'),
+        require('@/assets/camera/图2.png'),
+        require('@/assets/camera/图3.png'),
+        require('@/assets/camera/图4.png'),
+        require('@/assets/camera/图5.png'),
+        require('@/assets/camera/图6.png'),
+        require('@/assets/camera/图7.png')
+    ];
 
-    // 初始化 sorces 数组
+    // 取前8条数据
+    const first8Items = data.value.slice(0, 8);
+
+    // 初始化 sorces 数组，为每条数据分配对应的默认图片
     sorces.value = first8Items.map((item, index) => ({
         id: item.id,
         cn: item.cn || '摄像头',
-        imageUrl: '',
-        loading: true,
-        inQueue: false // 初始化并未进队
+        imageUrl: defaultImages[index] || defaultImages[0] // 如果超出范围，使用第一张图
     }));
 
-    // 重置队列
-    captureQueue.length = 0;
-    activeCount = 0;
-
-    // 不再这里直接 forEach 加载了，交给 Observer 懒加载
-    console.log('✅ 初始化视频网格完成，准备懒加载观察...');
-    initObserver();
+    console.log('✅ 初始化视频网格完成，共', sorces.value.length, '个摄像头');
 }
 
-const cameraListData = ref([]);
-const pageNo = ref(1);
-const pageSize = ref(20);
-const total = ref(0);
-
-const currentRegion = ref('全部');
-const regions = ['全部', '智能平库', '四向车库', '指挥中心', '立库'];
-
-const handleRegionChange = (tag) => {
-    currentRegion.value = tag;
-    pageNo.value = 1;
-    fetchData2();
-};
-
-const handleSizeChange = (val) => {
-    pageSize.value = val;
-    fetchData2();
-};
-
-const handleCurrentChange = (val) => {
-    pageNo.value = val;
-    fetchData2();
-};
-
+const data = ref([
+]);
 const RUN_STATUS_MAP = { 0: "离线", 1: "在线" };
-
-// 当使用输入框查询时，重置条件
-const triggerSearch = () => {
-    pageNo.value = 1;
-    fetchData2();
-};
-
-// ====== API 查询数据 ====== 
-const fetchData2_API = async () => {
+//列表查询
+const fetchData2 = async () => {
     try {
-        /**
-         * [方案 A] 后端分页筛选逻辑：
-         * 如果后端支持筛选，您可以将 currentRegion.value 作为一个参数传递给接口
-         * 例如：region: currentRegion.value === '全部' ? '' : currentRegion.value
-         */
         const res = await request({
-            url: '/api/qydigital-park-service/videoMonitoringPoint/queryDataListByPage',
+            url: 'api/qydigital-park-service/videoMonitoringPoint/queryDataListByPage',
             method: 'post',
             data: {
-                // 如果是一次性获取所有数据并在前端筛选 (方案 B)，则 pageSize 设置为 9999
-                pageSize: pageSize.value,
-                pageNo: pageNo.value,
-                cn: input3.value || '',
-                // region: currentRegion.value === '全部' ? '' : currentRegion.value // [方案 A] 给后端传参
+                pageSize: 999,
+                pageNo: 1,
+                cn: input3.value || ''
             },
             skipGlobalParams: true
         });
-
-        if (res.code === '0' || res.code === 0) {
-            let list = res.data?.list || [];
-
-            /**
-             * [方案 B] 如果接口不支持 region 筛选，且您一次性拿到了所有数据，请在此处手动过滤并分页：
-             * let allData = list;
-             * if (currentRegion.value !== '全部') {
-             *     allData = allData.filter(item => item.region && item.region.includes(currentRegion.value));
-             * }
-             * total.value = allData.length;
-             * list = allData.slice((pageNo.value - 1) * pageSize.value, pageNo.value * pageSize.value);
-             */
-
-            total.value = res.data?.total || list.length;
-            if (list && list.length > 0) {
-                const mappedList = list.map((item, index) => ({
+        if (res.code === '0') {
+            // 根据返回结构赋值
+            if (res.data && res.data.list) {
+                const mappedList = res.data.list.map((item, index) => ({
                     id: item.id,
-                    name1: item.cn || `摄像头#${index + 1}`,
+                    name1: `摄像头#${index + 1}`,
                     cn: item.cn,
                     online: RUN_STATUS_MAP[item.online] || '未知',
                     manufacturer: item.manufacturer
                 }));
-                cameraListData.value = mappedList;
-                // 数据加载完成后，初始化视频网格
+                data.value = mappedList;
+
+                // 数据加载完成后，初始化视频网格（只显示图片）
                 await initializeVideoGrids();
-            } else {
-                cameraListData.value = [];
-                sorces.value.forEach(item => item.loading = false);
             }
-        } else {
-            cameraListData.value = [];
-            sorces.value.forEach(item => item.loading = false);
         }
     } catch (err) {
-        console.error('获取data2 API 数据失败', err);
-        cameraListData.value = [];
-        sorces.value.forEach(item => item.loading = false);
+        console.error('获取data2数据失败', err);
     }
-};
-
-// ====== 本地 Mock 查询数据 ======
-const fetchData2_Mock = async () => {
-    try {
-        const allCameraList = require('./cameraList.json') || [];
-
-        // 模拟网络延迟
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        // 关键字过滤
-        const keyword = input3.value ? input3.value.trim() : '';
-        let filteredList = allCameraList;
-        if (keyword) {
-            filteredList = allCameraList.filter(item =>
-                (item.cn && item.cn.includes(keyword)) ||
-                (item.id && item.id.includes(keyword))
-            );
-        }
-
-        // 2. [方案 B] 区域过滤 (前端手动实现)
-        if (currentRegion.value !== '全部') {
-            filteredList = filteredList.filter(item => {
-                // 处理 JSON 中特殊的 Region‌ 字段键名 (可能包含不可见字符)
-                const regionValue = item['Region‌'] || item.Region;
-                return regionValue && regionValue.includes(currentRegion.value);
-            });
-        }
-
-        total.value = filteredList.length;
-
-        // 3. 手动分页
-        const startIndex = (pageNo.value - 1) * pageSize.value;
-        const endIndex = startIndex + pageSize.value;
-        const pageData = filteredList.slice(startIndex, endIndex);
-
-        if (pageData.length > 0) {
-            const mappedList = pageData.map((item, index) => ({
-                id: item.id,
-                name1: item.cn || `摄像头#${startIndex + index + 1}`,
-                cn: item.cn,
-                online: '在线', // mock 数据默认在线
-                manufacturer: item['Region‌'] || '摄像头设备'
-            }));
-            cameraListData.value = mappedList;
-
-            // 数据加载完成后，初始化视频网格
-            await initializeVideoGrids();
-        } else {
-            cameraListData.value = [];
-            sorces.value.forEach(item => item.loading = false);
-        }
-
-    } catch (err) {
-        console.error('获取data2 Mock 数据失败', err);
-        cameraListData.value = [];
-        sorces.value.forEach(item => item.loading = false);
-    }
-};
-
-// 主请求入口 (切换注释实现数据源切换)
-const fetchData2 = () => {
-    // fetchData2_API();     // [方案 A] 调用真实接口 (需后端配合筛选)
-    fetchData2_Mock(); // [方案 B] 调用本地 Mock 数据 (当前采用)
-};
-
+}
 
 
 // 生命周期
@@ -1368,8 +926,6 @@ onUnmounted(() => {
 });
 
 onBeforeUnmount(() => {
-    isCapturingActive = false; // 停止所有的背景抓拍排队
-    if (lazyObserver) lazyObserver.disconnect();
     // 组件卸载前销毁所有播放器
     destroySingleFlvPlayer();
     destroyGridPlayers();

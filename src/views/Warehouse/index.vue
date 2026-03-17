@@ -25,8 +25,9 @@
         </div>
     </div>
 
-    <div class="xm_date">
+    <div class="xm_date" style="pointer-events: auto; z-index: 9999;">
         {{ formattedTime }}&nbsp;&nbsp; |&nbsp; {{ formattedDate }} &nbsp;&nbsp;{{ weekDay }}
+        <img class="fullscreen-icon" :src="isFullscreen ? exitFullscreenImg : fullscreenImg" @click.stop="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '全屏切换'" />
     </div>
 
 
@@ -91,8 +92,8 @@
 /* 核心导航按钮样式 */
 .nav-button-item {
     position: relative;
-    width: 130px;
-    height: 30px;
+    width: 125px;
+    height: 25px;
     margin-left: -20px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
@@ -158,7 +159,7 @@
 
 .nav-button-item.active .nav-button-text {
     color: #fff !important;
-    font-size: 17px;
+    font-size: 16px;
     text-shadow: 0 0 10px rgba(0, 228, 255, 0.8);
     background: linear-gradient(to bottom, #FFFFFF, #DAEDFF);
     -webkit-background-clip: text;
@@ -396,12 +397,12 @@
 
 .menu_boxs {
     position: fixed;
-    top: 22px;
+    top: 24px;
     z-index: 999;
     width: 100%;
     background-size: 100% 100%;
     left: 20px;
-    height: 38px;
+    height: 35px;
 }
 
 .menu_box_uls {
@@ -446,6 +447,22 @@
     -webkit-text-fill-color: transparent;
 
 }
+
+.fullscreen-icon {
+    margin-left: 15px;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 22px;
+    height: 22px;
+    transition: all 0.3s;
+    opacity: 0.8;
+}
+
+.fullscreen-icon:hover {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(0, 228, 255, 0.9));
+}
 </style>
 
 <script>
@@ -462,6 +479,9 @@ import activeButton2 from '@/assets/宁德标签.png'
 
 import { onMounted, onUnmounted, ref, computed, onBeforeUnmount, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { FullScreen } from '@element-plus/icons-vue'
+import fullscreenImg from '@/assets/try/fullscreen_new.png'
+import exitFullscreenImg from '@/assets/try/exit_fullscreen.png'
 
 import DragFloatBall from '@/components/DragFloatBall.vue';
 
@@ -469,6 +489,17 @@ import DragFloatBall from '@/components/DragFloatBall.vue';
 const isPanelsVisible = ref(true);
 
 const isPaneClose = ref(true);
+
+// 全屏状态
+const isFullscreen = ref(false);
+
+const updateFullscreenState = () => {
+    // 强制使用最新的 DOM 状态或窗口高度检查全屏
+    const isFull = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+    if (isFullscreen.value !== isFull) {
+        isFullscreen.value = isFull;
+    }
+}
 
 const handleClose = () => {
     console.log("确认关闭悬浮球")
@@ -704,6 +735,41 @@ onMounted(async () => {
     }, 1000);
     //显示时间end
 
+    // 监听全屏变化
+    document.addEventListener('fullscreenchange', updateFullscreenState);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenState);
+    document.addEventListener('mozfullscreenchange', updateFullscreenState);
+    document.addEventListener('MSFullscreenChange', updateFullscreenState);
 })
 
+onUnmounted(() => {
+    document.removeEventListener('fullscreenchange', updateFullscreenState);
+    document.removeEventListener('webkitfullscreenchange', updateFullscreenState);
+    document.removeEventListener('mozfullscreenchange', updateFullscreenState);
+    document.removeEventListener('MSFullscreenChange', updateFullscreenState);
+})
+
+const toggleFullscreen = (e) => {
+    if(e) e.stopPropagation();
+    console.log('Toggle Fullscreen Triggered');
+    const doc = document.documentElement;
+    const currentlyFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+    
+    if (!currentlyFullscreen) {
+        // 先立刻改变图标状态保证反馈
+        isFullscreen.value = true;
+        const rfs = doc.requestFullscreen || doc.mozRequestFullScreen || doc.webkitRequestFullscreen || doc.msRequestFullscreen;
+        if(rfs) rfs.call(doc).catch(err => {
+            console.warn('全屏失败:', err);
+            isFullscreen.value = false; // 失败则回退状态
+        });
+    } else {
+        isFullscreen.value = false;
+        const efs = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if(efs) {
+            // efs.call 可能不返回 promise，包一层 try
+            try { efs.call(document); } catch (e) { console.warn(e); }
+        }
+    }
+}
 </script>

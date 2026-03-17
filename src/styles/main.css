@@ -76,6 +76,10 @@ html {
     height: 100% !important;
 }
 
+.el-table .cell.el-tooltip {
+    margin-left: 5px;
+}
+
 /* 侧边栏面板通用布局 - 默认允许滚动 */
 .left,
 .right {
