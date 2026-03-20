@@ -335,7 +335,7 @@
 }
 
 .jcrwright {
-    background: url('@/assets/框.png') no-repeat 0 0;
+    background: url('@/assets/frame.png') no-repeat 0 0;
     background-size: 100% 100%;
     display: flex;
     flex-direction: column;
@@ -352,7 +352,7 @@
     justify-content: center;
     margin: 10px 0px 10px 0px;
     padding: 5px;
-    background: url('@/assets/小标题33.png') no-repeat 0 0;
+    background: url('@/assets/subtitle-33.png') no-repeat 0 0;
     background-size: 100% 100%;
     position: relative;
 }
@@ -460,7 +460,7 @@
 }
 
 .jcrwrightm {
-    background: url('@/assets/框.png') no-repeat 0 0;
+    background: url('@/assets/frame.png') no-repeat 0 0;
     background-size: 100% 100%;
     background-size: 100% 100%;
     display: flex;

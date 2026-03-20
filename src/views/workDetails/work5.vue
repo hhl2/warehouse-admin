@@ -1,4 +1,4 @@
-<template>
+﻿﻿<template>
 
     <!-- <div class="lefts" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title" style="margin-top: 10px;">
@@ -23,7 +23,7 @@
             </div>
 
             <div class="changewidth">
-                <el-input v-model="input3" class="inputwidth inputwidth2" placeholder="请输入关键字" :prefix-icon="Search" />
+                <!-- <el-input v-model="input3" class="inputwidth inputwidth2" placeholder="请输入关键字" :prefix-icon="Search" /> -->
                 <!-- 类别切换栏与搜索框同一行 -->
                 <div class="category-switch-list">
                     <div v-for="(item, index) in categoryItems" :key="index" class="category-switch-item"
@@ -71,8 +71,8 @@
             </div>
         </div>
 
-        <div class="changleft">
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick">
+        <div class="changleft" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 10px; overflow: hidden;">
+            <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick" height="100%">
                 <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="manufacturer" label="设备类型" />
                 <el-table-column prop="cn" label="监测点位置" show-overflow-tooltip />
@@ -121,7 +121,7 @@
 .testmian {
     position: relative;
     padding: 25px 20px;
-    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 1250px;
     height: 330px;
@@ -132,9 +132,9 @@
 }
 
 .right {
-
     height: calc(100vh - 185px);
-
+    display: flex;
+    flex-direction: column;
 }
 
 .status-normal {
@@ -161,8 +161,7 @@
 }
 
 .my-spacing-table2 {
-
-    height: 420px;
+    flex: 1;
 }
 
 
@@ -171,16 +170,16 @@
 }
 
 .imgbox3 {
-    width: 445px;
-    height: 294px;
+    width: 432px;
+    height: 248px;
     background-color: #fff;
     margin: 15px 10px 15px 20px;
     overflow: hidden;
 }
 
 .context_tans {
-    width: 100%;
-    height: 100%;
+   width: 432px;
+    height: 248px;
     background: transparent;
     border: none;
     overflow: hidden;
@@ -262,7 +261,7 @@
     left: 50%;
     top: 80px;
     transform: translate(-50%);
-    background: url("@/assets/动画弹窗.png") no-repeat 0 0;
+    background: url("@/assets/animation-popup.png") no-repeat 0 0;
     background-size: 100% 100%;
     z-index: 1001;
 }

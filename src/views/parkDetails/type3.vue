@@ -14,11 +14,23 @@
                         <div v-if="value.loading" class="mini-loader"></div>
 
                         <!-- 加载完成显示图片 -->
-                        <img v-else-if="value.imageUrl" :src="value.imageUrl" alt=""
-                            style="width: 100%; height: 100%; object-fit: cover;">
+                        <div v-else-if="value.imageUrl" class="snapshot-wrapper">
+                            <img :src="value.imageUrl" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                            <!-- 右上角刷新的小按钮，随时可以重试 -->
+                            <div class="refresh-snapshot-btn" @click.stop="fetchSnapshot(value, index)" title="刷新此路监控快照">
+                                <el-icon>
+                                    <Refresh />
+                                </el-icon>
+                            </div>
+                        </div>
 
-                        <!-- 无图片也无加载显示暂无信号 -->
-                        <div v-else class="fetch-error">暂无信号</div>
+                        <!-- 无图片也无加载显示暂无信号，增加点击重试的容错机制 -->
+                        <div v-else class="fetch-error" @click.stop="fetchSnapshot(value, index)" style="cursor: pointer;" title="点击重新加载该路监控">
+                            <div style="text-align: center;">
+                                <div>暂无信号</div>
+                                <div style="font-size: 12px; margin-top: 4px; color: #10a8fd; opacity: 0.8;">⟳ 点击重试</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="spjkList_label">{{ value.cn || '摄像头' + (index + 1) }}</div>
                 </div>
@@ -135,12 +147,6 @@
 </template>
 
 <style scoped>
-.pagination-container {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 15px;
-
-}
 
 /* 背景遮罩层（已禁用，如需启用请取消注释） */
 /*
@@ -191,7 +197,7 @@
     left: 50%;
     top: 80px;
     transform: translate(-50%);
-    background: url("@/assets/动画弹窗.png") no-repeat 0 0;
+    background: url("@/assets/animation-popup.png") no-repeat 0 0;
     background-size: 100% 100%;
     z-index: 999;
 
@@ -354,13 +360,13 @@
 
 .testmian {
     padding: 20px 15px;
-    background: url('@/assets/框中间.png') no-repeat 0 0;
+    background: url('@/assets/frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 875px;
     height: 330px;
     position: fixed;
     left: 50%;
-    bottom: 65px;
+    bottom: 70px;
     transform: translateX(-50%);
     z-index: 999;
     display: flex;
@@ -435,6 +441,37 @@
     font-size: 14px;
 }
 
+
+/* 监控快照相关样式 */
+.snapshot-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.refresh-snapshot-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.refresh-snapshot-btn:hover {
+    background: #10a8fd;
+    transform: scale(1.1);
+}
 
 .spjkList_label {
     margin-top: 10px;
@@ -525,118 +562,6 @@
 
 }
 
-/* 分页器科技风样式 */
-::v-deep(.pagination-container .el-pagination) {
-    --el-pagination-bg-color: transparent;
-    --el-pagination-text-color: #8ed0ff;
-    --el-pagination-button-color: #8ed0ff;
-    --el-pagination-button-disabled-bg-color: transparent;
-    --el-pagination-button-disabled-color: rgba(142, 208, 255, 0.3);
-    --el-pagination-hover-color: #00f0ff;
-    padding: 0;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-    background-color: rgba(0, 240, 255, 0.2);
-    border: 1px solid #00f0ff;
-    color: #ffffff;
-    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.6);
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li) {
-    background-color: rgba(16, 55, 98, 0.6);
-    border: 1px solid rgba(81, 169, 255, 0.4);
-    color: #8ed0ff;
-    border-radius: 4px;
-    margin: 0 4px;
-    transition: all 0.3s;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:hover) {
-    background-color: rgba(0, 240, 255, 0.1);
-    border-color: #00f0ff;
-    color: #00f0ff;
-}
-
-/* 分页容器布局复位，确保总计文本被正常显示不被遮挡 */
-.pagination-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 5px;
-    margin-top: 10px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-::v-deep(.pagination-container .el-pagination) {
-    --el-pagination-bg-color: transparent;
-    --el-pagination-text-color: #8ed0ff;
-    --el-pagination-button-color: #8ed0ff;
-    --el-pagination-button-disabled-bg-color: transparent;
-    --el-pagination-button-disabled-color: rgba(142, 208, 255, 0.3);
-    --el-pagination-hover-color: #00f0ff;
-    padding: 0;
-    display: flex;
-    flex-wrap: nowrap;
-}
-
-/* 使下拉框变窄，避免撑出屏幕 */
-::v-deep(.pagination-container .el-pagination .el-select) {
-    width: 78px;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-    background-color: rgba(0, 240, 255, 0.2);
-    border: 1px solid #00f0ff;
-    color: #ffffff;
-    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.6);
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li) {
-    background-color: rgba(16, 55, 98, 0.6);
-    border: 1px solid rgba(81, 169, 255, 0.4);
-    color: #8ed0ff;
-    border-radius: 4px;
-    margin: 0 4px;
-    transition: all 0.3s;
-}
-
-::v-deep(.pagination-container .el-pagination.is-background .btn-prev:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .btn-next:hover:not(:disabled)),
-::v-deep(.pagination-container .el-pagination.is-background .el-pager li:hover) {
-    background-color: rgba(0, 240, 255, 0.1);
-    border-color: #00f0ff;
-    color: #00f0ff;
-}
-
-::v-deep(.pagination-container .el-pagination__total),
-::v-deep(.pagination-container .el-pagination__classifier),
-::v-deep(.pagination-container .el-pagination__rightwrapper),
-::v-deep(.pagination-container .el-pagination__jump) {
-    color: #8ed0ff !important;
-    /* margin-right: 10px; */
-    font-size: 13px;
-}
-
-::v-deep(.pagination-container .el-select .el-input__wrapper) {
-    background-color: rgba(16, 55, 98, 0.6);
-    box-shadow: inset 0 0 0 1px rgba(81, 169, 255, 0.4);
-}
-
-::v-deep(.pagination-container .el-select:hover .el-input__wrapper) {
-    box-shadow: inset 0 0 0 1px #00f0ff;
-}
-
-::v-deep(.pagination-container .el-select .el-input__inner) {
-    color: #8ed0ff;
-}
 </style>
 
 <script setup>
@@ -648,7 +573,7 @@ const props = defineProps({
     },
 
 })
-import { Search } from '@element-plus/icons-vue'
+import { Search, Refresh } from '@element-plus/icons-vue'
 import { reactive, ref, inject, watch, onMounted, onUnmounted, onBeforeUnmount, nextTick } from 'vue'
 import request from '@/utils/request'
 
@@ -1082,6 +1007,7 @@ const executeSnapshot = (item, index) => {
 
 const capturePlayerFrame = (videoUrl, index) => {
     return new Promise((resolve) => {
+        console.log("进入到这个页面")
         if (!isCapturingActive || !sorces.value[index]) return resolve();
 
         // 创建临时隐藏容器，确保有充足宽高来渲染画面
@@ -1105,7 +1031,8 @@ const capturePlayerFrame = (videoUrl, index) => {
                 hasAudio: false,
                 autoplay: true,
                 live: false,
-                muted: true
+                muted: true,
+                preserveDrawingBuffer: true // 解决 WebGL(canvas) 截图黑屏的核心参数
             });
         } catch (e) {
             if (document.body.contains(tempContainer)) document.body.removeChild(tempContainer);
@@ -1114,34 +1041,54 @@ const capturePlayerFrame = (videoUrl, index) => {
         }
 
         let attempts = 0;
-        let snapshotInterval = setInterval(() => {
-            attempts++;
-            // 设置超时时间 (约 8 秒)
-            if (attempts > 80 || !isCapturingActive) {
-                clearInterval(snapshotInterval);
-                cleanUpTempPlayer(player, tempContainer);
-                if (sorces.value[index]) sorces.value[index].loading = false;
-                return resolve();
-            }
-
-            try {
-                // 轮询播放器的 canvas 并生成图片
-                const canvas = tempContainer.querySelector('canvas');
-                if (canvas) {
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                    // 数据长度>3000说明不是纯黑(透明)占位帧
-                    if (dataUrl && dataUrl.length > 3000) {
-                        clearInterval(snapshotInterval);
-                        if (sorces.value[index]) {
-                            sorces.value[index].imageUrl = dataUrl;
-                            sorces.value[index].loading = false;
-                        }
-                        cleanUpTempPlayer(player, tempContainer);
-                        return resolve();
-                    }
+        // 先给 2 秒（2000ms）的“缓冲强制等待期”，让播放器充分初始化并跳过初始黑屏/Logo
+        setTimeout(() => {
+            let snapshotInterval = setInterval(() => {
+                attempts++;
+                // 设置超时时间 (约 12 秒)
+                if (attempts > 120 || !isCapturingActive) {
+                    clearInterval(snapshotInterval);
+                    cleanUpTempPlayer(player, tempContainer);
+                    if (sorces.value[index]) sorces.value[index].loading = false;
+                    return resolve();
                 }
-            } catch (err) { }
-        }, 100);
+
+                try {
+                    let dataUrl = null;
+
+                    // 方案 A：如果是普通视频标签 (MSE)，直接绘制 video 上的画面
+                    const video = tempContainer.querySelector('video');
+                    if (video && video.videoWidth > 0 && video.videoHeight > 0) {
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = video.videoWidth;
+                        tempCanvas.height = video.videoHeight;
+                        const ctx = tempCanvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+                        dataUrl = tempCanvas.toDataURL('image/jpeg', 0.6);
+                    } else {
+                        // 方案 B：如果是 Wasm 解码，则它是渲染在 canvas (WebGL) 上的
+                        const canvas = tempContainer.querySelector('canvas');
+                        if (canvas) {
+                            dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                        }
+                    }
+
+                    if (dataUrl) {
+                        // 验证画面是否真实加载：数据长度 > 5000（提高阈值，防止高分屏下的大体积黑块）说明是真实画面
+                        if (dataUrl.length > 5000) {
+                            clearInterval(snapshotInterval);
+
+                            if (sorces.value[index]) {
+                                sorces.value[index].imageUrl = dataUrl;
+                                sorces.value[index].loading = false;
+                            }
+                            cleanUpTempPlayer(player, tempContainer);
+                            return resolve();
+                        }
+                    }
+                } catch (err) { }
+            }, 100);
+        }, 2000);
 
         player.play(absoluteUrl).catch(e => {
             clearInterval(snapshotInterval);
@@ -1259,7 +1206,7 @@ const fetchData2_API = async () => {
              * list = allData.slice((pageNo.value - 1) * pageSize.value, pageNo.value * pageSize.value);
              */
 
-            total.value = res.data?.total || list.length;
+            total.value = res.data?.count || list.length;
             if (list && list.length > 0) {
                 const mappedList = list.map((item, index) => ({
                     id: item.id,
@@ -1346,7 +1293,7 @@ const fetchData2_Mock = async () => {
 
 // 主请求入口 (切换注释实现数据源切换)
 const fetchData2 = () => {
-    // fetchData2_API();     // [方案 A] 调用真实接口 (需后端配合筛选)
+   // fetchData2_API();     // [方案 A] 调用真实接口 (需后端配合筛选)
     fetchData2_Mock(); // [方案 B] 调用本地 Mock 数据 (当前采用)
 };
 

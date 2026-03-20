@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
@@ -112,7 +112,7 @@
 <style scoped>
 .testmian {
     padding: 25px 20px;
-    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 1250px;
     height: 340px;
@@ -363,84 +363,84 @@ const statusClassMaps = reactive({
 })
 
 var data = [
-    {
-        countNums1: "装卸1区",
-        countNums2: "粤A23456W",
-        countNums3: "2025-04-12 08:24",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "装卸中",
-        countNums7: "",
-        countNums8: "",
-        type: 2
+    // {
+    //     countNums1: "装卸1区",
+    //     countNums2: "粤A23456W",
+    //     countNums3: "2025-04-12 08:24",
+    //     countNums4: "2025-04-12 08:24",
+    //     countNums5: "2025-04-12 10:24",
+    //     countNums6: "装卸中",
+    //     countNums7: "",
+    //     countNums8: "",
+    //     type: 2
 
-    },
+    // },
 
-    {
-        countNums1: "装卸1区",
-        countNums2: "粤A23457W",
-        countNums3: "2025-04-12 08:24",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "完成",
-        countNums7: "",
-        countNums8: "",
-        type: 3
+    // {
+    //     countNums1: "装卸1区",
+    //     countNums2: "粤A23457W",
+    //     countNums3: "2025-04-12 08:24",
+    //     countNums4: "2025-04-12 08:24",
+    //     countNums5: "2025-04-12 10:24",
+    //     countNums6: "完成",
+    //     countNums7: "",
+    //     countNums8: "",
+    //     type: 3
 
-    },
+    // },
 
-    {
-        countNums1: "装卸2区",
-        countNums2: "粤A23459W",
-        countNums3: "2025-04-12 08:24",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "装卸中",
-        countNums7: "",
-        countNums8: "",
-        type: 4
+    // {
+    //     countNums1: "装卸2区",
+    //     countNums2: "粤A23459W",
+    //     countNums3: "2025-04-12 08:24",
+    //     countNums4: "2025-04-12 08:24",
+    //     countNums5: "2025-04-12 10:24",
+    //     countNums6: "装卸中",
+    //     countNums7: "",
+    //     countNums8: "",
+    //     type: 4
 
-    },
+    // },
 
-    {
-        countNums1: "装卸2区",
-        countNums2: "粤A23451W",
-        countNums3: "2025-04-12 08:24",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "完成",
-        countNums7: "",
-        countNums8: "",
-        type: 4
+    // {
+    //     countNums1: "装卸2区",
+    //     countNums2: "粤A23451W",
+    //     countNums3: "2025-04-12 08:24",
+    //     countNums4: "2025-04-12 08:24",
+    //     countNums5: "2025-04-12 10:24",
+    //     countNums6: "完成",
+    //     countNums7: "",
+    //     countNums8: "",
+    //     type: 4
 
-    },
+    // },
 
 
 
-    {
-        countNums1: "装卸1区",
-        countNums2: "粤A23452W",
-        countNums3: "2025-04-12 08:24",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "装卸中",
-        countNums7: "",
-        countNums8: "",
-        type: 5
+    // {
+    //     countNums1: "装卸1区",
+    //     countNums2: "粤A23452W",
+    //     countNums3: "2025-04-12 08:24",
+    //     countNums4: "2025-04-12 08:24",
+    //     countNums5: "2025-04-12 10:24",
+    //     countNums6: "装卸中",
+    //     countNums7: "",
+    //     countNums8: "",
+    //     type: 5
 
-    },
-    {
-        countNums1: "装卸3区",
-        countNums2: "粤A23453W",
-        countNums3: "2025-04-12 08:24",
-        countNums4: "2025-04-12 08:24",
-        countNums5: "2025-04-12 10:24",
-        countNums6: "装卸中",
-        countNums7: "",
-        countNums8: "",
-        type: 6
+    // },
+    // {
+    //     countNums1: "装卸3区",
+    //     countNums2: "粤A23453W",
+    //     countNums3: "2025-04-12 08:24",
+    //     countNums4: "2025-04-12 08:24",
+    //     countNums5: "2025-04-12 10:24",
+    //     countNums6: "装卸中",
+    //     countNums7: "",
+    //     countNums8: "",
+    //     type: 6
 
-    },
+    // },
 
 
 

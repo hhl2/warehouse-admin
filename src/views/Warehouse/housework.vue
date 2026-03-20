@@ -17,7 +17,7 @@
 
             <div class="jcfx">
                 <div class="jcfx_box">
-                    <img src="@/assets/蓝牌.png" alt="">
+                    <img src="@/assets/blue-plate.png" alt="">
                     <div class="jcfx_sum">
                         <div class="jcfx_texts1">{{ overviewData.safetyBriefings }}</div>
                     </div>
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="jcfx_box">
-                    <img src="@/assets/黄牌.png" alt="">
+                    <img src="@/assets/yellow-plate.png" alt="">
                     <div class="jcfx_texts">{{ overviewData.workPermits }}</div>
                     <div class="jcfx_text3">许可作业票</div>
                 </div>
@@ -209,10 +209,10 @@
 
                     <el-table class="my-spacing-table" ref="tableRef" :data="tableData" v-else-if="activeAlertTab === 3"
                         v-loading="loading">
-                        <el-table-column prop="index" label="序号" width="60" />
+                        <el-table-column prop="index" label="序号" width="50" />
                         <el-table-column prop="arrangementCode" label="作业票编码" width="120" show-overflow-tooltip />
                         <el-table-column prop="visitor" label="来访人" width="70" />
-                        <el-table-column prop="guardian" label="工作负责人" width="85" />
+                        <el-table-column prop="guardian" label="工作负责人" width="85"  show-overflow-tooltip />
                         <el-table-column prop="ticketType" label="作业票类型" width="85" />
                         <el-table-column prop="teams" label="单位和班组" width="100" show-overflow-tooltip />
                         <el-table-column prop="arriveTime" label="入园时间" width="100" show-overflow-tooltip />
@@ -239,8 +239,10 @@ import {
 } from "@/api/user";
 
 
-const warehouseCode = '0318080022';
-const warehouseId = '';
+// const warehouseCode = '0318080022';
+// const warehouseId = '';
+const warehouseCode   = "03180800KS"
+const warehouseId= "aebf01bd6fae4f63a1d2bbb4c8208e0c"
 
 const timeType1 = ref(1);
 const loading = ref(false);
@@ -252,7 +254,7 @@ const queryParkReservationListPaginationsParams = () => {
         sendType: alertFilterParams.status, // 当前状态
         billType: alertFilterParams.businessType, // 业务类型
         pageNo: 1,
-        pageSize: 99,
+        pageSize: 999,
         warehouseCode,
         warehouseId
     }).then(res => {
@@ -326,7 +328,7 @@ const formatDate = (timestamp) => {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 const queryWarehouseStatusPaginations = () => {
-    queryWarehouseJobNum({ timeType: timeType1.value, warehouseCode, }).then(res => {
+    queryWarehouseJobNum({ timeType: timeType1.value, warehouseCode,warehouseId }).then(res => {
         if (res && res.code == 0 && res.data) {
             overviewData.safetyBriefings = res.data.E10 || 0;
             overviewData.workPermits = res.data.AB01 || 0;
@@ -828,7 +830,7 @@ onUnmounted(() => {
 
 .ckleft {
     margin: 10px 10px 0px 20px;
-    background: url('@/assets/内框.png') no-repeat right top;
+    background: url('@/assets/inner-frame.png') no-repeat right top;
     background-size: 100% 100%;
     height: 300px;
 }
@@ -938,7 +940,7 @@ onUnmounted(() => {
 }
 
 .jcard_box {
-    background: url('@/assets/图标10.png') no-repeat 0 0;
+    background: url('@/assets/icon-10.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 82px;
     height: 72px;
@@ -994,7 +996,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 20px 10px 20px;
+    margin: 10px 20px 0px 20px;
 }
 
 .yylf_left {

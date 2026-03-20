@@ -26,7 +26,7 @@
 
         <div style="display: flex;justify-content: flex-end ">
             <div class="xbts">
-                <img src="@/assets/小标题内.png" />
+                <img src="@/assets/subtitle-inner.png" />
                 <div class="xbt_texts">物资周转率TOP5</div>
             </div>
 
@@ -34,7 +34,7 @@
 
         <div class="ck_list">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
+                <img src="@/assets/blue-plate.png" alt="">
                 <div class="jcfx_sum">
                     <div class="jcfx_texts1">99
                     </div>
@@ -64,7 +64,7 @@
 
         <div style="display: flex;justify-content: flex-end ">
             <div class="xbts">
-                <img src="@/assets/小标题内.png" />
+                <img src="@/assets/subtitle-inner.png" />
                 <div class="xbt_texts">平均库存下降率TO5</div>
             </div>
 
@@ -72,7 +72,7 @@
 
         <div class="ck_list">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
+                <img src="@/assets/blue-plate.png" alt="">
                 <div class="jcfx_sum">
                     <div class="jcfx_texts1">99
                     </div>
@@ -103,7 +103,7 @@
 
         <div class="gjtj">
             <div v-for="stat in personnelData1.stats" :key="stat.label" class="sbgl_box">
-                <img src="@/assets/图标.png" alt="">
+                <img src="@/assets/icon.png" alt="">
                 <div class="sbgl_box_title">{{ stat.label }}</div>
                 <div class="sbgl_box_textss">{{ stat.value }}<div class="sbgl_box_label">{{ stat.unit }}</div>
                 </div>
@@ -118,7 +118,7 @@
 
         <div style="display: flex;justify-content: flex-end ">
             <div class="xbts">
-                <img src="@/assets/小标题内.png" />
+                <img src="@/assets/subtitle-inner.png" />
                 <div class="xbt_texts">安全库存预警TOP5</div>
             </div>
 
@@ -126,7 +126,7 @@
 
         <div class="ck_list">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
+                <img src="@/assets/blue-plate.png" alt="">
                 <div class="jcfx_sum">
                     <div class="jcfx_texts1">22
                     </div>
@@ -155,7 +155,7 @@
 
         <div style="display: flex;justify-content: flex-end ">
             <div class="xbts">
-                <img src="@/assets/小标题内.png" />
+                <img src="@/assets/subtitle-inner.png" />
                 <div class="xbt_texts">物资呆滞率TOP5</div>
             </div>
 
@@ -163,7 +163,7 @@
 
         <div class="ck_list">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
+                <img src="@/assets/blue-plate.png" alt="">
                 <div class="jcfx_sum">
                     <div class="jcfx_texts1">99
                     </div>
@@ -468,7 +468,7 @@ onUnmounted(() => {
 }
 
 .jcry .jcry_box {
-    background: url('@/assets/组1449.png') no-repeat 0 0;
+    background: url('@/assets/group-1449.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 172px;
     height: 83px;

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
@@ -80,7 +80,7 @@
 
 .testmian {
     padding: 25px 20px;
-    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 1250px;
     height: 340px;

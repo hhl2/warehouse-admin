@@ -1,10 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Try from '@/views/try/index.vue'
 import Warehouse from '@/views/Warehouse/index.vue'
-
-
-
-
 
 // 使用懒加载导入页面组件
 
@@ -33,14 +28,6 @@ const work2 = () => import('@/views/workDetails/work2.vue')
 const work3 = () => import('@/views/workDetails/work3.vue')
 const work4 = () => import('@/views/workDetails/work4.vue')
 const work5 = () => import('@/views/workDetails/work5.vue')
-const trytext = () => import('@/views/trytext.vue')
-
-
-
-
-
-
-
 
 
 // 1. 定义路由规则
@@ -49,21 +36,6 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     redirect: '/inspection'
-  },
-  {
-    path: "/try",
-    component: Try,
-    name: 'Try',
-
-  },
-  {
-    path: "/trytext",
-    name: "trytext",
-    component: trytext,
-    meta: {
-      title: 'AGV模拟',
-      keepAlive: false
-    }
   },
   {
     path: "/",

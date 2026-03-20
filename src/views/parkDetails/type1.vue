@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmianx">
             <div class="changewidth">
@@ -35,7 +35,7 @@
 <style scoped>
 .testmiansx {
     padding: 25px 20px;
-    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 1344px;
     height: 354px;

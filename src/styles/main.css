@@ -121,7 +121,7 @@ a {
     min-height: auto;
     position: absolute;
     z-index: 31;
-    background: url('@/assets/左框.png') no-repeat 0 0;
+    background: url('@/assets/left-frame.png') no-repeat 0 0;
     background-size: 100% 100%;
     left: 15px;
     top: 80px;
@@ -158,7 +158,7 @@ a {
     min-height: auto;
     position: absolute;
     z-index: 31;
-    background: url('@/assets/右框.png') no-repeat right top;
+    background: url('@/assets/right-frame.png') no-repeat right top;
     background-size: 100% 100%;
     right: 15px;
     top: 80px;
@@ -209,7 +209,7 @@ a {
 
 .testmian {
     padding: 20px 15px;
-    background: url('@/assets/框中间.png') no-repeat 0 0;
+    background: url('@/assets/frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 870px;
     height: 340px;
@@ -579,4 +579,162 @@ a {
 .search-btn:hover {
     background: rgba(16, 168, 253, 0.8);
     color: #fff;
+}
+
+/* ---- 全局通用分页器科技风样式及响应式适配 ---- */
+.pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 3px;
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden; 
+}
+
+.pagination-container .el-pagination {
+    --el-pagination-bg-color: transparent;
+    --el-pagination-text-color: #8ed0ff;
+    --el-pagination-button-color: #8ed0ff;
+    --el-pagination-button-disabled-bg-color: transparent;
+    --el-pagination-button-disabled-color: rgba(142, 208, 255, 0.3);
+    --el-pagination-hover-color: #00f0ff;
+    padding: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.pagination-container .el-pagination__total {
+    color: #8ed0ff !important;
+    font-size: 14px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    margin-right: 0px !important;
+    white-space: nowrap;
+}
+
+.pagination-container .el-pagination__sizes {
+    margin-left: 5px !important;
+    margin-right: 8px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.pagination-container .el-pagination .el-select {
+    width: 80px !important;
+    margin-right: 0 !important;
+    height: 24px !important;
+}
+
+.pagination-container .el-select .el-input {
+    width: 100% !important;
+    height: 24px !important;
+}
+
+.pagination-container .el-select .el-input__wrapper,
+.pagination-container .el-select .el-select__wrapper {
+    background-color: rgba(16, 55, 98, 0.6) !important;
+    box-shadow: inset 0 0 0 1px rgba(81, 169, 255, 0.4) !important;
+    padding: 0 6px !important;
+    height: 24px !important;
+    min-height: auto !important;
+    line-height: 24px !important;
+}
+
+.pagination-container .el-select:hover .el-input__wrapper,
+.pagination-container .el-select:hover .el-select__wrapper {
+    box-shadow: inset 0 0 0 1px #00f0ff !important;
+}
+
+.pagination-container .el-select .el-input__inner,
+.pagination-container .el-select .el-select__placeholder,
+.pagination-container .el-select .el-select__selected-item span,
+.pagination-container .el-select .el-select__selected-item {
+    color: #8ed0ff !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    font-size: 13px !important;
+}
+
+/* 修正 Select 内置图标大小不缩放问题 */
+.pagination-container .el-select .el-select__caret.el-select__icon,
+.pagination-container .el-select .el-select__caret.el-select__icon svg {
+    font-size: 14px !important;
+    width: 1em !important;
+    height: 1em !important;
+}
+
+.pagination-container .el-pagination.is-background .btn-prev,
+.pagination-container .el-pagination.is-background .btn-next,
+.pagination-container .el-pagination.is-background .el-pager li {
+    background-color: rgba(16, 55, 98, 0.6) !important;
+    border: 1px solid rgba(81, 169, 255, 0.4) !important;
+    color: #8ed0ff !important;
+    border-radius: 4px !important;
+    margin: 0 3px !important;
+    transition: all 0.3s;
+    min-width: 24px !important;
+    height: 24px !important;
+    line-height: 22px !important;
+    font-size: 12px !important;
+    padding: 0 4px !important;
+}
+
+.pagination-container .el-pagination.is-background .btn-prev:hover:not(:disabled),
+.pagination-container .el-pagination.is-background .btn-next:hover:not(:disabled),
+.pagination-container .el-pagination.is-background .el-pager li:hover {
+    background-color: rgba(0, 240, 255, 0.1) !important;
+    border-color: #00f0ff !important;
+    color: #00f0ff !important;
+}
+
+.pagination-container .el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+    background-color: rgba(0, 240, 255, 0.2) !important;
+    border: 1px solid #00f0ff !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.6) !important;
+}
+
+.pagination-container .el-pagination__classifier,
+.pagination-container .el-pagination__rightwrapper,
+.pagination-container .el-pagination__jump {
+    color: #8ed0ff !important;
+    font-size: 13px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    margin-left: 8px !important;
+    white-space: nowrap;
+}
+
+.pagination-container .el-pagination__jump .el-input {
+    width: 40px !important;
+    margin: 0 4px !important;
+}
+
+.pagination-container .el-pagination__jump .el-input__wrapper {
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 0 2px !important;
+}
+
+.pagination-container .el-pagination__jump .el-input__inner {
+    height: 24px !important;
+    line-height: 24px !important;
+    font-size: 12px !important;
+    text-align: center !important;
+}
+
+.el-popper.is-light .el-select-dropdown__item {
+    font-size: 13px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+    padding: 0 15px !important;
+}
+
+.el-select-dropdown__wrap {
+    max-height: 250px !important;
 }

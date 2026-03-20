@@ -1,10 +1,13 @@
 <template>
+  <!-- <v-scale-screen width="1920" height="1080" :fullScreen="true"> -->
   <div class="bigpg">
     <router-view />
   </div>
+  <!-- </v-scale-screen> -->
 </template>
 
 <script>
+// import VScaleScreen from 'vue3-scale-box'
 import { ref, provide, onMounted, onUnmounted, readonly, nextTick } from 'vue'
 import { Config, PixelStreaming } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.4'
 import { Application, PixelStreamingApplicationStyle } from '@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.4'
@@ -21,6 +24,9 @@ const DEFAULT_CONFIG = {
 
 export default {
   name: 'PlayerView',
+  // components: {
+  //   VScaleScreen
+  // },
 
   setup() {
     const router = useRouter()

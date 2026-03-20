@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="testmians">
         <div class="testmian">
             <div style="margin:20px 15px 10px 20px;">
@@ -114,7 +114,7 @@
 .testmian {
     padding: 20px 15px;
 
-    background: url('@/assets/框中间.png') no-repeat 0 0;
+    background: url('@/assets/frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 915px;
     height: 370px;

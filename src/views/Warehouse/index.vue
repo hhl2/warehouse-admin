@@ -1,6 +1,6 @@
 <template>
     <div class="xm_title">
-        <img v-if="showBack" class="backimg" src="@/assets/圆角矩形.png" @click="goback()" />
+        <img v-if="showBack" class="backimg" src="@/assets/rounded-rectangle.png" @click="goback()" />
         <img class="xmimg" src="@/assets/xm_title.png" />
         <div class="xm_titles">清远仓库数字孪生平台</div>
     </div>
@@ -474,8 +474,8 @@ export default {
 
 import activeButton from '@/assets/activeButton.png'
 import defaultButton from '@/assets/defaultButton.png'
-import defaultButton2 from '@/assets/标签选中.png'
-import activeButton2 from '@/assets/宁德标签.png'
+import defaultButton2 from '@/assets/label-selected.png'
+import activeButton2 from '@/assets/ningde-label.png'
 
 import { onMounted, onUnmounted, ref, computed, onBeforeUnmount, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -596,7 +596,16 @@ const imageMap = {
 };
 const changli = ref(1)
 const changelist = (item) => {
+
     changli.value = item.id;
+        if(item.id==2){
+        changli2.value=21
+
+    }
+            if(item.id==3){
+        changli3.value=31
+
+    }
     // 如果是id为4，打开新窗口
     if (item.id == 4) {
         // console.log('打开新窗口')

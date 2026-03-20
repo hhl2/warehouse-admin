@@ -1,4 +1,4 @@
-<template>
+﻿﻿<template>
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
@@ -37,11 +37,11 @@
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">摄像头</div>
-            <div class="title_text_box">
+            <!-- <div class="title_text_box">
                 <div class="title_txets">立体仓库</div>
                 <div class="title_txets">平置仓库</div>
                 <div class="title_txets">堆场</div>
-            </div>
+            </div> -->
         </div>
         <div class="inputbox">
             <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable />
@@ -67,7 +67,7 @@
             </el-table>
 
         </div>
-        <div class="title">
+        <!-- <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">视频监控</div>
 
@@ -81,7 +81,7 @@
                     <div class="spjkList_label">{{ value.countNums1 || '摄像头' + (index + 1) }}</div>
                 </div>
             </template>
-        </div>
+        </div> -->
     </div>
 
     <!-- 弹窗（遮罩层已禁用） -->
@@ -117,7 +117,7 @@
 <style scoped>
 .testmian {
     padding: 25px 20px;
-    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 1250px;
     height: 340px;
@@ -236,7 +236,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: url("@/assets/try/图层弹窗.png") no-repeat 0 0;
+    background: url("@/assets/try/layer-popup.png") no-repeat 0 0;
     background-size: 100% 100%;
     z-index: 999;
 }
@@ -312,7 +312,7 @@
     left: 50%;
     top: 80px;
     transform: translate(-50%);
-    background: url("@/assets/动画弹窗.png") no-repeat 0 0;
+    background: url("@/assets/animation-popup.png") no-repeat 0 0;
     background-size: 100% 100%;
     z-index: 999;
 }
@@ -684,22 +684,22 @@ const sorces =
         {
             countNums1: "摄像头#1",
             id: 'ee0febb859a541f1bca7515db0e5a41a',
-            url: require("@/assets/camera/图1.png"),
+            url: require("@/assets/camera/img1.png"),
         },
         {
             countNums1: "摄像头#2",
             id: 'dafe004a0d264b18ac12564fefc9dcd6',
-            url: require("@/assets/camera/图2.png"),
+            url: require("@/assets/camera/img2.png"),
         },
         {
             countNums1: "摄像头#3",
             id: 'b9877ba9b8d94041a8a448eb178d8163',
-            url: require("@/assets/camera/图3.png"),
+            url: require("@/assets/camera/img3.png"),
         },
         {
             countNums1: "摄像头#4",
             id: 'ee0febb859a541f1bca7515db0e5a41a',
-            url: require("@/assets/camera/图4.png"),
+            url: require("@/assets/camera/img4.png"),
         },
 
     ]

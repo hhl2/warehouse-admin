@@ -336,7 +336,7 @@
 .testmian {
     padding: 20px 15px;
 
-    background: url('@/assets/try/图层56.png') no-repeat 0 0;
+    background: url('@/assets/try/layer-56.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 815px;
     height: 370px;
@@ -357,14 +357,14 @@ import { Search } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { getDeviceList, getCountOnlinSum, getEnergyDeviceList, getParkWeatherStationList, getVideoPointList, getDisplayDeviceList, getBuildingDeviceList } from '@/api/user'
 
-import sb2 from '@/assets/shebei/智能设备.png';
-import sb3 from '@/assets/shebei/特种设备.png';
-import sb1 from '@/assets/shebei/安防设备.png';
-import sb4 from '@/assets/shebei/巡更设备.png';
-import sb5 from '@/assets/shebei/环境设备.png';
-import sb6 from '@/assets/shebei/消防设备.png';
-import sb7 from '@/assets/shebei/工具设备.png';
-import sb8 from '@/assets/shebei/计量设备.png';
+import sb2 from '@/assets/shebei/smart-equipment.png';
+import sb3 from '@/assets/shebei/special-equipment.png';
+import sb1 from '@/assets/shebei/security-equipment.png';
+import sb4 from '@/assets/shebei/patrol-equipment.png';
+import sb5 from '@/assets/shebei/environmental-equipment.png';
+import sb6 from '@/assets/shebei/fire-fighting-equipment.png';
+import sb7 from '@/assets/shebei/tool-equipment.png';
+import sb8 from '@/assets/shebei/metering-equipment.png';
 
 const MOCK_DEVICES = [
     {

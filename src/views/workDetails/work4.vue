@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
@@ -14,7 +14,7 @@
         </div>
         <div class="ck_list">
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
+                <img src="@/assets/blue-plate.png" alt="">
                 <div class="jcfx_sum">
                     <div class="jcfx_texts1">{{ totalAmt }}</div>
                     <div class="jcfx_texts2">万元</div>
@@ -22,7 +22,7 @@
                 <div class="jcfx_text wzwidth">库存金额</div>
             </div>
             <div class="jcfx_box">
-                <img src="@/assets/蓝牌.png" alt="">
+                <img src="@/assets/blue-plate.png" alt="">
                 <div class="jcfx_sum">
                     <div class="jcfx_texts1">{{ avgAmt }}</div>
                     <div class="jcfx_texts2">万元</div>
@@ -93,7 +93,7 @@
 
         <div class="gjtj">
             <div v-for="stat in personnelData1.stats" :key="stat.label" class="sbgl_box">
-                <img src="@/assets/图标.png" alt="">
+                <img src="@/assets/icon.png" alt="">
                 <div class="sbgl_box_title">{{ stat.label }}</div>
                 <div class="sbgl_box_textss">{{ stat.value }}<div class="sbgl_box_label">{{ stat.unit }}</div>
                 </div>

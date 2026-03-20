@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmianx">
             <div class="title">
@@ -135,7 +135,7 @@
 
 .testmiansx {
     padding: 20px 15px;
-    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 1287px;
     height: 351px;

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
 
         <div class="title">
@@ -78,21 +78,21 @@
             </div>
 
             <div class="tycsbox">
-                <div class="tycsbox_lalel">缓存位至输送线</div>
+                <div class="tycsbox_lalel">人工叉车至输送线</div>
                 <div class="progress-container">
                     <div class="progress-bar" :style="{ width: detectProgressStr ? detectProgressStr + '%' : 0 }">
                     </div>
                 </div>
             </div>
             <div class="tycsbox">
-                <div class="tycsbox_lalel">输送线至立库</div>
+                <div class="tycsbox_lalel">输送线至堆垛机</div>
                 <div class="progress-container">
                     <div class="progress-bar" :style="{ width: detectProgressStr2 ? detectProgressStr2 + '%' : 0 }">
                     </div>
                 </div>
             </div>
             <div class="tycsbox">
-                <div class="tycsbox_lalel">立库堆垛入库</div>
+                <div class="tycsbox_lalel">堆垛机至立库货位</div>
                 <div class="progress-container">
                     <div class="progress-bar" :style="{ width: detectProgressStr3 ? detectProgressStr3 + '%' : 0 }">
                     </div>
@@ -107,21 +107,21 @@
             </div>
 
             <div class="tycsbox">
-                <div class="tycsbox_lalel"> 立库堆垛出库</div>
+                <div class="tycsbox_lalel"> 立库货位至堆垛机</div>
                 <div class="progress-container">
                     <div class="progress-bar" :style="{ width: detectProgressStr ? detectProgressStr + '%' : 0 }">
                     </div>
                 </div>
             </div>
             <div class="tycsbox">
-                <div class="tycsbox_lalel">立库至输送线</div>
+                <div class="tycsbox_lalel">堆垛机至输送线</div>
                 <div class="progress-container">
                     <div class="progress-bar" :style="{ width: detectProgressStr2 ? detectProgressStr2 + '%' : 0 }">
                     </div>
                 </div>
             </div>
             <div class="tycsbox">
-                <div class="tycsbox_lalel"> 缓存位至输送线</div>
+                <div class="tycsbox_lalel"> 输送线至人工叉车</div>
                 <div class="progress-container">
                     <div class="progress-bar" :style="{ width: detectProgressStr3 ? detectProgressStr3 + '%' : 0 }">
                     </div>
@@ -194,7 +194,7 @@
 }
 
 .jcard_box {
-    background: url('@/assets/图标10.png') no-repeat 0 0;
+    background: url('@/assets/icon-10.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 87px;
     height: 72px;
@@ -230,8 +230,8 @@
 }
 
 .allBoxs {
-    height: 185px;
-    padding: 10px 24px;
+    height: 180px;
+    padding: 8px 24px;
     padding-bottom: 8px;
     display: flex;
     align-items: center;
@@ -305,7 +305,7 @@
 }
 
 .tycsbox_lalel {
-    width: 130px;
+    width: 150px;
     font-family: Microsoft YaHei;
     font-weight: 500;
     font-size: 18px;
@@ -313,7 +313,7 @@
 }
 
 .progress-container {
-    width: 236px;
+    width: 226px;
     height: 7px;
     background-color: #1C71B4;
     border-radius: 3px;

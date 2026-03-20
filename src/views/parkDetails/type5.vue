@@ -1,4 +1,4 @@
-<template>
+﻿﻿<template>
     <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmian">
             <div class="changewidth">
@@ -254,7 +254,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: url("@/assets/try/图层弹窗.png") no-repeat 0 0;
+    background: url("@/assets/try/layer-popup.png") no-repeat 0 0;
     background-size: 100% 100%;
     z-index: 999;
 }
@@ -645,7 +645,7 @@ const initTrendChart = () => {
                 name: '',
                 type: 'bar',
                 data: [
-                    2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                 ],
                 itemStyle: {
                     color: '#74B2FE'
@@ -712,9 +712,9 @@ const initTrendChart1 = () => {
             {
                 name: '',
                 type: 'bar',
-                barWidth: '30%',
+                barWidth: '25%',
                 data: [
-                    2.0, 4.9, 7.0, 3.2,
+                    0, 0, 0, 0,
                 ],
                 itemStyle: {
                     color: '#52FFFD'
@@ -782,7 +782,7 @@ const initTrendChart2 = () => {
                 type: 'bar',
                 barWidth: '30%',
                 data: [
-                    2.0, 4.9, 7.0, 3.2,
+                    0, 0, 0, 0,
                 ],
                 itemStyle: {
                     color: '#0769DC'
@@ -926,19 +926,19 @@ const renderDefaultChartsData = () => {
     if (trendChart2) {
         trendChart2.setOption({
             xAxis: [{ data: ['环境监测告警', '安防监测告警', '能耗监测告警', '消防监测告警', '装卸作业告警', '人员监测告警'] }],
-            series: [{ data: [15, 32, 10, 5, 18, 24] }]
+            series: [{ data: [0,0, 0, 0, 0, 0] }]
         });
     }
     if (trendChart1) {
         trendChart1.setOption({
             xAxis: [{ data: ['立体仓库', '平置仓库', '堆场', '指挥中心'] }],
-            series: [{ data: [2.0, 4.9, 7.0, 3.2] }]
+            series: [{ data: [0, 0, 0, 0] }]
         });
     }
     if (trendChart) {
         trendChart.setOption({
             xAxis: [{ data: ['监控摄像头', '烟感探测器', '门禁闸机', '报警按钮', '温湿度计'] }],
-            series: [{ data: [12, 8, 25, 5, 18] }]
+            series: [{ data: [0, 0, 0, 0, 0] }]
         });
     }
 };

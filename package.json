@@ -21,7 +21,8 @@
     "mpegts.js": "^1.7.3",
     "swiper": "^11.2.6",
     "vue": "^3.2.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "vue3-scale-box": "^0.1.9"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

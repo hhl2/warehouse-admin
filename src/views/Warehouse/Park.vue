@@ -115,7 +115,7 @@
         <div class="jcrys">
             <div class="jcrys_left">
                 <div class="jcrys_left_box">
-                    <img src="@/assets/图标8.png" alt="">
+                    <img src="@/assets/icon-8.png" alt="">
                     <div class="jcrys_lalel">当前在园人数</div>
                     <div class="jcrys__value">
                         <span class="jcrys__number">{{ personnelData.cumulativelyUser }}</span>
@@ -235,11 +235,11 @@ const instances = {
 
 // --- Reactive Data (Initialized with Default/Mock values for Fault Tolerance) ---
 const environmentData = reactive([
-    { icon: require('@/assets/温度.png'), label: '温度', value: '0', unit: '°C', key: 'temperature' },
-    { icon: require('@/assets/多云.png'), label: 'PM10', value: '0', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm10' },
+    { icon: require('@/assets/temperature.png'), label: '温度', value: '0', unit: '°C', key: 'temperature' },
+    { icon: require('@/assets/cloudy.png'), label: 'PM10', value: '0', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm10' },
     { icon: require('@/assets/C02.png'), label: '风向', value: '0', unit: '°', colorClass: 'gjyellow', key: 'windPower' },
-    { icon: require('@/assets/湿度.png'), label: '湿度', value: '0', unit: '%', key: 'humidity' },
-    { icon: require('@/assets/多云.png'), label: 'PM2.5', value: '0', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm25' },
+    { icon: require('@/assets/humidity.png'), label: '湿度', value: '0', unit: '%', key: 'humidity' },
+    { icon: require('@/assets/cloudy.png'), label: 'PM2.5', value: '0', unit: 'PU/m3', colorClass: 'gjgreen', key: 'pm25' },
     { icon: require('@/assets/C02.png'), label: '大气压', value: '0', unit: 'Pa', colorClass: 'gjyellow', key: 'atmospheric' }
 ]);
 
@@ -419,7 +419,7 @@ const fetchWeather = async () => {
     try {
         const res = await queryParkWeatherListPagination({ "pageNo": 1, "pageSize": 99 });
         if (res.code === '0' && res.data?.list?.length > 0) {
-            const device = res.data.list[0];
+            const device = res.data.list[1];
             const mapping = { temperature: 'temperature', humidity: 'humidity', pm10: 'pmTen', pm25: 'pmTwoFive', windPower: 'windPower', 'atmospheric': 'atmospheric' };
             environmentData.forEach(item => {
                 const apiField = mapping[item.key];
@@ -824,7 +824,7 @@ onUnmounted(() => {
     width: 173px;
     height: 61px;
     position: relative;
-    background: url('@/assets/图标9.png') no-repeat 0 0;
+    background: url('@/assets/icon-9.png') no-repeat 0 0;
     background-size: 100% 100%;
     margin-top: 20px;
     margin-bottom: 5px;
@@ -866,7 +866,7 @@ onUnmounted(() => {
 }
 
 .jcry .jcry_box {
-    background: url('@/assets/组1449.png') no-repeat 0 0;
+    background: url('@/assets/group-1449.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 128px;
     height: 70px;
@@ -917,7 +917,7 @@ onUnmounted(() => {
 }
 
 .jcard_box {
-    background: url('@/assets/图标10.png') no-repeat 0 0;
+    background: url('@/assets/icon-10.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 82px;
     height: 72px;

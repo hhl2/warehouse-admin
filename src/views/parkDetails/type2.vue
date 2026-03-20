@@ -45,7 +45,7 @@
         </div>
 
         <div class="imgbox">
-            <img src="@/assets/try/示意图.png" alt="">
+            <img src="@/assets/try/diagram.png" alt="">
         </div>
 
         <div class="title">
@@ -53,7 +53,7 @@
             <div class="title_txet">水能路径图</div>
         </div>
         <div class="imgbox2">
-            <img src="@/assets/try/图层34.png" alt="">
+            <img src="@/assets/try/layer-34.png" alt="">
         </div>
 
     </div>
@@ -69,7 +69,7 @@
 <style scoped>
 .testmian {
     padding: 25px 20px;
-    background: url('@/assets/长框中间.png') no-repeat 0 0;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
     background-size: 100% 100%;
     width: 1250px;
     height: 340px;
@@ -128,7 +128,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: url("@/assets/try/图层弹窗.png") no-repeat 0 0;
+    background: url("@/assets/try/layer-popup.png") no-repeat 0 0;
     background-size: 100% 100%;
     z-index: 999;
 }
@@ -183,8 +183,8 @@ const props = defineProps({
 });
 
 // --- Constants & Config ---
-const DEVICE_TYPE_MAP = { 1: "水表", 2: "电表" };
-const RUN_STATUS_MAP = { 0: "异常", 1: "正常" };
+const DEVICE_TYPE_MAP = { 1: "电表", 2: "水表" };
+const RUN_STATUS_MAP = { 0: "正常", 1: "异常" };
 
 const statusClassMap = {
     '紧急告警': 'status-urgent',
