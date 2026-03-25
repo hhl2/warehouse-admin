@@ -520,15 +520,15 @@ const fetchVisitorData = async () => {
         });
         if (res.code == 0) {
             visitordata.value = res.data.list.map(item => {
-        return {
-            ...item,
-            sendType: RUN_STATUS_MAP[item.sendType] || '未知',
+                return {
+                    ...item,
+                    sendType: RUN_STATUS_MAP[item.sendType] || '未知',
 
-            arriveTime: formatDate(item.arriveTime),
-            leaceTime: formatDate(item.arriveTime)
+                    arriveTime: formatDate(item.arriveTime),
+                    leaceTime: formatDate(item.arriveTime)
 
-        }
-    });
+                }
+            });
 
         }
     } catch (error) {
@@ -681,26 +681,6 @@ const handleClickOutside = (event) => {
 
 const sorces =
     [
-        {
-            countNums1: "摄像头#1",
-            id: 'ee0febb859a541f1bca7515db0e5a41a',
-            url: require("@/assets/camera/img1.png"),
-        },
-        {
-            countNums1: "摄像头#2",
-            id: 'dafe004a0d264b18ac12564fefc9dcd6',
-            url: require("@/assets/camera/img2.png"),
-        },
-        {
-            countNums1: "摄像头#3",
-            id: 'b9877ba9b8d94041a8a448eb178d8163',
-            url: require("@/assets/camera/img3.png"),
-        },
-        {
-            countNums1: "摄像头#4",
-            id: 'ee0febb859a541f1bca7515db0e5a41a',
-            url: require("@/assets/camera/img4.png"),
-        },
 
     ]
 
