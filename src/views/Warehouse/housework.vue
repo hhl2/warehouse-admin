@@ -34,9 +34,9 @@
             <div class="ckleft">
                 <div class="ckleft_label">
                     <div class="ckleft_title" :class="{ 'active_title': activeWorkType === 1 }"
-                        @click="activeWorkType = 1">运行中仓库作业总数</div>
+                        @click="switchWorkType(1)">运行中仓库作业总数</div>
                     <div class="ckleft_title ckleftwz" :class="{ 'active_title': activeWorkType === 2 }"
-                        @click="activeWorkType = 2"> 完成仓库作业总数</div>
+                        @click="switchWorkType(2)"> 完成仓库作业总数</div>
                 </div>
 
                 <div class="allBoxs">
@@ -361,6 +361,7 @@ const queryWarehouseStatusPaginations = () => {
             const seriesData = res.data.warehouse_job_quantity_code || [];
             // 只有当有真实数据时才传入，否则 initTrendChart 内部会使用兜底默认值
             initTrendChart(xAxisData, seriesData);
+            updateWarehouseChart(); // 接口返回后更新饼图数据
         } else {
             initTrendChart(); // 接口返回异常时显示默认图表
         }
@@ -513,6 +514,9 @@ const initTrendChart = (xAxisData = [], seriesData = []) => {
     }
 
     const option = {
+        tooltip: {
+            trigger: 'axis'
+        },
         textStyle: {
             fontFamily: 'Adobe Heiti Std',
             fontWeight: 'normal',
@@ -640,9 +644,34 @@ const initWarehouseChart = () => {
     warehouseChart.setOption(option);
 };
 
+const updateWarehouseChart = () => {
+    if (!warehouseChart) return;
+    const isRunning = activeWorkType.value === 1;
+    const data = [
+        {
+            value: isRunning ? warehouseData.inboundCompleted : warehouseData.inboundCompleted1,
+            itemStyle: { color: '#42FFF9' }
+        },
+        {
+            value: isRunning ? warehouseData.outboundCompleted : warehouseData.outboundCompleted1,
+            itemStyle: { color: '#F0B716' }
+        }
+    ];
+    warehouseChart.setOption({
+        series: [{ data }]
+    });
+};
+
+const switchWorkType = (type) => {
+    activeWorkType.value = type;
+    updateWarehouseChart();
+    // 如果后续需要在这里调用接口，可以写在这里，上面两行代码会确保页面先切换
+};
+
 // 事件处理函数
 const switchAlertTab = (tabId) => {
     activeAlertTab.value = tabId;
+    tableData.value = []; // 先清空表格数据，保证不管接口快慢，标签页都能立刻切换
     handleAlertReset();
 };
 

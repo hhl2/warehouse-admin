@@ -1293,8 +1293,8 @@ const fetchData2_Mock = async () => {
 
 // 主请求入口 (切换注释实现数据源切换)
 const fetchData2 = () => {
-   // fetchData2_API();     // [方案 A] 调用真实接口 (需后端配合筛选)
-    fetchData2_Mock(); // [方案 B] 调用本地 Mock 数据 (当前采用)
+   fetchData2_API();     // [方案 A] 调用真实接口 (需后端配合筛选)?
+    // fetchData2_Mock(); // [方案 B] 调用本地 Mock 数据 (当前采用)
 };
 
 

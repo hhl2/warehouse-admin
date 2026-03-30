@@ -172,9 +172,8 @@ const props = defineProps({
 
 const data1 = ref([]);
 
-const warehouseCode = '0318080022';
-const warehouseId = '';
-
+const warehouseCode = '';//0318080022
+const warehouseId = '03180000020822';
 const timeType1 = ref(3);
 const timeType2 = ref(3);
 const timeType3 = ref(3);
@@ -199,8 +198,8 @@ const personnelData1 = reactive({
 //仓库呆滞率
 const queryInventoryRateInfos = () => {
     queryInventoryRateInfo({ timeType: timeType5.value, warehouseCode, warehouseId }).then(res => {
-        if (res?.data?.code == 200) {
-            lazyRate.value = res?.data?.data?.inventoryRate || 0
+        if (res?.code == 0) {
+            lazyRate.value = res?.data.inventoryRate || 0
         }
     })
 }
@@ -208,7 +207,7 @@ const queryInventoryRateInfos = () => {
 //安全库存预警
 const querySafeDistributionInfos = () => {
     querySafeDistributionInfo({ timeType: timeType1.value, warehouseCode, warehouseId }).then(res => {
-        if (res?.data?.code == 200) {
+        if (res?.code == 0) {
             data1.value = res.data.data.list
         }
     })
@@ -217,8 +216,8 @@ const querySafeDistributionInfos = () => {
 //生产效率
 const queryProductionInfos = () => {
     queryProductionInfo({ timeType: timeType4.value, warehouseCode, warehouseId }).then(res => {
-        if (res?.data?.code == 200) {
-            const resData = res?.data?.data
+        if (res?.code == 0) {
+            const resData = res?.data
             // 更新 personnelData1.stats 中的显示值
             personnelData1.stats.forEach(stat => {
                 if (stat.label === '入库金额') stat.value = resData?.receiptAmt || 0
@@ -233,8 +232,8 @@ const queryProductionInfos = () => {
 //平均库存下降率
 const queryAvgDisDeclineRateInfos = () => {
     queryAvgDisDeclineRateInfo({ timeType: timeType3.value, warehouseCode, warehouseId }).then(res => {
-        if (res?.data?.code == 200) {
-            declineRate.value = res?.data?.data?.wareDropRate || 0
+        if (res?.code == 0) {
+            declineRate.value = res?.data.wareDropRate || 0
         }
     })
 }
@@ -242,8 +241,9 @@ const queryAvgDisDeclineRateInfos = () => {
 //库存周转率统计
 const queryTurnoverInfos = () => {
     queryTurnoverInfo({ timeType: timeType2.value, warehouseCode, warehouseId }).then(res => {
-        if (res?.data?.code == 200) {
-            turnoverRate.value = res?.data?.data?.revolveRate || 0
+        if (res?.code == 0) {
+            console.log(res.data)
+            turnoverRate.value = res?.data.revolveRate || 0
         }
     })
 }
@@ -251,9 +251,9 @@ const queryTurnoverInfos = () => {
 //仓库吞吐量统计
 const queryWarehouseThroughputStatistics = () => {
     queryWarehouseThroughputStatistic({ timeType: timeType1.value, warehouseCode, warehouseId }).then(res => {
-        if (res?.data?.code == 200) {
-            totalAmt.value = res?.data?.data?.inventoryAmount || 0
-            avgAmt.value = res?.data?.data?.avgInventoryAmount || 0
+        if (res?.code == 0) {
+            totalAmt.value = res?.data.inventoryAmount || 0
+            avgAmt.value = res?.data.avgInventoryAmount || 0
         }
     })
 }

@@ -609,7 +609,7 @@ const changelist = (item) => {
     // 如果是id为4，打开新窗口
     if (item.id == 4) {
         // console.log('打开新窗口')
-        // window.open('http://localhost:8082/#/', '_blank');
+        window.open('http://10.151.223.209/jc/#/', '_blank');
         // return;
         // const data2 = {
 
