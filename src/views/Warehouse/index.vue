@@ -27,7 +27,8 @@
 
     <div class="xm_date" style="pointer-events: auto; z-index: 9999;">
         {{ formattedTime }}&nbsp;&nbsp; |&nbsp; {{ formattedDate }} &nbsp;&nbsp;{{ weekDay }}
-        <img class="fullscreen-icon" :src="isFullscreen ? exitFullscreenImg : fullscreenImg" @click.stop="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '全屏切换'" />
+        <img class="fullscreen-icon" :src="isFullscreen ? exitFullscreenImg : fullscreenImg"
+            @click.stop="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '全屏切换'" />
     </div>
 
 
@@ -580,7 +581,7 @@ const menuList = ref([
 
 const menuList2 = ref([
     { id: 21, name: '仓储作业', routeName: 'housework' },
-    { id: 22, name: '告警联动', routeName: 'work1' },
+    // { id: 22, name: '告警联动', routeName: 'work1' },
     { id: 23, name: '作业推演', routeName: 'work2' },
     { id: 24, name: '作业安全', routeName: 'work3' },
     { id: 25, name: '物资监控', routeName: 'work4' },
@@ -598,12 +599,12 @@ const changli = ref(1)
 const changelist = (item) => {
 
     changli.value = item.id;
-        if(item.id==2){
-        changli2.value=21
+    if (item.id == 2) {
+        changli2.value = 21
 
     }
-            if(item.id==3){
-        changli3.value=31
+    if (item.id == 3) {
+        changli3.value = 31
 
     }
     // 如果是id为4，打开新窗口
@@ -759,23 +760,23 @@ onUnmounted(() => {
 })
 
 const toggleFullscreen = (e) => {
-    if(e) e.stopPropagation();
+    if (e) e.stopPropagation();
     console.log('Toggle Fullscreen Triggered');
     const doc = document.documentElement;
     const currentlyFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
-    
+
     if (!currentlyFullscreen) {
         // 先立刻改变图标状态保证反馈
         isFullscreen.value = true;
         const rfs = doc.requestFullscreen || doc.mozRequestFullScreen || doc.webkitRequestFullscreen || doc.msRequestFullscreen;
-        if(rfs) rfs.call(doc).catch(err => {
+        if (rfs) rfs.call(doc).catch(err => {
             console.warn('全屏失败:', err);
             isFullscreen.value = false; // 失败则回退状态
         });
     } else {
         isFullscreen.value = false;
         const efs = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen || document.msExitFullscreen;
-        if(efs) {
+        if (efs) {
             // efs.call 可能不返回 promise，包一层 try
             try { efs.call(document); } catch (e) { console.warn(e); }
         }

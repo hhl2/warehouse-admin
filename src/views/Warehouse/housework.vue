@@ -71,7 +71,7 @@
                                 <div class="jcard__number">{{ warehouseData.inboundCompleted }}%</div>
                             </div>
                             <div class="jcard_box">
-                                <div class="jcard__unit">盘库作业</div>
+                                <div class="jcard__unit">盘点作业</div>
                                 <div class="jcard__number">{{ warehouseData.outboundCompleted }}%</div>
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                                 <div class="jcard__number">{{ warehouseData.inboundCompleted1 }}%</div>
                             </div>
                             <div class="jcard_box">
-                                <div class="jcard__unit">盘库作业</div>
+                                <div class="jcard__unit">盘点作业</div>
                                 <div class="jcard__number">{{ warehouseData.outboundCompleted1 }}%</div>
                             </div>
                         </div>
@@ -131,8 +131,9 @@
             </div>
 
             <div class="yySearch">
-                <el-input v-model="alertFilterParams.visitor" size="small" placeholder="请输入姓名" :prefix-icon="Search"
-                    clearable @clear="handleAlertSearch" @keyup.enter="handleAlertSearch" />
+                <el-input class="yySearch_input" v-model="alertFilterParams.visitor" size="small" placeholder="请输入姓名"
+                    :prefix-icon="Search" clearable @clear="handleAlertSearch" @keyup.enter="handleAlertSearch" />
+
                 <template v-if="activeAlertTab === 1">
                     <div class="yySearch_left">
                         <div class="yylf_label">业务类型</div>
@@ -172,6 +173,7 @@
             </div>
 
             <div class="yylf">
+
                 <div class="yylf_left">
                     <div class="yylf_label">{{ activeAlertTab === 1 ? '预约开始时间' : '计划开始时间' }}</div>
                     <el-date-picker v-model="alertFilterParams.visitDate" type="date" placeholder="" size="small"
@@ -182,45 +184,96 @@
                     <div class="yylf_search_box" @click="handleAlertReset">重置</div>
                 </div>
             </div>
-            <div class="change_table">
+            <div class="change_table" v-loading="loading">
                 <transition name="fade" mode="out-in">
-                    <el-table class="my-spacing-table" ref="tableRef" :data="tableData" v-if="activeAlertTab === 1"
-                        v-loading="loading">
-                        <el-table-column prop="index" label="序号" width="60" />
-                        <el-table-column prop="reservationCode" label="预约号" width="100" show-overflow-tooltip>
-                            <template #default="scope">
-                                <span class="status-normal">{{ scope.row.reservationCode }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="billType" label="业务类型" width="100" show-overflow-tooltip />
-                        <el-table-column prop="visitor" label="姓名" width="60" />
-                        <el-table-column prop="carNumber" label="车牌号" width="100" show-overflow-tooltip>
-                            <template #default="scope">
-                                <span class="status-normal">{{ scope.row.carNumber }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="address" label="装卸点" width="60">
-                            <template #default="scope">
-                                <span class="status-normal2">{{ scope.row.address }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="startVisitDate" label="预约开始时间" width="120" show-overflow-tooltip />
-                    </el-table>
+                    <!-- 预约列表卡片 -->
+                    <div class="card-list-wrapper" v-if="activeAlertTab === 1" key="tab1">
+                        <div class="card-item" v-for="item in tableData" :key="item.reservationCode || item.index">
+                            <div class="card-header">
+                                <span class="card-title">
+                                    <span class="card-index">{{ item.index }}</span>
+                                    <span class="card-code">预约号: {{ item.reservationCode }}</span>
+                                </span>
+                                <span class="card-status status-normal">{{ item.billType }}</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-row">
+                                    <div class="card-cell">
+                                        <span class="card-label">姓名:</span>
+                                        <span class="card-value">{{ item.visitor }}</span>
+                                    </div>
+                                    <div class="card-cell">
+                                        <span class="card-label">车牌号:</span>
+                                        <span class="card-value">{{ item.carNumber }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-row">
+                                    <div class="card-cell">
+                                        <span class="card-label">装卸点:</span>
+                                        <span class="card-value status-normal2">{{ item.address }}</span>
+                                    </div>
+                                    <div class="card-cell">
+                                        <span class="card-label">预约时间:</span>
+                                        <span class="card-value">{{ item.startVisitDate }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="tableData.length === 0" class="empty-data">暂无预约数据</div>
+                    </div>
 
-                    <el-table class="my-spacing-table" ref="tableRef" :data="tableData" v-else-if="activeAlertTab === 3"
-                        v-loading="loading">
-                        <el-table-column prop="index" label="序号" width="50" />
-                        <el-table-column prop="arrangementCode" label="作业票编码" width="120" show-overflow-tooltip />
-                        <el-table-column prop="visitor" label="来访人" width="70" />
-                        <el-table-column prop="guardian" label="工作负责人" width="85"  show-overflow-tooltip />
-                        <el-table-column prop="ticketType" label="作业票类型" width="85" />
-                        <el-table-column prop="teams" label="单位和班组" width="100" show-overflow-tooltip />
-                        <el-table-column prop="arriveTime" label="入园时间" width="100" show-overflow-tooltip />
-                        <el-table-column prop="startWorkPlanDate" label="计划开始时间" width="110" show-overflow-tooltip />
-                        <el-table-column prop="endWorkPlanDate" label="计划结束时间" width="110" show-overflow-tooltip />
-                        <el-table-column prop="billType" label="业务类型" width="80" show-overflow-tooltip />
-                        <el-table-column prop="isSubmit" label="当前状态" width="80" />
-                    </el-table>
+                    <!-- 作业票卡片 -->
+                    <div class="card-list-wrapper" v-else-if="activeAlertTab === 3" key="tab3">
+                        <div class="card-item" v-for="item in tableData" :key="item.arrangementCode || item.index">
+                            <div class="card-header">
+                                <span class="card-title">
+                                    <span class="card-index">{{ item.index }}</span>
+                                    <span class="card-code">作业票编码: {{ item.arrangementCode }}</span>
+                                </span>
+                                <span class="card-status">{{ item.isSubmit }}</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-row">
+                                    <div class="card-cell">
+                                        <span class="card-label">作业票类型:</span>
+                                        <span class="card-value">{{ item.ticketType }}</span>
+                                    </div>
+                                    <div class="card-cell">
+                                        <span class="card-label">业务类型:</span>
+                                        <span class="card-value">{{ item.billType }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-row">
+                                    <div class="card-cell">
+                                        <span class="card-label">来访人:</span>
+                                        <span class="card-value">{{ item.visitor }}</span>
+                                    </div>
+                                    <div class="card-cell">
+                                        <span class="card-label">作业负责人:</span>
+                                        <span class="card-value">{{ item.guardian }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-row">
+                                    <div class="card-cell">
+                                        <span class="card-label">单位/班组:</span>
+                                        <span class="card-value">{{ item.teams }}</span>
+                                    </div>
+                                    <div class="card-cell">
+                                        <span class="card-label">入园时间:</span>
+                                        <span class="card-value">{{ item.arriveTime }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-row">
+                                    <div class="card-cell" style="width: 100%;">
+                                        <span class="card-label">计划周期:</span>
+                                        <span class="card-value">{{ item.startWorkPlanDate }} - {{ item.endWorkPlanDate
+                                        }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="tableData.length === 0" class="empty-data">暂无作业票数据</div>
+                    </div>
                 </transition>
             </div>
         </div>
@@ -241,8 +294,8 @@ import {
 
 // const warehouseCode = '0318080022';
 // const warehouseId = '';
-const warehouseCode   = "03180800KS"
-const warehouseId= "aebf01bd6fae4f63a1d2bbb4c8208e0c"
+const warehouseCode = "03180800KS"
+const warehouseId = "aebf01bd6fae4f63a1d2bbb4c8208e0c"
 
 const timeType1 = ref(1);
 const loading = ref(false);
@@ -328,7 +381,7 @@ const formatDate = (timestamp) => {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 const queryWarehouseStatusPaginations = () => {
-    queryWarehouseJobNum({ timeType: timeType1.value, warehouseCode,warehouseId }).then(res => {
+    queryWarehouseJobNum({ timeType: timeType1.value, warehouseCode, warehouseId }).then(res => {
         if (res && res.code == 0 && res.data) {
             overviewData.safetyBriefings = res.data.E10 || 0;
             overviewData.workPermits = res.data.AB01 || 0;
@@ -496,6 +549,8 @@ const initData = () => {
 const generateTableData = () => {
     return Array.from({ length: 20 }, (_, index) => ({
         index: index + 1,
+        billType: "访客",
+
         reservationCode: `RYY0800${(index + 20).toString().padStart(2, '0')}`,
         businessType: '供应商送货',
         visitor: index % 2 === 0 ? '李强' : '叶润林',
@@ -730,8 +785,8 @@ const handleResize = () => {
 // 生命周期
 onMounted(() => {
     initData();
-    queryWarehouseStatusPaginations();
-    queryParkReservationListPaginationsParams();
+    // queryWarehouseStatusPaginations();
+    // queryParkReservationListPaginationsParams();
     initWarehouseChart();
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);
@@ -998,9 +1053,13 @@ onUnmounted(() => {
 .yySearch {
     display: flex;
     align-items: center;
-    margin: 15px 10px;
-    margin-top: 10px;
-    gap: 8px;
+    justify-content: space-evenly;
+    margin: 5px 0px 10px 10px;
+
+}
+
+.yySearch_input {
+    width: 115px !important;
 }
 
 
@@ -1025,7 +1084,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 20px 0px 20px;
+    margin: 0px 20px 0px 20px;
 }
 
 .yylf_left {
@@ -1224,5 +1283,140 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
+}
+
+.card-list-wrapper {
+    /* 使用 calc 动态计算占据剩下的高度（减去顶部标题、筛选器的高度） */
+    height: calc(100vh - 340px);
+    overflow-y: auto;
+    padding: 0 5px;
+
+    /* Firefox 专属极细且透明的滚动条支持 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 168, 253, 0.15) transparent;
+}
+</style>
+
+<style>
+/* Custom Scrollbar for cards (non-scoped to ensure pseudo-elements work) */
+div.card-list-wrapper::-webkit-scrollbar {
+    width: 3px !important;
+}
+
+div.card-list-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(16, 168, 253, 0.15) !important;
+    border-radius: 2px !important;
+}
+
+div.card-list-wrapper::-webkit-scrollbar-track {
+    background-color: transparent !important;
+}
+
+.card-item {
+    background: rgba(16, 168, 253, 0.15);
+    border: 1px solid rgba(16, 168, 253, 0.6);
+    box-shadow: inset 0 0 10px rgba(16, 168, 253, 0.2);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    padding: 12px;
+    transition: all 0.3s;
+}
+
+.card-item:hover {
+    background: rgba(0, 240, 255, 0.25);
+    border-color: rgba(0, 240, 255, 0.9);
+    box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.5), 0 0 10px rgba(0, 240, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(16, 168, 253, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    flex-wrap: nowrap;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.card-index {
+    display: inline-block;
+    width: 22px;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    background: #06A7E5;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.card-code {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-status {
+    font-size: 13px;
+    color: #06A7E5;
+    padding: 2px 8px;
+    background: rgba(6, 167, 229, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.card-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.card-row:last-child {
+    margin-bottom: 0;
+}
+
+.card-cell {
+    width: 48%;
+    display: flex;
+}
+
+.card-label {
+    color: #8ED0FF;
+    font-size: 13px;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+.card-value {
+    color: #E6F2FF;
+    font-size: 13px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty-data {
+    text-align: center;
+    color: #8ED0FF;
+    padding: 30px 0;
+    font-size: 14px;
 }
 </style>

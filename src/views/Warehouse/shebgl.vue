@@ -46,56 +46,56 @@
             </div>
         </div>
 
-        <div class="sblf_list">
-            <div v-for="(value, index) in source" :key="index">
-                <div class="sblf_box">
-                    <div class="sblf_box_title">
-                        设备编码：
-                        <span>{{ value.deviceCode }}</span>
-                    </div>
-
-                    <div class="margin_sb_box">
-                        <div class="sb_box_label">
-                            <span>设备名称</span>
-                            <span>下次检验时间</span>
-                            <span>设备类型</span>
-                            <span>子设备类型</span>
-                        </div>
-
-                        <div class="sb_box_label2">
-                            <el-tooltip :content="value.deviceName" placement="top" :show-after="300"
-                                popper-class="custom-tooltip" effect="dark">
-                                <span class="ellipsis-text">{{ value.deviceName }}</span>
-                            </el-tooltip>
-                            <span>{{ value.nextInspectionDate }}</span>
-                            <span>{{ value.deviceType }}</span>
-                            <span>{{ value.subDeviceType }}</span>
-                        </div>
-
-                        <div class="sb_box_label">
-                            <span>生产厂家</span>
-                            <span>规格型号</span>
-                            <span>运行状态</span>
-                            <span></span>
-                        </div>
-
-                        <div class="sb_box_label2">
-                            <el-tooltip :content="value.manufacturer" placement="top" :show-after="300"
-                                popper-class="custom-tooltip" effect="dark" v-if="value.manufacturer">
-                                <span class="ellipsis-text">{{ value.manufacturer }}</span>
-                            </el-tooltip>
-                            <span v-else></span>
-                            <span>{{ value.modelSpec }}</span>
-                            <span>{{ value.status }}</span>
-                            <span></span>
-                        </div>
-
-                    </div>
-
-
+        <div class="card-list-wrapper sblf_list">
+            <div class="card-item" v-for="(value, index) in source" :key="index">
+                <div class="card-header">
+                    <span class="card-title">
+                        <span class="card-index">{{ index + 1 }}</span>
+                        <span class="card-code">设备编码: {{ value.deviceCode }}</span>
+                    </span>
+                    <span class="card-status status-normal">{{ value.status }}</span>
                 </div>
-
+                <div class="card-body">
+                    <div class="card-row">
+                        <div class="card-cell">
+                            <span class="card-label">设备名称:</span>
+                            <el-tooltip :content="value.deviceName" placement="top" :show-after="300" popper-class="custom-tooltip" effect="dark">
+                                <span class="card-value">{{ value.deviceName }}</span>
+                            </el-tooltip>
+                        </div>
+                        <div class="card-cell">
+                            <span class="card-label">设备类型:</span>
+                            <span class="card-value">{{ value.deviceType }}</span>
+                        </div>
+                    </div>
+                    <div class="card-row">
+                        <div class="card-cell">
+                            <span class="card-label">子类型:</span>
+                            <span class="card-value">{{ value.subDeviceType || '暂无' }}</span>
+                        </div>
+                        <div class="card-cell">
+                            <span class="card-label">规格型号:</span>
+                            <span class="card-value">{{ value.modelSpec || '未知' }}</span>
+                        </div>
+                    </div>
+                    <div class="card-row">
+                        <div class="card-cell" style="width: 100%;">
+                            <span class="card-label">生产厂家:</span>
+                            <el-tooltip :content="value.manufacturer" placement="top" :show-after="300" popper-class="custom-tooltip" effect="dark" v-if="value.manufacturer">
+                                <span class="card-value">{{ value.manufacturer }}</span>
+                            </el-tooltip>
+                            <span class="card-value" v-else>未知</span>
+                        </div>
+                    </div>
+                    <div class="card-row">
+                        <div class="card-cell" style="width: 100%;">
+                            <span class="card-label">下次检验时间:</span>
+                            <span class="card-value">{{ value.nextInspectionDate || '无' }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div v-if="source.length === 0" class="empty-data">暂无设备数据</div>
         </div>
 
     </div>
@@ -221,105 +221,127 @@
     overflow: hidden !important;
 }
 
-.sblf_list {
+.card-list-wrapper {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 0 5px;
+    margin-top: 10px;
     scrollbar-width: thin;
-    scrollbar-color: #c1c1c1 transparent;
+    scrollbar-color: rgba(16, 168, 253, 0.15) transparent;
 }
 
-.sblf_list::-webkit-scrollbar {
-    width: 8px;
+.card-item {
+    background: rgba(16, 168, 253, 0.15);
+    border: 1px solid rgba(16, 168, 253, 0.6);
+    box-shadow: inset 0 0 10px rgba(16, 168, 253, 0.2);
+    border-radius: 6px;
+    margin: 0 10px 12px 10px;
+    padding: 12px;
+    transition: all 0.3s;
 }
 
-.sblf_list::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 4px;
+.card-item:hover {
+    background: rgba(0, 240, 255, 0.25);
+    border-color: rgba(0, 240, 255, 0.9);
+    box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.5), 0 0 10px rgba(0, 240, 255, 0.3);
+    transform: translateY(-2px);
 }
 
-.sblf_list::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 4px;
-}
-
-.sblf_list:hover::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-}
-
-.sblf_box {
-    width: 438px;
-    height: 190px;
-
-    border: 1px solid #1C70D7;
-    border-radius: 5px;
-    margin: 16px 15px;
-    margin-bottom: 16px;
-
-}
-
-.sblf_box_title {
-    color: #E9FBFF;
-    font-size: 16px;
-    padding: 5px 10px;
-
-
-
-}
-
-.sblf_box_title span {
-    color: #54BAFF;
-
-}
-
-.sb_box_label {
+.card-header {
     display: flex;
-
-    font-size: 12px;
-    padding: 5px 8px;
-    background: #095DBE;
-    color: #04E9E9;
-    font-size: 16px;
     justify-content: space-between;
-    margin-bottom: 5px;
-
+    align-items: center;
+    border-bottom: 1px solid rgba(16, 168, 253, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    flex-wrap: nowrap;
 }
 
-.sb_box_label span {
-    display: inline-block;
-    width: 110px;
-    text-align: center;
-}
-
-.sb_box_label span:first-child {
-    text-align: left;
-}
-
-
-.sb_box_label2 {
+.card-title {
     display: flex;
-    padding: 5px 8px;
-    background-color: rgba(9, 93, 190, 0.6);
-    color: #DFF3FA;
-    font-size: 16px;
-    justify-content: space-between;
-    margin-bottom: 5px;
+    align-items: center;
+    overflow: hidden;
+    flex: 1;
+    margin-right: 10px;
 }
 
-.sb_box_label2 span:first-child {
-    text-align: left;
-}
-
-.sb_box_label2 span {
+.card-index {
     display: inline-block;
-    width: 100px;
+    width: 22px;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
     text-align: center;
+    background: #06A7E5;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 10px;
+    flex-shrink: 0;
 }
 
-.ellipsis-text {
+.card-code {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-status {
+    font-size: 13px;
+    color: #06A7E5;
+    padding: 2px 8px;
+    background: rgba(6, 167, 229, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.status-normal {
+    color: #51E4FF;
+}
+
+.card-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.card-row:last-child {
+    margin-bottom: 0;
+}
+
+.card-cell {
+    width: 48%;
+    display: flex;
+    align-items: center;
+}
+
+.card-label {
+    color: #8ED0FF;
+    font-size: 13px;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+.card-value {
+    color: #E6F2FF;
+    font-size: 13px;
+    flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.empty-data {
+    text-align: center;
+    color: #8ED0FF;
+    padding: 30px 0;
+    font-size: 14px;
 }
 
 .sblf_search {
@@ -551,6 +573,20 @@ onMounted(() => {
     fetchCurrentCategoryList(); // 默认加载列表，可以通过 activeCategory 指定初始展示的分类
 });
 
-
-
 </script>
+
+<style>
+/* Custom Scrollbar for cards (non-scoped to ensure pseudo-elements work) */
+div.card-list-wrapper::-webkit-scrollbar {
+    width: 3px !important;
+}
+
+div.card-list-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(16, 168, 253, 0.15) !important;
+    border-radius: 2px !important;
+}
+
+div.card-list-wrapper::-webkit-scrollbar-track {
+    background-color: transparent !important;
+}
+</style>

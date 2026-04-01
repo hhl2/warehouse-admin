@@ -71,7 +71,8 @@
             </div>
         </div>
 
-        <div class="changleft" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 10px; overflow: hidden;">
+        <div class="changleft"
+            style="flex: 1; display: flex; flex-direction: column; margin-bottom: 10px; overflow: hidden;">
             <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick" height="100%">
                 <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="manufacturer" label="设备类型" />
@@ -178,7 +179,7 @@
 }
 
 .context_tans {
-   width: 432px;
+    width: 432px;
     height: 248px;
     background: transparent;
     border: none;
@@ -561,10 +562,10 @@ const activeShelfChange = (index) => {
 const handleInventoryRowClick = (row) => {
     if (!row) return;
     const id = row.materialId || '';
-    console.log(row,'row')
+    console.log(row, 'row')
     const uniqueWarehouseCode = row.uniqueWarehouseCode || '';
-    console.log('库存行点击', { "code": 1, "type": "goods", "data": { "id": uniqueWarehouseCode} });
-    // callParentMethod({ "code": 1, "type": "goods", "data": { "id": uniquewarehouseCode, "warehouseCode": warehouseCode } });
+    console.log('库存行点击', { "code": 1, "type": "goods", "data": { "id": uniqueWarehouseCode } });
+    callParentMethod({ "code": 1, "type": "goods", "data": { "id": uniqueWarehouseCode, "warehouseCode": warehouseCode } });
 };
 
 // 新增分类切换数据 (与搜索框同级)

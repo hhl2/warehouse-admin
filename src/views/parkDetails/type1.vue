@@ -2,7 +2,7 @@
     <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmianx">
             <div class="changewidth">
-                <el-input v-model="deviceName" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable
+                <el-input v-model="deviceName" class="inputwidth" placeholder="请输入设备名称" :prefix-icon="Search" clearable
                     @keyup.enter="queryParkWeatherListPaginations" />
                 <el-button type="primary" class="search-btn" @click="queryParkWeatherListPaginations">查询</el-button>
             </div>

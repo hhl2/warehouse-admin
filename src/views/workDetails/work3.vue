@@ -125,48 +125,45 @@
                 <div class="sblf_search_box" @click="handleAlertReset">重置</div>
             </div>
         </div>
-        <div v-for="(value, index) in source" :key="index">
-            <div class="sblf_box">
-                <div class="sblf_box_title">
-                    设备编码：
-                    <span>{{ value.deviceCode }}</span>
+        <div class="card-list-wrapper">
+            <div class="card-item" :class="getAlertClass(value.alertLevel)" v-for="(value, index) in source" :key="index">
+                <div class="card-header">
+                    <span class="card-title">
+                        <span class="card-index">{{ index + 1 }}</span>
+                        <span class="card-code">设备编码: {{ value.deviceCode }}</span>
+                    </span>
+                    <span class="card-status status-normal">{{ value.alertLevel }}</span>
                 </div>
-
-                <div class="margin_sb_box">
-                    <div class="sb_box_label">
-                        <span>告警名称</span>
-                        <span>告警级别</span>
-                        <span>告警时间</span>
-                        <span>告警分类</span>
+                <div class="card-body">
+                    <div class="card-row">
+                        <div class="card-cell">
+                            <span class="card-label">告警名称:</span>
+                            <span class="card-value">{{ value.alertName }}</span>
+                        </div>
+                        <div class="card-cell">
+                            <span class="card-label">告警分类:</span>
+                            <span class="card-value">{{ value.alertCategory }}</span>
+                        </div>
                     </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.alertName }}</span>
-                        <span>{{ value.alertLevel }}</span>
-                        <span>{{ value.alertTime }}</span>
-                        <span>{{ value.alertCategory }}</span>
+                    <div class="card-row">
+                        <div class="card-cell">
+                            <span class="card-label">告警恢复:</span>
+                            <span class="card-value">{{ value.alertRecovery }}</span>
+                        </div>
+                        <div class="card-cell">
+                            <span class="card-label">告警描述:</span>
+                            <span class="card-value">{{ value.alertDesc || '无' }}</span>
+                        </div>
                     </div>
-
-                    <div class="sb_box_label">
-                        <span>告警恢复</span>
-                        <span>告警描述</span>
-                        <span></span>
-                        <span></span>
-
+                    <div class="card-row">
+                        <div class="card-cell" style="width: 100%;">
+                            <span class="card-label">告警时间:</span>
+                            <span class="card-value">{{ value.alertTime }}</span>
+                        </div>
                     </div>
-
-                    <div class="sb_box_label2">
-                        <span>{{ value.alertRecovery }}</span>
-                        <span>{{ value.alertDesc || '' }}</span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
                 </div>
-
-
             </div>
-
+            <div v-if="source.length === 0" class="empty-data">暂无告警数据</div>
         </div>
 
 
@@ -177,7 +174,7 @@
 
 <style scoped>
 .inputwidth2 {
-   width: 203px;
+    width: 203px;
 }
 
 ::v-deep(.el-select--small) {
@@ -390,78 +387,139 @@
     justify-content: space-between;
 }
 
-.sblf_box {
-    width: 438px;
-    height: 190px;
-
-    border: 1px solid #1C70D7;
-    border-radius: 5px;
-    margin: 0px 15px;
-    margin-bottom: 16px;
-
+.card-list-wrapper {
+    height: calc(100vh - 250px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 5px;
+    margin-top: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 168, 253, 0.15) transparent;
 }
 
-.sblf_box_title {
+.card-item {
+    background: rgba(16, 168, 253, 0.15);
+    border: 1px solid rgba(16, 168, 253, 0.6);
+    box-shadow: inset 0 0 10px rgba(16, 168, 253, 0.2);
+    border-radius: 6px;
+    margin: 0 10px 12px 10px;
+    padding: 12px;
+    transition: all 0.3s;
+}
+
+.card-item:hover {
+    background: rgba(0, 240, 255, 0.25);
+    border-color: rgba(0, 240, 255, 0.9);
+    box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.5), 0 0 10px rgba(0, 240, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.card-item.card-major:hover {
+    background: rgba(255, 193, 7, 0.25);
+    border-color: rgba(255, 193, 7, 0.9);
+    box-shadow: inset 0 0 15px rgba(255, 193, 7, 0.5), 0 0 10px rgba(255, 193, 7, 0.3);
+}
+
+.card-item.card-urgent:hover {
+    background: rgba(244, 67, 54, 0.25);
+    border-color: rgba(244, 67, 54, 0.9);
+    box-shadow: inset 0 0 15px rgba(244, 67, 54, 0.5), 0 0 10px rgba(244, 67, 54, 0.3);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(16, 168, 253, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    flex-wrap: nowrap;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.card-index {
+    display: inline-block;
+    width: 22px;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    background: #06A7E5;
     color: #fff;
-    font-size: 16px;
-    padding: 5px 10px;
-
-
-
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 10px;
+    flex-shrink: 0;
 }
 
-.sblf_box_title span {
-    color: #F06262;
-
+.card-code {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.sb_box_label {
+.card-status {
+    font-size: 13px;
+    color: #06A7E5;
+    padding: 2px 8px;
+    background: rgba(6, 167, 229, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.status-normal {
+    color: #51E4FF;
+}
+
+.card-row {
     display: flex;
-    padding: 5px 5px;
-    font-size: 12px;
-    padding: 5px 8px;
-    /* background: #274A9D;
-    color: #65D0F2; */
-    /* background-color: rgba(93, 146, 237, 0.7); */
-    background: #095DBE;
-    color: #04E9E9;
-    /* color: #54B1FC; */
-    font-size: 16px;
     justify-content: space-between;
-    margin-bottom: 5px;
-
+    margin-bottom: 6px;
 }
 
-.sb_box_label span {
-    display: inline-block;
-    width: 100px;
-    text-align: center;
+.card-row:last-child {
+    margin-bottom: 0;
 }
 
-.sb_box_label span:first-child {
-    /* text-align: left; */
-}
-
-
-.sb_box_label2 {
+.card-cell {
+    width: 48%;
     display: flex;
-    padding: 5px 5px;
-    background-color: rgba(9, 93, 190, 0.6);
-    /* background-color: rgba(116, 154, 205, 0.7); */
-    color: #DFF3FA;
-    font-size: 16px;
-    justify-content: space-between;
-    margin-bottom: 5px;
+    align-items: center;
 }
 
-.sb_box_label2 span {
-    display: inline-block;
-    width: 100px;
+.card-label {
+    color: #8ED0FF;
+    font-size: 13px;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+.card-value {
+    color: #E6F2FF;
+    font-size: 13px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty-data {
     text-align: center;
-}
-
-.sb_box_label2 span:first-child {
-    /* text-align: left; */
+    color: #8ED0FF;
+    padding: 30px 0;
+    font-size: 14px;
 }
 
 .sblf_search {
@@ -514,7 +572,7 @@ const source = ref([
     {
         deviceCode: '74BC256336654588523369814CVT4',
         alertName: 'TEMP01',
-        alertLevel: '严重警告',
+        alertLevel: '重大警告',
         alertTime: '2026-01-08',
         alertCategory: '温度告警',
         alertRecovery: '已恢复',
@@ -532,7 +590,7 @@ const source = ref([
     {
         deviceCode: '94BC256336654588523369814CVT6',
         alertName: 'NET05',
-        alertLevel: '提示',
+        alertLevel: '紧急告警',
         alertTime: '2025-12-28',
         alertCategory: '网络告警',
         alertRecovery: '已恢复',
@@ -540,6 +598,13 @@ const source = ref([
     }
 ])
 const input3 = ref('')
+
+const getAlertClass = (level) => {
+    if (!level) return '';
+    if (level.includes('紧急')) return 'card-urgent';
+    if (level.includes('重大')) return 'card-major';
+    return '';
+};
 
 const fetchAlarmInfoList = async () => {
     try {
@@ -549,28 +614,28 @@ const fetchAlarmInfoList = async () => {
             pageSize: 25,
             alarmDevice: input3.value || undefined
         });
-        
+
         if (infoRes && (infoRes.code === '0' || infoRes.code === 0) && infoRes.data && infoRes.data.list) {
             const levelMap = { '1': '紧急', '2': '重大', '3': '一般' };
             const typeMap = { '1': '安防告警', '2': '温度告警', '3': '电力告警', '4': '网络告警' }; // Example mapping fallback map
-            
+
             const formatDate = (timestamp) => {
                 if (!timestamp) return '';
                 const d = new Date(timestamp);
                 return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
             };
-            
+
             source.value = infoRes.data.list.map(item => ({
-                deviceCode: item.alarmCode || item.primaryValue || '未知设备', 
+                deviceCode: item.alarmCode || item.primaryValue || '未知设备',
                 alertName: item.alarmName || '未知告警',
                 alertLevel: levelMap[item.alarmLevel?.toString()] || item.alarmLevel || '一般',
                 alertTime: formatDate(item.alarmTime),
                 alertCategory: typeMap[item.alarmType?.toString()] || item.alarmType || '其它告警',
-                alertRecovery: item.alarmStatus || (item.dealState === 1 ? '已处理' : '未恢复'), 
+                alertRecovery: item.alarmStatus || (item.dealState === 1 ? '已处理' : '未恢复'),
                 alertDesc: item.alarmDescription || ''
             }));
         } else {
-             source.value = [];
+            source.value = [];
         }
     } catch (error) {
         console.error('获取作业告警列表失败:', error);
@@ -993,31 +1058,31 @@ const fetchWorkArrangementCount = async () => {
         });
         if (response && (response.code === '0' || response.code === 0) && response.data) {
             const data = response.data;
-            
+
             // 1. 处理高、中、低风险 -> alertData
             const height = Number(data.heigthQty || 0);
             const medium = Number(data.mediumQty || 0);
             const low = Number(data.lowQty || 0);
-            
+
             alertData.items[0].value = height;
             alertData.items[1].value = medium;
             alertData.items[2].value = low;
             alertData.total = height + medium + low;
-            
+
             // 2. 处理 A、B、C 类作业 -> alertData2
             const aQty = Number(data.aQty || 0);
             const bQty = Number(data.bQty || 0);
             const cQty = Number(data.cQty || 0);
-            
+
             alertData2.items[0].value = aQty;
             alertData2.items[1].value = bQty;
             alertData2.items[2].value = cQty;
             alertData2.total = aQty + bQty + cQty;
-            
+
             // 3. 处理仓储作业、施工作业 -> alertData4
             const issueQty = Number(data.issueQty || 0);
             const workQty = Number(data.workQty || 0);
-            
+
             alertData4.items[0].value = issueQty;
             alertData4.items[1].value = workQty;
             alertData4.total = issueQty + workQty;
@@ -1030,7 +1095,7 @@ const fetchWorkArrangementCount = async () => {
     } catch (error) {
         console.error('获取作业统计数据失败:', error);
     }
-    
+
     // 4. 处理 告警数 -> alertData3
     try {
         const alarmRes = await queryAlarmLevelNumCount({
@@ -1038,7 +1103,7 @@ const fetchWorkArrangementCount = async () => {
             startAlarmTime: startTimeISO,
             endAlarmTime: endTimeISO
         });
-        
+
         if (alarmRes && (alarmRes.code === '0' || alarmRes.code === 0)) {
             const list = alarmRes.data || [];
             let total = 0;
@@ -1049,7 +1114,7 @@ const fetchWorkArrangementCount = async () => {
                     typeMap[item.alarmLevel.toString()] = Number(item.numCount || 0);
                 }
             });
-            
+
             alertData3.items[0].value = typeMap['1'];
             alertData3.items[1].value = typeMap['2'];
             alertData3.items[2].value = typeMap['3'];
@@ -1057,7 +1122,7 @@ const fetchWorkArrangementCount = async () => {
             initChart4();
         }
     } catch (error) {
-         console.error('获取告警数数据失败:', error);
+        console.error('获取告警数数据失败:', error);
     }
 };
 
@@ -1082,3 +1147,19 @@ onUnmounted(() => {
 
 
 </script>
+
+<style>
+/* Custom Scrollbar for cards (non-scoped to ensure pseudo-elements work) */
+div.card-list-wrapper::-webkit-scrollbar {
+    width: 3px !important;
+}
+
+div.card-list-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(16, 168, 253, 0.15) !important;
+    border-radius: 2px !important;
+}
+
+div.card-list-wrapper::-webkit-scrollbar-track {
+    background-color: transparent !important;
+}
+</style>
