@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmianx">
             <div class="changewidth">
@@ -7,7 +7,8 @@
                 <el-button type="primary" class="search-btn" @click="queryParkWeatherListPaginations">查询</el-button>
             </div>
             <div class="changleft">
-                <el-table class="my-spacing-table" ref="tableRef" :data="deviceData">
+                <el-table class="my-spacing-table" ref="tableRef" :data="deviceData" :row-class-name="tableRowClassName"
+                    @row-click="handleRowClick">
                     <el-table-column prop="deviceName" label="设备名称" show-overflow-tooltip />
                     <el-table-column prop="deviceType" label="设备类型" />
                     <el-table-column prop="location" label="监测点位置" show-overflow-tooltip />
@@ -81,10 +82,32 @@
 }
 </style>
 
+<style>
+/* 高亮行样式（非scoped，确保覆盖el-table默认样式） */
+.el-table .highlight-row td.el-table__cell {
+    background: rgba(0, 240, 255, 0.25) !important;
+    border-color: rgba(0, 240, 255, 0.4) !important;
+}
+
+.el-table .highlight-row td.el-table__cell .cell {
+    color: #00f0ff !important;
+    font-weight: bold;
+}
+</style>
+
 <script setup>
 import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted, onUnmounted, inject, watch } from 'vue'
 import { queryParkWeatherListPagination } from '@/api/user'
+const playerMethods = inject('playerMethods')
+// 封装调用逻辑
+const callParentMethod = (message) => {
+    if (playerMethods?.sendMessage) {
+        playerMethods.sendMessage(message)
+    } else {
+        console.error('方法未成功注入')
+    }
+}
 
 // 接收从 index 传入的面板状态
 const props = defineProps({
@@ -99,14 +122,51 @@ const menuRef = ref(null);
 const deviceName = ref('');
 const ueResponseData = inject('ueResponseData')
 
+const highlightId = ref('');
+
 watch(ueResponseData, (newVal) => {
     if (newVal) {
         console.log('接收到新数据:', newVal)
         if (newVal?.json.type === 'hjjc') {
+            const targetId = newVal?.json.id;
+            if (targetId) {
+                highlightId.value = targetId;
+            }
             // showMenus.value = true
         }
     }
 })
+
+const tableRowClassName = ({ row }) => {
+    if (row.id && row.id === highlightId.value) {
+        return 'highlight-row';
+    }
+    return '';
+};
+
+const handleRowClick = (row) => {
+    const isSameRow = highlightId.value === row.id;
+    highlightId.value = isSameRow ? '' : row.id;
+
+    if (!isSameRow) {
+        // 选中新行，发送消息
+        const ll = {
+            code: 1,
+            type: "poi",
+            data: { id: row.id }
+        };
+        console.log(ll, "222");
+        callParentMethod(ll);
+    } else {
+        callParentMethod({
+            "code": 1, "type": "btn", "data": { "id": 'hjjc' }
+
+        })
+        // 取消选中，可以发送取消消息或不发送
+        console.log("取消高亮", row.id);
+    }
+};
+
 
 // 环境数据映射配置（字段名对应接口返回的实际字段）
 const environmentDataMap = {
@@ -138,7 +198,16 @@ const formatEnvironmentData = (row) => {
 };
 
 const deviceData = ref([
-
+    { id: "EN-JC1-401", deviceName: "EN-JC1-401工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-401", deviceName: "EN-JC2-401工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC1-101", deviceName: "EN-JC1-101工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC1-102", deviceName: "EN-JC1-102工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC1-103", deviceName: "EN-JC1-103工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-102", deviceName: "EN-JC2-102工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-103", deviceName: "EN-JC2-103工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-104", deviceName: "EN-JC2-104工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-105", deviceName: "EN-JC2-105工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-106", deviceName: "EN-JC2-106工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
 ]);
 
 const formatDate = (timestamp) => {

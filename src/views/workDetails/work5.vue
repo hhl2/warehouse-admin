@@ -1,4 +1,4 @@
-﻿﻿<template>
+<template>
 
     <!-- <div class="lefts" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title" style="margin-top: 10px;">
@@ -73,7 +73,7 @@
 
         <div class="changleft"
             style="flex: 1; display: flex; flex-direction: column; margin-bottom: 10px; overflow: hidden;">
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick" height="100%">
+            <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick" :row-class-name="tableRowClassName" height="100%">
                 <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="manufacturer" label="设备类型" />
                 <el-table-column prop="cn" label="监测点位置" show-overflow-tooltip />
@@ -543,7 +543,7 @@ const activeCategorys = (index) => {
         shelfItems.value = ['全部', '第一排', '第二排', '第三排', '第四排', '第五排', '第六排', '第七排', '第八排']
     }
     activeShelf.value = 0;
-    queryDistributionInfoPaginations();
+    // queryDistributionInfoPaginations();
     console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
     callParentMethod({ "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
 }
@@ -703,8 +703,24 @@ const fetchCameraVideoAndOpenPopup = async (cameraId, cameraName = '摄像头', 
     }
 }
 
+const highlightId = ref('');
+
+const tableRowClassName = ({ row }) => {
+    if (row.id && row.id === highlightId.value) {
+        return 'highlight-row';
+    }
+    return '';
+};
+
 const handleRowClick = async (row) => {
     if (!row) return;
+    const isSameRow = highlightId.value === row.id;
+    highlightId.value = isSameRow ? '' : row.id;
+    console.log('work5 handleRowClick highlightId:', highlightId.value, 'row id:', row.id);
+    
+    // 强制刷新表格以应用高亮类名
+    data1.value = [...data1.value];
+
     await fetchCameraVideoAndOpenPopup(
         row.id || '',
         row.cn || '摄像头',
@@ -2079,10 +2095,32 @@ const fetchData2 = async () => {
 // 生命周期
 onMounted(() => {
     document.addEventListener("click", handleClickOutside);
-    queryDistributionInfoPaginations();
+    // queryDistributionInfoPaginations();
     fetchData2();
+    const mappedData = workdata.value.map(item => ({
+        id: item.uniqueWarehouseCode,
+        status: 1
+    }));
 
+    const ll = {
+        code: 1,
+        type: "status",
+        data: mappedData
+    }
 
+    // 等待 playerMethods 就绪后再发送
+    const tryCall = (retries = 0) => {
+        if (playerMethods?.sendMessage) {
+            console.log(ll, '222')
+            callParentMethod(ll)
+        } else if (retries < 10) {
+            console.log(`playerMethods 未就绪，第${retries + 1}次重试...`)
+            setTimeout(() => tryCall(retries + 1), 500)
+        } else {
+            console.error('playerMethods 始终未就绪，放弃发送')
+        }
+    }
+    setTimeout(() => tryCall(), 1000);
 });
 
 onUnmounted(() => {
@@ -2095,3 +2133,16 @@ onBeforeUnmount(() => {
 });
 
 </script>
+
+<style>
+/* 高亮行样式（非scoped，确保覆盖el-table默认样式） */
+.el-table .highlight-row td.el-table__cell {
+    background: rgba(0, 240, 255, 0.25) !important;
+    border-color: rgba(0, 240, 255, 0.4) !important;
+}
+
+.el-table .highlight-row td.el-table__cell .cell {
+    color: #00f0ff !important;
+    font-weight: bold;
+}
+</style>

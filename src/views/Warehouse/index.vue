@@ -1,4 +1,66 @@
 <template>
+    <!-- 顶部右侧状态栏 -->
+    <div class="top-right-status" style="pointer-events: auto; z-index: 9999;">
+        <!-- 切换按钮 -->
+        <div class="toggle-btn-circle" @click.stop="handleStatusToggle" title="切换页面显示">
+            <!-- 正常显示状态 -->
+            <svg v-if="isPanelsVisible" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f1d6b0"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M6 14l4-4 3 3 5-5"></path>
+                <line x1="12" y1="18" x2="12" y2="22"></line>
+                <line x1="8" y1="22" x2="16" y2="22"></line>
+            </svg>
+            <!-- 隐藏被划掉的状态 -->
+            <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M6 14l4-4 3 3 5-5"></path>
+                <line x1="12" y1="18" x2="12" y2="22"></line>
+                <line x1="8" y1="22" x2="16" y2="22"></line>
+                <line x1="1" y1="1" x2="23" y2="23" stroke="#CBD5E1" stroke-width="2.5"></line>
+            </svg>
+        </div>
+
+        <!-- 时间 -->
+        <div class="status-time">{{ formattedTime }}</div>
+
+        <!-- 日期信息 -->
+        <div class="status-date-group">
+            <div class="status-day">{{ weekDay }}</div>
+            <div class="status-date">{{ formattedDateDash }}</div>
+        </div>
+
+        <div class="status-divider"></div>
+
+        <!-- 天气 -->
+        <!-- <div class="status-weather-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                <circle cx="9" cy="9" r="4" fill="#F59E0B" />
+
+                <path
+                    d="M18.5 16C20.433 16 22 14.433 22 12.5C22 10.567 20.433 9 18.5 9C18.2325 9 17.9719 9.03009 17.7214 9.0865C16.9298 7.28828 15.1119 6 13 6C10.2386 6 8 8.23858 8 11C8 11.2334 8.016 11.4629 8.04692 11.6872C6.30403 12.1158 5 13.6828 5 15.5C5 17.433 6.567 19 8.5 19H18.5Z"
+                    fill="#E2E8F0" />
+
+                <path d="M10 20L9 22" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
+                <path d="M14 20L13 22" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
+                <path d="M18 20L17 22" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+        </div>
+
+        <div class="status-temp-group">
+            <div class="status-temp">23.8°C</div>
+            <div class="status-weather-text">多云</div>
+        </div> -->
+
+        <!-- <div class="status-divider"></div> -->
+
+        <!-- 放大缩小图标 -->
+        <img class="fullscreen-icon-new" :src="isFullscreen ? exitFullscreenImg : fullscreenImg"
+            @click.stop="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '全屏切换'" />
+    </div>
+
     <div class="xm_title">
         <img v-if="showBack" class="backimg" src="@/assets/rounded-rectangle.png" @click="goback()" />
         <img class="xmimg" src="@/assets/xm_title.png" />
@@ -23,12 +85,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="xm_date" style="pointer-events: auto; z-index: 9999;">
-        {{ formattedTime }}&nbsp;&nbsp; |&nbsp; {{ formattedDate }} &nbsp;&nbsp;{{ weekDay }}
-        <img class="fullscreen-icon" :src="isFullscreen ? exitFullscreenImg : fullscreenImg"
-            @click.stop="toggleFullscreen" :title="isFullscreen ? '退出全屏' : '全屏切换'" />
     </div>
 
 
@@ -86,6 +142,72 @@
         </DragFloatBall>
 
     </div>
+
+    <!-- 操作说明面板，页面隐藏时显示 -->
+    <transition name="fade">
+        <div v-show="!isPanelsVisible" class="operation-instruction">
+            <div class="op-header">
+                <span class="op-title-zh">操作说明</span>
+                <span class="op-title-en">/ OPERATION INSTRUCTION</span>
+            </div>
+            <div class="op-divider"></div>
+            <div class="op-list">
+                <!-- WASD -->
+                <div class="op-item">
+                    <div class="op-icon-group">
+                        <div class="keyboard-keys wasd-keys">
+                            <div class="key-top"><span class="key-box">W</span></div>
+                            <div class="key-bottom">
+                                <span class="key-box">A</span>
+                                <span class="key-box">S</span>
+                                <span class="key-box">D</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="op-text">
+                        <p>键盘WASD控制方向</p>
+                        <p>分别代表上下左右</p>
+                    </div>
+                </div>
+                <!-- Q E -->
+                <div class="op-item mt-30">
+                    <div class="op-icon-group">
+                        <div class="key-bottom">
+                            <span class="key-box">Q</span>
+                            <span class="key-box">E</span>
+                        </div>
+                    </div>
+                    <div class="op-text">
+                        <p>键盘QE键控制升降</p>
+                        <p>Q键下降，E键上升</p>
+                    </div>
+                </div>
+                <!-- Mouse -->
+                <div class="op-item mt-30">
+                    <div class="op-icon-group">
+                        <svg class="mouse-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 3C8.68629 3 6 5.68629 6 9V15C6 18.3137 8.68629 21 12 21C15.3137 21 18 18.3137 18 15V9C18 5.68629 15.3137 3 12 3Z"
+                                stroke="#E2E8F0" stroke-width="1.2" />
+                            <path d="M12 7V10" stroke="#E2E8F0" stroke-width="1.2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="op-text">
+                        <p>鼠标控制视角</p>
+                    </div>
+                </div>
+                <!-- Ctrl -->
+                <div class="op-item mt-30">
+                    <div class="op-icon-group">
+                        <span class="key-box ctrl-box">Ctrl</span>
+                    </div>
+                    <div class="op-text">
+                        <p>按住Ctrl 显示鼠标</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </transition>
 
 </template>
 
@@ -464,6 +586,253 @@
     transform: scale(1.15);
     filter: drop-shadow(0 0 8px rgba(0, 228, 255, 0.9));
 }
+
+/* 操作说明面板样式 */
+.operation-instruction {
+    position: fixed;
+    left: 2%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9998;
+    color: #E2E8F0;
+    pointer-events: none;
+    /* 不阻挡鼠标事件，点击事件穿透到底层UE */
+    background: linear-gradient(90deg, rgba(12, 34, 56, 0.6) 0%, rgba(12, 34, 56, 0) 100%);
+    padding: 35px 60px 40px 30px;
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
+    transition: opacity 0.4s ease;
+}
+
+.op-header {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+
+.op-title-zh {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #fff;
+    font-family: Microsoft YaHei;
+}
+
+.op-title-en {
+    font-size: 12px;
+    margin-left: 10px;
+    color: #94A3B8;
+    letter-spacing: 2px;
+    font-family: sans-serif;
+}
+
+.op-divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+    margin-bottom: 40px;
+}
+
+.op-item {
+    display: flex;
+    align-items: center;
+}
+
+.mt-30 {
+    margin-top: 45px;
+}
+
+.op-icon-group {
+    width: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.keyboard-keys {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.key-bottom {
+    display: flex;
+    gap: 6px;
+}
+
+.key-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    font-size: 13px;
+    color: #E2E8F0;
+    font-family: sans-serif;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.space-box {
+    width: 100px;
+    height: 32px;
+    letter-spacing: 1px;
+    font-size: 12px;
+}
+
+.ctrl-box {
+    width: 70px;
+    height: 32px;
+    font-size: 13px;
+}
+
+.mouse-svg {
+    width: 35px;
+    height: 48px;
+}
+
+.op-text {
+    margin-left: 20px;
+    font-size: 14px;
+    color: #CBD5E1;
+    line-height: 1.8;
+    letter-spacing: 1px;
+    font-family: Microsoft YaHei;
+}
+
+.op-text p {
+    margin: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+/* 顶部右侧状态栏样式 */
+.top-right-status {
+    position: fixed;
+    top: 10px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    /* background: linear-gradient(280deg, rgba(16, 36, 61, 0.95) 0%, rgba(20, 50, 85, 0.85) 60%, rgba(20, 50, 85, 0.1) 100%); */
+    padding: 8px 15px 8px 30px;
+    /* border-right: 3px solid rgba(135, 180, 225, 0.8); */
+    backdrop-filter: blur(4px);
+    clip-path: polygon(5% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.fullscreen-icon-new {
+    margin-left: 5px;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 25px;
+    height: 25px;
+    transition: all 0.3s;
+    opacity: 0.85;
+}
+
+.fullscreen-icon-new:hover {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(0, 228, 255, 0.9));
+}
+
+.toggle-btn-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(10, 15, 25, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 20px;
+    border: 1px solid rgba(174, 210, 245, 0.2);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.toggle-btn-circle:hover {
+    transform: scale(1.08);
+    background: rgba(20, 30, 45, 0.9);
+    border-color: rgba(174, 210, 245, 0.6);
+    box-shadow: 0 0 10px rgba(174, 210, 245, 0.4);
+}
+
+.status-time {
+    font-size: 26px;
+    font-weight: 900;
+    color: #E2E8F0;
+    font-family: Arial, Helvetica, sans-serif;
+    letter-spacing: 2px;
+    margin-right: 18px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.status-date-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 18px;
+}
+
+.status-day {
+    font-size: 12px;
+    color: #E2E8F0;
+    text-align: right;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.status-date {
+    font-size: 11px;
+    color: #E2E8F0;
+    font-weight: bold;
+}
+
+.status-divider {
+    width: 1.5px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 18px 0 0;
+}
+
+.status-weather-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-temp-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.status-temp {
+    font-size: 13px;
+    color: #E2E8F0;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 1px;
+}
+
+.status-weather-text {
+    font-size: 11px;
+    color: #CBD5E1;
+    text-align: left;
+}
 </style>
 
 <script>
@@ -506,8 +875,17 @@ const handleClose = () => {
     console.log("确认关闭悬浮球")
     isPaneClose.value = false
 }
+
 const handleToggle = (isVisible) => {
     console.log('面板状态:', isPanelsVisible, isVisible ? '显示' : '隐藏');
+    if (playerMethods?.setCursorHidden) {
+        playerMethods.setCursorHidden(!isVisible);
+    }
+};
+
+const handleStatusToggle = () => {
+    isPanelsVisible.value = !isPanelsVisible.value;
+    handleToggle(isPanelsVisible.value);
 };
 
 const handleDragStart = (position) => {
@@ -722,6 +1100,11 @@ const formatDateTime = () => {
 const formattedDate = computed(() => {
     const { year, month, day } = formatDateTime();
     return `${year}年${month}月${day}日`;
+});
+
+const formattedDateDash = computed(() => {
+    const { year, month, day } = formatDateTime();
+    return `${year}-${month}-${day}`;
 });
 
 const formattedTime = computed(() => {

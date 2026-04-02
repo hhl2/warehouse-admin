@@ -1,6 +1,6 @@
 ﻿﻿<template>
-    <div class="testmians" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="testmian">
+    <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
+        <div class="testmianx">
             <div class="changewidth">
                 <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable />
                 <el-button type="primary" class="search-btn" @click="fetchVisitorData">查询</el-button>
@@ -33,15 +33,11 @@
         </div>
     </div>
 
-    <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
+    <!-- <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">摄像头</div>
-            <!-- <div class="title_text_box">
-                <div class="title_txets">立体仓库</div>
-                <div class="title_txets">平置仓库</div>
-                <div class="title_txets">堆场</div>
-            </div> -->
+
         </div>
         <div class="inputbox">
             <el-input v-model="input3" class="inputwidth" placeholder="请输入关键字" :prefix-icon="Search" clearable />
@@ -67,22 +63,8 @@
             </el-table>
 
         </div>
-        <!-- <div class="title">
-            <img src="@/assets/title_bgs.png" alt="">
-            <div class="title_txet">视频监控</div>
 
-        </div>
-        <div class="spjkLists">
-            <template v-for="(value, index) in sorces">
-                <div class="spjkList" @click="handleRowClick(value)">
-                    <div class="spjkListbox">
-                        <img :src="value.url" alt="" style="width: 100%; height: 100%; object-fit: cover;" />
-                    </div>
-                    <div class="spjkList_label">{{ value.countNums1 || '摄像头' + (index + 1) }}</div>
-                </div>
-            </template>
-        </div> -->
-    </div>
+    </div> -->
 
     <!-- 弹窗（遮罩层已禁用） -->
     <Transition name="fade">
@@ -115,6 +97,29 @@
 </template>
 
 <style scoped>
+.testmiansx {
+    padding: 25px 20px;
+    background: url('@/assets/long-frame-center.png') no-repeat 0 0;
+    background-size: 100% 100%;
+    width: 1344px;
+    height: 340px;
+    position: fixed;
+    left: 50%;
+    bottom: 80px;
+    transform: translateX(-50%);
+    z-index: 999;
+}
+
+.testmiansx.panel-collapsed {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.testmianx {
+    position: relative;
+}
+
 .testmian {
     padding: 25px 20px;
     background: url('@/assets/long-frame-center.png') no-repeat 0 0;

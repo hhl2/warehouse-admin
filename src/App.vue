@@ -1,6 +1,6 @@
 <template>
   <!-- <v-scale-screen width="1920" height="1080" :fullScreen="true"> -->
-  <div class="bigpg">
+  <div class="bigpg" :class="{ 'hide-cursor': isCursorHidden }">
     <router-view />
   </div>
   <!-- </v-scale-screen> -->
@@ -8,7 +8,7 @@
 
 <script>
 // import VScaleScreen from 'vue3-scale-box'
-import { ref, provide, onMounted, onUnmounted, readonly, nextTick } from 'vue'
+import { ref, provide, onMounted, onUnmounted, readonly, nextTick, computed, watch } from 'vue'
 import { Config, PixelStreaming } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.4'
 import { Application, PixelStreamingApplicationStyle } from '@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.4'
 import { useRouter } from 'vue-router'
@@ -32,6 +32,50 @@ export default {
     const router = useRouter()
     const ueData = ref(null)
     const clickPosition = ref({ x: 0, y: 0 })
+
+    // ========== 新增：鼠标隐藏状态控制 ==========
+    const baseForceHidden = ref(false) // 是否被前端业务强制隐藏
+    const isCtrlHeld = ref(false) // 是否按住了 Ctrl
+
+    // 最终是否需要隐藏：只有在业务需要隐藏 且 没有按住Ctrl的时候，才隐藏
+    const isCursorHidden = computed(() => {
+      return baseForceHidden.value && !isCtrlHeld.value
+    })
+
+    const applyCursorState = (hidden) => {
+      if (hidden) {
+        document.body.classList.add('hide-cursor')
+        if (pixelStreamingInstance && pixelStreamingInstance.config) {
+            pixelStreamingInstance.config.setFlagEnabled('HoveringMouse', false)
+        }
+      } else {
+        document.body.classList.remove('hide-cursor')
+        if (pixelStreamingInstance && pixelStreamingInstance.config) {
+            pixelStreamingInstance.config.setFlagEnabled('HoveringMouse', true)
+        }
+      }
+    }
+
+    watch(isCursorHidden, (newVal) => {
+      applyCursorState(newVal)
+    })
+
+    const setCursorHidden = (hidden) => {
+      baseForceHidden.value = hidden
+      // 由于是 watch 监听，只要计算属性 isCursorHidden 发生变化，都会自动执行样式挂载和 UE 配置下发
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Control') {
+        isCtrlHeld.value = true
+      }
+    }
+
+    const handleKeyUp = (event) => {
+      if (event.key === 'Control') {
+        isCtrlHeld.value = false
+      }
+    }
 
     // ========== 新增：连接状态管理 ==========
     const connectionState = ref({
@@ -261,10 +305,14 @@ export default {
     onMounted(() => {
       initializePixelStreaming()
       window.addEventListener('click', handleCaptureClick)
+      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('keyup', handleKeyUp)
     })
 
     onUnmounted(() => {
       cleanup()
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
     })
 
     // ========== 提供响应式数据和方法 ==========
@@ -273,6 +321,7 @@ export default {
     provide('playerMethods', {
       sendMessage,
       getUeData: () => ueData.value,
+      setCursorHidden
       // getConnectionState: () => connectionState.value,  // 新增：获取连接状态
       // reconnect: attemptReconnect  // 新增：手动触发重连
     })
@@ -280,18 +329,38 @@ export default {
     return {
       ueData,
       clickPosition,
-      connectionState  // 新增：暴露连接状态
+      connectionState, // 新增：暴露连接状态
+      isCursorHidden
     }
   }
 }
 </script>
 
 <style>
+/* 避免 UE Canvas 动态覆盖，必须加上 !important */
+.hide-cursor, .hide-cursor * {
+  cursor: none !important;
+}
+
 body {
   width: 100vw;
   height: 100vh;
   min-height: -webkit-fill-available;
   font-family: 'Montserrat';
   margin: 0;
+  background-color: #000; /* 防止全屏比例不一致漏出白边 */
+  overflow: hidden; /* 防止出现滚动条白边 */
+}
+
+/* 消除全屏时的浏览器默认边框/外边框/白底 */
+html, :fullscreen, ::backdrop {
+  background-color: #000 !important;
+  outline: none !important;
+  border: none !important;
+}
+
+video, canvas {
+  outline: none !important;
+  border: none !important;
 }
 </style>
