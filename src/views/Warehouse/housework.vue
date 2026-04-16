@@ -70,10 +70,10 @@
                                 <div class="jcard__unit">移库作业</div>
                                 <div class="jcard__number">{{ warehouseData.inboundCompleted }}%</div>
                             </div>
-                            <div class="jcard_box">
+                            <!-- <div class="jcard_box">
                                 <div class="jcard__unit">盘点作业</div>
                                 <div class="jcard__number">{{ warehouseData.outboundCompleted }}%</div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -94,10 +94,10 @@
                                 <div class="jcard__unit">移库作业</div>
                                 <div class="jcard__number">{{ warehouseData.inboundCompleted1 }}%</div>
                             </div>
-                            <div class="jcard_box">
+                            <!-- <div class="jcard_box">
                                 <div class="jcard__unit">盘点作业</div>
                                 <div class="jcard__number">{{ warehouseData.outboundCompleted1 }}%</div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -267,7 +267,7 @@
                                     <div class="card-cell" style="width: 100%;">
                                         <span class="card-label">计划周期:</span>
                                         <span class="card-value">{{ item.startWorkPlanDate }} - {{ item.endWorkPlanDate
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -446,7 +446,7 @@ let trendChart = null;
 let warehouseChart = null;
 
 // 响应式数据
-const activeAlertTab = ref(1);
+const activeAlertTab = ref(3);
 const activeWorkType = ref(1);
 
 
@@ -549,14 +549,23 @@ const initData = () => {
 const generateTableData = () => {
     return Array.from({ length: 20 }, (_, index) => ({
         index: index + 1,
-        billType: "访客",
-
+        // 预约列表字段
         reservationCode: `RYY0800${(index + 20).toString().padStart(2, '0')}`,
-        businessType: '供应商送货',
+        billType: index % 5 === 0 ? '供应商送货' : (index % 5 === 1 ? '访客' : (index % 5 === 2 ? '施工' : (index % 5 === 3 ? '领料' : '承运商提货'))),
         visitor: index % 2 === 0 ? '李强' : '叶润林',
         carNumber: `粤A123Y${(45 + index).toString().padStart(2, '0')}`,
-        address: (index % 4) + 1,
-        startVisitDate: `2025-04-06 08:${30 + index}`
+        address: `装卸点${(index % 4) + 1}`,
+        startVisitDate: `2025-04-06 08:${30 + index}`,
+
+        // 作业票字段
+        arrangementCode: `ZYP20250406${(index + 101).toString()}`,
+        isSubmit: index % 3 === 0 ? '已提交' : (index % 3 === 1 ? '未提交' : '新建'),
+        ticketType: index % 3 === 0 ? 'A类' : (index % 3 === 1 ? 'B类' : 'C类'),
+        guardian: index % 2 === 0 ? '王大伟' : '张晓明',
+        teams: index % 2 === 0 ? '工程一部' : '物流班组',
+        arriveTime: `2025-04-06 08:15:00`,
+        startWorkPlanDate: `2025-04-06 09:00`,
+        endWorkPlanDate: `2025-04-06 18:00`
     }));
 };
 

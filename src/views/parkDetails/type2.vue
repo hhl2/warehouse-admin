@@ -960,8 +960,8 @@ const categoryItems = ref([
     { label: '全部', type: "all", type2: "" },
     { label: '水表', type: 'water', type2: "水表" },
     { label: '电表', type: 'electricity', type2: "电表" },
-    { label: '热力图', type: 'electricity1', type2: "热力图" },
-    { label: '水力图', type: 'electricity2', type2: "水力图" },
+    { label: '热力图', type: 'hotmap', type2: "热力图" },
+    { label: '水力图', type: 'watermap', type2: "水力图" },
 ]);
 
 const applyFilter = () => {
@@ -976,7 +976,16 @@ const applyFilter = () => {
 const handleCategoryChange = (index) => {
     activeCategory.value = index;
     applyFilter();
-    callParentMethod({ "code": 1, "type": "btn", "data": { "id": "nyjc", type: categoryItems.value[index].type } });
+    if (index == 3 || index == 4) {
+        console.log("水力、热力图", categoryItems.value[index].type)
+        callParentMethod({ "code": 1, "type": "btn", "data": { "id": categoryItems.value[index].type } });
+
+    } else {
+        console.log("水表、电表", categoryItems.value[index].type)
+        callParentMethod({ "code": 1, "type": "btn", "data": { "id": "nyjc", type: categoryItems.value[index].type } });
+
+    }
+
 };
 
 // --- Helper Functions ---

@@ -1,6 +1,38 @@
 <template>
     <!-- 顶部右侧状态栏 -->
     <div class="top-right-status" style="pointer-events: auto; z-index: 9999;">
+        <!-- 视角切换下拉框（最左） -->
+        <div class="view-selector" @click.stop="toggleViewDropdown" ref="viewSelectorRef">
+            <div class="view-selector-inner">
+                <!-- 摄像头图标 -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#AED2F5" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 7l-7 5 7 5V7z"></path>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+                <span class="view-selector-text">{{ currentView.label }}</span>
+                <!-- 下拉箭头 -->
+                <svg class="view-arrow" :class="{ open: showViewDropdown }" width="12" height="12" viewBox="0 0 24 24"
+                    fill="none" stroke="#AED2F5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+        <!-- 用 Teleport 挂载到 body，彻底脱离父容器裁切 -->
+        <Teleport to="body">
+            <transition name="dropdown-fade">
+                <div v-if="showViewDropdown" class="view-dropdown-list-teleport"
+                    :style="{ top: dropdownPos.top + 'px', left: dropdownPos.left + 'px' }" @click.stop>
+                    <div v-for="item in viewList" :key="item.id" class="view-dropdown-item"
+                        :class="{ active: currentView.id === item.id, disabled: item.disabled }"
+                        @click.stop="!item.disabled && selectView(item)">
+                        {{ item.label }}
+                        <span v-if="item.disabled" class="view-item-tag">暂不可用</span>
+                    </div>
+                </div>
+            </transition>
+        </Teleport>
+
         <!-- 切换按钮 -->
         <div class="toggle-btn-circle" @click.stop="handleStatusToggle" title="切换页面显示">
             <!-- 正常显示状态 -->
@@ -32,29 +64,6 @@
         </div>
 
         <div class="status-divider"></div>
-
-        <!-- 天气 -->
-        <!-- <div class="status-weather-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-
-                <circle cx="9" cy="9" r="4" fill="#F59E0B" />
-
-                <path
-                    d="M18.5 16C20.433 16 22 14.433 22 12.5C22 10.567 20.433 9 18.5 9C18.2325 9 17.9719 9.03009 17.7214 9.0865C16.9298 7.28828 15.1119 6 13 6C10.2386 6 8 8.23858 8 11C8 11.2334 8.016 11.4629 8.04692 11.6872C6.30403 12.1158 5 13.6828 5 15.5C5 17.433 6.567 19 8.5 19H18.5Z"
-                    fill="#E2E8F0" />
-
-                <path d="M10 20L9 22" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
-                <path d="M14 20L13 22" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
-                <path d="M18 20L17 22" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
-            </svg>
-        </div>
-
-        <div class="status-temp-group">
-            <div class="status-temp">23.8°C</div>
-            <div class="status-weather-text">多云</div>
-        </div> -->
-
-        <!-- <div class="status-divider"></div> -->
 
         <!-- 放大缩小图标 -->
         <img class="fullscreen-icon-new" :src="isFullscreen ? exitFullscreenImg : fullscreenImg"
@@ -833,6 +842,170 @@
     color: #CBD5E1;
     text-align: left;
 }
+
+/* ---- 视角切换下拉框 ---- */
+.view-selector {
+    position: relative;
+    margin-right: 15px;
+    cursor: pointer;
+    user-select: none;
+    overflow: visible;
+    /* 允许下拉列表浮出，不撑开父容器 */
+}
+
+.view-selector-inner {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(10, 20, 40, 0.75);
+    border: 1px solid rgba(0, 228, 255, 0.3);
+    border-radius: 4px;
+    padding: 5px 10px;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(6px);
+}
+
+.view-selector-inner:hover {
+    border-color: rgba(0, 228, 255, 0.7);
+    background: rgba(0, 60, 100, 0.85);
+    box-shadow: 0 0 10px rgba(0, 228, 255, 0.2);
+}
+
+.view-selector-text {
+    font-size: 14px;
+    color: #AED2F5;
+    font-family: Microsoft YaHei, sans-serif;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.view-arrow {
+    transition: transform 0.25s ease;
+}
+
+.view-arrow.open {
+    transform: rotate(180deg);
+}
+
+.view-dropdown-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    /* 对齐按鈕左侧（已在最左位置） */
+    min-width: 130px;
+    background: rgba(5, 20, 45, 0.95);
+    border: 1px solid rgba(0, 228, 255, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 10000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 100, 200, 0.2);
+    backdrop-filter: blur(12px);
+}
+
+.view-dropdown-item {
+    padding: 9px 16px;
+    font-size: 14px;
+    color: #AED2F5;
+    font-family: Microsoft YaHei, sans-serif;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.view-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.view-dropdown-item:hover {
+    background: rgba(0, 100, 180, 0.4);
+    color: #fff;
+    padding-left: 20px;
+}
+
+.view-dropdown-item.active {
+    color: #00E4FF;
+    background: rgba(0, 100, 180, 0.25);
+    font-weight: bold;
+}
+
+/* 下拉动画 */
+.dropdown-fade-enter-active,
+.dropdown-fade-leave-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dropdown-fade-enter-from,
+.dropdown-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+</style>
+
+<!-- Teleport \u5185\u5bb9\u5728 scoped \u5916\uff0c\u9700\u8981\u5168\u5c40\u6837\u5f0f -->
+<style>
+.view-dropdown-list-teleport {
+    position: fixed;
+    min-width: 130px;
+    background: rgba(5, 20, 45, 0.97);
+    border: 1px solid rgba(0, 228, 255, 0.35);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 99999;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 100, 200, 0.25);
+    backdrop-filter: blur(12px);
+}
+
+.view-dropdown-list-teleport .view-dropdown-item {
+    padding: 9px 16px;
+    font-size: 14px;
+    color: #AED2F5;
+    font-family: Microsoft YaHei, sans-serif;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.view-dropdown-list-teleport .view-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.view-dropdown-list-teleport .view-dropdown-item:hover {
+    background: rgba(0, 100, 180, 0.4);
+    color: #fff;
+    padding-left: 20px;
+}
+
+.view-dropdown-list-teleport .view-dropdown-item.active {
+    color: #00E4FF;
+    background: rgba(0, 100, 180, 0.25);
+    font-weight: bold;
+}
+
+.view-dropdown-list-teleport .view-dropdown-item.disabled {
+    color: rgba(174, 210, 245, 0.35);
+    cursor: not-allowed;
+    pointer-events: auto;
+}
+
+.view-dropdown-list-teleport .view-dropdown-item.disabled:hover {
+    background: transparent;
+    color: rgba(174, 210, 245, 0.35);
+    padding-left: 16px;
+    /* \u53d6\u6d88 hover \u5de6\u8fb9\u8ddd\u53d8\u5316 */
+}
+
+.view-item-tag {
+    font-size: 10px;
+    color: rgba(174, 210, 245, 0.5);
+    border: 1px solid rgba(174, 210, 245, 0.25);
+    border-radius: 3px;
+    padding: 1px 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+    letter-spacing: 0;
+}
 </style>
 
 <script>
@@ -847,7 +1020,7 @@ import defaultButton from '@/assets/defaultButton.png'
 import defaultButton2 from '@/assets/label-selected.png'
 import activeButton2 from '@/assets/ningde-label.png'
 
-import { onMounted, onUnmounted, ref, computed, onBeforeUnmount, inject } from 'vue'
+import { onMounted, onUnmounted, ref, computed, onBeforeUnmount, inject, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { FullScreen } from '@element-plus/icons-vue'
 import fullscreenImg from '@/assets/try/fullscreen_new.png'
@@ -941,6 +1114,51 @@ const callParentMethod = (message) => {
         console.error('方法未成功注入')
     }
 }
+
+// --- 视角切换下拉 ---
+const viewList = ref([
+    { id: 'birdview', label: '鸟瞰视角', ueId: 'birdview' },
+    { id: 'frontview', label: '正视视角', ueId: 'frontview' },
+    // { id: 'insideview', label: '室内视角', ueId: 'insideview' },
+    { id: 'followview', label: '漫游视角', ueId: 'followview', disabled: true },
+]);
+const currentView = ref(viewList.value[0]);
+const showViewDropdown = ref(false);
+const viewSelectorRef = ref(null);
+const dropdownPos = ref({ top: 0, left: 0 });
+
+const toggleViewDropdown = () => {
+    showViewDropdown.value = !showViewDropdown.value;
+    if (showViewDropdown.value && viewSelectorRef.value) {
+        // 计算按鈕在屏幕上的绝对坐标
+        const rect = viewSelectorRef.value.getBoundingClientRect();
+        dropdownPos.value = {
+            top: rect.bottom + 6,
+            left: rect.left
+        };
+    }
+};
+
+const selectView = (item) => {
+    currentView.value = item;
+    showViewDropdown.value = false;
+    callParentMethod({ "code": 1, "type": "btn", "data": { "id": item.ueId } });
+};
+
+// 点击外部关闭下拉
+const handleOutsideClick = (e) => {
+    if (viewSelectorRef.value && !viewSelectorRef.value.contains(e.target)) {
+        showViewDropdown.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleOutsideClick);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleOutsideClick);
+});
 
 const ue5click = (index) => {
     console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": index } });
