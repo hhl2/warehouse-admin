@@ -153,7 +153,7 @@ const handleRowClick = (row) => {
         const ll = {
             code: 1,
             type: "poi",
-            data: { id: row.id }
+            data: { id: row.pid }
         };
         console.log(ll, "222");
         callParentMethod(ll);
@@ -197,17 +197,22 @@ const formatEnvironmentData = (row) => {
     return formattedParts.join('，');
 };
 
+const pidList = [
+    "EN-JC1-401", "EN-JC2-401", "EN-JC1-101", "EN-JC1-102", "EN-JC1-103",
+    "EN-JC2-102", "EN-JC2-103", "EN-JC2-104", "EN-JC2-105", "EN-JC2-106"
+];
+
 const deviceData = ref([
-    { id: "EN-JC1-401", deviceName: "EN-JC1-401工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC2-401", deviceName: "EN-JC2-401工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC1-101", deviceName: "EN-JC1-101工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC1-102", deviceName: "EN-JC1-102工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC1-103", deviceName: "EN-JC1-103工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC2-102", deviceName: "EN-JC2-102工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC2-103", deviceName: "EN-JC2-103工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC2-104", deviceName: "EN-JC2-104工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC2-105", deviceName: "EN-JC2-105工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
-    { id: "EN-JC2-106", deviceName: "EN-JC2-106工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC1-401", pid: "EN-JC1-401", deviceName: "EN-JC1-401工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-401", pid: "EN-JC2-401", deviceName: "EN-JC2-401工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC1-101", pid: "EN-JC1-101", deviceName: "EN-JC1-101工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC1-102", pid: "EN-JC1-102", deviceName: "EN-JC1-102工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC1-103", pid: "EN-JC1-103", deviceName: "EN-JC1-103工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-102", pid: "EN-JC2-102", deviceName: "EN-JC2-102工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-103", pid: "EN-JC2-103", deviceName: "EN-JC2-103工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-104", pid: "EN-JC2-104", deviceName: "EN-JC2-104工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-105", pid: "EN-JC2-105", deviceName: "EN-JC2-105工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
+    { id: "EN-JC2-106", pid: "EN-JC2-106", deviceName: "EN-JC2-106工业气体", deviceType: "环境监测", location: "1号楼", watchTime: "2026-04-01 17:49:48", runStatus: "正常", alarmLevel: "正常", alarmInfo: "正常" },
 ]);
 
 const formatDate = (timestamp) => {
@@ -227,12 +232,12 @@ const queryParkWeatherListPaginations = async () => {
     if (res?.code == 0) {
         const list = res.data?.list || [];
         console.log(list)
-        deviceData.value = list.map(item => {
+        deviceData.value = list.map((item, index) => {
             return {
                 ...item,
+                pid: pidList[index % pidList.length], // 循环分配 pid
                 runStatus: RUN_STATUS_MAP[item.runStatus] || '未知',
                 watchTime: formatDate(item.watchTime)
-
             }
         });
     }

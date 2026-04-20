@@ -3,39 +3,9 @@
 
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
 
-
         <div class="title">
             <img src="@/assets/title_bgs.png" alt="">
-            <div class="title_txet">设备概览</div>
-        </div>
-
-
-        <div class="sbglx">
-
-            <div class="sbglx_boxs">
-                <template v-for="value in sorces">
-                    <div class="sbglx_box" @click="changelist(value)">
-                        <img :src="value.icon" alt="" @click.stop="changelist(value)">
-                        <div class="sbglx_label">{{ value.text }}</div>
-                        <div class="sbglx_text">{{ value.num }}</div>
-                    </div>
-
-                </template>
-
-
-
-            </div>
-
-        </div>
-
-
-
-    </div>
-
-    <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="title">
-            <img src="@/assets/title_bgs.png" alt="">
-            <div class="title_txet">{{ activeCategory || '园区设备' }}</div>
+            <div class="title_txet">{{ activeCategory || '重点设备' }}</div>
         </div>
 
         <div class="sblf">
@@ -47,7 +17,9 @@
         </div>
 
         <div class="card-list-wrapper sblf_list">
-            <div class="card-item" v-for="(value, index) in source" :key="index">
+            <div class="card-item" v-for="(value, index) in source" :key="value.deviceCode"
+                :class="{ 'card-active': selectedRow?.deviceCode === value.deviceCode }"
+                @click="handleCardClick(value, index + 1)">
                 <div class="card-header">
                     <span class="card-title">
                         <span class="card-index">{{ index + 1 }}</span>
@@ -59,7 +31,8 @@
                     <div class="card-row">
                         <div class="card-cell">
                             <span class="card-label">设备名称:</span>
-                            <el-tooltip :content="value.deviceName" placement="top" :show-after="300" popper-class="custom-tooltip" effect="dark">
+                            <el-tooltip :content="value.deviceName" placement="top" :show-after="300"
+                                popper-class="custom-tooltip" effect="dark">
                                 <span class="card-value">{{ value.deviceName }}</span>
                             </el-tooltip>
                         </div>
@@ -81,7 +54,8 @@
                     <div class="card-row">
                         <div class="card-cell" style="width: 100%;">
                             <span class="card-label">生产厂家:</span>
-                            <el-tooltip :content="value.manufacturer" placement="top" :show-after="300" popper-class="custom-tooltip" effect="dark" v-if="value.manufacturer">
+                            <el-tooltip :content="value.manufacturer" placement="top" :show-after="300"
+                                popper-class="custom-tooltip" effect="dark" v-if="value.manufacturer">
                                 <span class="card-value">{{ value.manufacturer }}</span>
                             </el-tooltip>
                             <span class="card-value" v-else>未知</span>
@@ -97,6 +71,71 @@
             </div>
             <div v-if="source.length === 0" class="empty-data">暂无设备数据</div>
         </div>
+
+
+        <!-- <div class="sbglx">
+
+            <div class="sbglx_boxs">
+                <template v-for="value in sorces">
+                    <div class="sbglx_box" @click="changelist(value)">
+                        <img :src="value.icon" alt="" @click.stop="changelist(value)">
+                        <div class="sbglx_label">{{ value.text }}</div>
+                        <div class="sbglx_text">{{ value.num }}</div>
+                    </div>
+
+                </template>
+
+
+
+</div>
+
+</div> -->
+
+
+
+    </div>
+
+    <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
+
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">设备基本信息</div>
+        </div>
+
+        <div class="sbrwright">
+            <div class="sbrws_box">
+                <span class="sbrws_label">设备编码</span>
+                <div class="sbrws_text">{{ selectedRow.deviceCode }}</div>
+
+            </div>
+            <div class="sbrws_box">
+                <span class="sbrws_label">设备名称</span>
+                <div class="sbrws_text">{{ selectedRow.deviceName }}</div>
+                <span class="sbrws_label">生产厂家</span>
+                <div class="sbrws_text">{{ selectedRow.manufacturer || '' }}</div>
+
+            </div>
+            <div class="sbrws_box">
+                <span class="sbrws_label">设备型号</span>
+                <div class="sbrws_text">{{ selectedRow.modelSpec }}</div>
+                <span class="sbrws_label">生产日期</span>
+                <div class="sbrws_text">{{ selectedRow.manufactureDate || '' }}</div>
+            </div>
+
+            <div class="sbrws_box">
+                <span class="sbrws_label">购买日期</span>
+                <div class="sbrws_text">{{ selectedRow.purchaseDate || '' }}</div>
+            </div>
+            <div class="sbrws_box">
+                <span class="sbrws_label">上一次维护时间</span>
+                <div class="sbrws_text">{{ selectedRow.lastMaintainDate || '' }}</div>
+            </div>
+            <div class="sbrws_box">
+                <span class="sbrws_label">下一期维护时间</span>
+                <div class="sbrws_text">{{ selectedRow.nextMaintainDate || '' }}</div>
+            </div>
+        </div>
+
 
     </div>
 
@@ -241,7 +280,8 @@
     transition: all 0.3s;
 }
 
-.card-item:hover {
+.card-item:hover,
+.card-item.card-active {
     background: rgba(0, 240, 255, 0.25);
     border-color: rgba(0, 240, 255, 0.9);
     box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.5), 0 0 10px rgba(0, 240, 255, 0.3);
@@ -376,7 +416,7 @@
 
 <script setup>
 import { Search } from '@element-plus/icons-vue'
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, onUnmounted, inject, watch } from 'vue'
 import { getDeviceList, getCountOnlinSum, getEnergyDeviceList, getParkWeatherStationList, getVideoPointList, getDisplayDeviceList, getBuildingDeviceList } from '@/api/user'
 
 import sb2 from '@/assets/shebei/smart-equipment.png';
@@ -388,6 +428,17 @@ import sb6 from '@/assets/shebei/fire-fighting-equipment.png';
 import sb7 from '@/assets/shebei/tool-equipment.png';
 import sb8 from '@/assets/shebei/metering-equipment.png';
 
+const playerMethods = inject('playerMethods')
+const ueResponseData = inject('ueResponseData')
+// 封装调用逻辑
+const callParentMethod = (message) => {
+    if (playerMethods?.sendMessage) {
+        playerMethods.sendMessage(message)
+    } else {
+        console.error('方法未成功注入')
+    }
+}
+
 const MOCK_DEVICES = [
     {
         deviceCode: '64BC256336654588523369814CVT3',
@@ -395,10 +446,13 @@ const MOCK_DEVICES = [
         nextInspectionDate: '2025-11-23',
         deviceType: '智能设备',
         subDeviceType: '作业设备',
-        manufacturer: '某某厂家',
+        manufacturer: '堆垛机厂家',
         modelSpec: 'DZ-001',
         status: '在线',
-        quantity: ''
+        quantity: '',
+        manufactureDate: '2025-10-20',
+        purchaseDate: '2025-10-30',
+        lastMaintainDate: '2025-11-1'
     },
     {
         deviceCode: '64BC256336654588523369814CVT4',
@@ -409,7 +463,10 @@ const MOCK_DEVICES = [
         manufacturer: '智能科技',
         modelSpec: 'AGV-2023',
         status: '在线',
-        quantity: '5'
+        quantity: '5',
+        manufactureDate: '2025-10-10',
+        purchaseDate: '2025-10-8',
+        lastMaintainDate: '2025-11-2'
     },
     {
         deviceCode: '64BC256336654588523369814CVT5',
@@ -420,7 +477,10 @@ const MOCK_DEVICES = [
         manufacturer: '机器人公司',
         modelSpec: 'MD-500',
         status: '离线',
-        quantity: '2'
+        quantity: '2',
+        manufactureDate: '2025-10-13',
+        purchaseDate: '2025-10-11',
+        lastMaintainDate: '2025-11-1'
     },
     {
         deviceCode: '64BC256336654588523369814CVT6',
@@ -431,12 +491,15 @@ const MOCK_DEVICES = [
         manufacturer: '传输设备厂',
         modelSpec: 'SST-100',
         status: '在线',
-        quantity: ''
+        quantity: '',
+        manufactureDate: '2025-10-24',
+        purchaseDate: '2025-10-18',
+        lastMaintainDate: '2025-11-3'
     }
 ];
 
 const source = ref(MOCK_DEVICES);
-
+const selectedRow = ref(MOCK_DEVICES[0]);
 // 接收从 index 传入的面板状态
 const props = defineProps({
     isPanelVisible: { type: Boolean, default: true }
@@ -548,6 +611,21 @@ const fetchDeviceData = (apiMethod, categoryName) => {
     });
 };
 
+const handleCardClick = (item, index) => {
+    selectedRow.value = item;
+    // 向 UE5 发送消息
+    const message = {
+        "code": 1,
+        "type": "poi",
+        "data": {
+            "id": index.toString(),
+            "type": "agv" // 按照要求拼写为 avg
+        }
+    };
+    console.log('点击设备卡片，向 UE5 发送消息:', message);
+    callParentMethod(message);
+};
+
 const handleAlertSearch = () => {
     fetchCurrentCategoryList();
 };
@@ -569,9 +647,23 @@ const sorces = ref([
 ]);
 
 onMounted(() => {
-    fetchCountOnlinSums();
-    fetchCurrentCategoryList(); // 默认加载列表，可以通过 activeCategory 指定初始展示的分类
+    // fetchCountOnlinSums();
+    // fetchCurrentCategoryList(); // 默认加载列表，可以通过 activeCategory 指定初始展示的分类
 });
+watch(ueResponseData, (newVal) => {
+    if (newVal && newVal.json) {
+        console.log('接收到新数据:', newVal)
+        // 支持多种类型的触发，例如 AGV
+        if (newVal.json.type === 'AGV' || newVal.json.type === 'target') {
+            const targetId = newVal.json.targetId || newVal.json.id;
+            if (targetId >= 1 && targetId <= source.value.length) {
+                console.log('自动高亮列表项:', targetId);
+                selectedRow.value = source.value[targetId - 1];
+            }
+        }
+    }
+}, { deep: true });
+
 
 </script>
 
@@ -588,5 +680,50 @@ div.card-list-wrapper::-webkit-scrollbar-thumb {
 
 div.card-list-wrapper::-webkit-scrollbar-track {
     background-color: transparent !important;
+}
+
+.sbrws_box .sbrws_text {
+    color: #E9FBFF;
+    flex: 1;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.8;
+    max-height: 2.8em;
+    margin-left: 5px;
+}
+
+.sbrwright {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border-radius: 5px;
+    margin: 20px;
+    margin-bottom: 0px;
+}
+
+.sbrwright .sbrws_box {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 15px;
+    line-height: 1.6;
+    background: rgba(16, 168, 253, 0.15);
+    border: 1px solid rgba(16, 168, 253, 0.6);
+    border-radius: 4px;
+    box-shadow: inset 0 0 10px rgba(16, 168, 253, 0.2);
+    padding: 2px 5px;
+    margin-bottom: 12px;
+}
+
+.sbrwright .sbrws_label {
+    color: #8ED0FF;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 500;
+    font-size: 17px;
 }
 </style>

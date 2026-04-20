@@ -1,140 +1,185 @@
 <template>
     <div class="left" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="side-module">
-            <div class="title">
-                <img src="@/assets/title_bgs.png" alt="">
-                <div class="title_txet">环境监测</div>
-                <div class="View_Details_tag" @click="changelist('type1')">查看详情</div>
-            </div>
-            <div class="parck_left">
-                <div v-for="item in environmentData" :key="item.label" class="gjbox">
-                    <img :src="item.icon" alt="">
-                    <div class="gjlalel">{{ item.label }}</div>
-                    <div class="gjtext" :class="item.colorClass">
-                        {{ item.value }}<div v-if="item.unit" class="gjtexts">{{ item.unit }}</div>
-                    </div>
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">环境监测</div>
+            <div class="View_Details_tag" @click="changelist('type1')">查看详情</div>
+        </div>
+        <div class="parck_left">
+            <div v-for="item in environmentData" :key="item.label" class="gjbox">
+                <img :src="item.icon" alt="">
+                <div class="gjlalel">{{ item.label }}</div>
+                <div class="gjtext" :class="item.colorClass">
+                    {{ item.value }}<div v-if="item.unit" class="gjtexts">{{ item.unit }}</div>
                 </div>
             </div>
         </div>
 
-        <div class="side-module">
-            <div class="title">
-                <img src="@/assets/title_bgs.png" alt="">
-                <div class="title_txet">能源监测</div>
-                <div class="View_Details_tag" @click="changelist('type2')">查看详情</div>
-            </div>
-            <div class="allBoxs nyjcPadding">
-                <div ref="chartRef" class="nyjcchart"></div>
-            </div>
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">能源监测</div>
+            <div class="View_Details_tag" @click="changelist('type2')">查看详情</div>
+        </div>
+        <div class="allBoxs nyjcPadding">
+            <div ref="chartRef" class="nyjcchart"></div>
         </div>
 
-        <div class="side-module">
-            <div class="title">
-                <img src="@/assets/title_bgs.png" alt="">
-                <div class="title_txet">安防监测</div>
-                <div class="View_Details_tag" @click="changelist('type3')">查看详情</div>
-            </div>
-            <div class="allBoxs">
-                <div class="echartp changchart">
-                    <div class="echart_pwidth" ref="chartDom"></div>
-                    <div class="chart_sum">
-                        <div class="chart_snumber">{{ securityData.total }}</div>
-                    </div>
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">安防监测</div>
+            <div class="View_Details_tag" @click="changelist('type3')">查看详情</div>
+        </div>
+        <div class="allBoxs">
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom"></div>
+                <div class="chart_sum">
+                    <div class="chart_snumber">{{ securityData.total }}</div>
                 </div>
-                <div class="left_number">
-                    <div v-for="item in securityData.items" :key="item.label" class="jcard">
-                        <div class="jcard_box">
-                            <div class="jcard_box_text">
-                                <div class="jcard__units">个</div>
-                                <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
-                                    item.value
-                                    }}</div>
-                            </div>
+            </div>
+            <div class="left_number">
+                <div v-for="item in securityData.items" :key="item.label" class="jcard">
+                    <div class="jcard_box">
+                        <div class="jcard_box_text">
+                            <div class="jcard__units">个</div>
+                            <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
+                                item.value
+                            }}</div>
                         </div>
-                        <div class="jcard__values">{{ item.label }}</div>
                     </div>
+                    <div class="jcard__values">{{ item.label }}</div>
                 </div>
             </div>
+
         </div>
+
+        <!-- <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">消防监测</div>
+            <div class="View_Details_tag" @click="changelist('type4')">查看详情</div>
+        </div>
+        <div class="allBoxs">
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom1"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber">{{ fireData.total }}</div>
+                </div>
+            </div>
+            <div class="left_number">
+                <div v-for="item in fireData.items" :key="item.label" class="jcard">
+                    <div class="jcard_box">
+                        <div class="jcard_box_text">
+                            <div class="jcard__units">个</div>
+                            <div class="jcard__numbers" :class="{ leftColor: item.color === 'yellow' }">{{
+                                item.value
+                            }}</div>
+                        </div>
+                    </div>
+                    <div class="jcard__values">{{ item.label }}</div>
+                </div>
+            </div>
+
+        </div> -->
     </div>
 
     <div class="right" :class="{ 'panel-collapsed': !isPanelVisible }">
-        <div class="side-module">
-            <div class="title">
-                <img src="@/assets/title_bgs.png" alt="">
-                <div class="title_txet">告警管理</div>
-                <div class="View_Details_tag" @click="changelist('type5')">查看详情</div>
-            </div>
-            <div class="allBoxs">
-                <div class="echartp changchart">
-                    <div class="echart_pwidth" ref="chartDom2"></div>
-                    <div class=" chart_sum">
-                        <div class="chart_snumber">{{ formatNumber(alertData.total) }}</div>
-                    </div>
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">告警管理</div>
+            <div class="View_Details_tag" @click="changelist('type5')">查看详情</div>
+        </div>
+        <div class="allBoxs">
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom2"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber">{{ formatNumber(alertData.total) }}</div>
                 </div>
-                <div class="right_numbers">
-                    <div v-for="item in alertData.items" :key="item.label" class="card card--urgent">
-                        <div class="card__badges" :class="`card__badges--${item.color}`"></div>
-                        <div class="card__labels">{{ item.label }}</div>
-                        <div class="card__values" :class="`card__values--${item.color}`">
-                            <span class="card__numbers">{{ formatNumber(item.value) }}</span>
-                            <span class="card__units">{{ item.unit }}</span>
-                        </div>
+            </div>
+            <div class="right_numbers">
+                <div v-for="item in alertData.items" :key="item.label" class="card card--urgent">
+                    <div class="card__badges" :class="`card__badges--${item.color}`"></div>
+                    <div class="card__labels">{{ item.label }}</div>
+                    <div class="card__values" :class="`card__values--${item.color}`">
+                        <span class="card__numbers">{{ formatNumber(item.value) }}</span>
+                        <span class="card__units">{{ item.unit }}</span>
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="side-module">
-            <div class="title">
-                <img src="@/assets/title_bgs.png" alt="">
-                <div class="title_txet">人员监测</div>
-                <div class="View_Details_tag" @click="changelist('type6')">查看详情</div>
-            </div>
-            <div class="jcrys">
-                <div class="jcrys_left">
-                    <div class="jcrys_left_box">
-                        <img src="@/assets/icon-8.png" alt="">
-                        <div class="jcrys_lalel">当前在园人数</div>
-                        <div class="jcrys__value">
-                            <span class="jcrys__number">{{ personnelData.cumulativelyUser }}</span>
-                            <span class="jcrys__unit">人</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="jcry">
-                    <div v-for="stat in personnelData.stats" :key="stat.label" class="jcry_box">
-                        <div class="jcry_box_lalel">{{ stat.label }}</div>
-                        <div class="jcry_box_num">{{ stat.value }}</div>
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">人员监测</div>
+            <div class="View_Details_tag" @click="changelist('type6')">查看详情</div>
+        </div>
+        <div class="jcrys">
+            <div class="jcrys_left">
+                <div class="jcrys_left_box">
+                    <img src="@/assets/icon-8.png" alt="">
+                    <div class="jcrys_lalel">当前在园人数</div>
+                    <div class="jcrys__value">
+                        <span class="jcrys__number">{{ personnelData.cumulativelyUser }}</span>
+                        <span class="jcrys__unit">人</span>
                     </div>
                 </div>
             </div>
+            <div class="jcry">
+                <div v-for="stat in personnelData.stats" :key="stat.label" class="jcry_box">
+                    <div class="jcry_box_lalel">{{ stat.label }}</div>
+                    <div class="jcry_box_num">{{ stat.value }}</div>
+                </div>
+            </div>
+
         </div>
 
-        <div class="side-module">
-            <div class="title">
-                <img src="@/assets/title_bgs.png" alt="">
-                <div class="title_txet">堆场作业</div>
-                <div class="View_Details_tag" @click="changelist('type8')">查看详情</div>
-            </div>
-            <div class="allBoxs">
-                <div class="echartp changchart">
-                    <div class="echart_pwidth" ref="chartDom4"></div>
-                    <div class=" chart_sum">
-                        <div class="chart_snumber">{{ formatNumber(yardData.percentage) }}</div>
-                    </div>
+        <!-- <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">装卸作业</div>
+            <div class="View_Details_tag" @click="changelist('type7')">查看详情</div>
+        </div>
+        <div class="allBoxs">
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom3"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber">{{ formatNumber(loadingData.percentage) }}</div>
                 </div>
-                <div class="right_numbers yard-numbers">
-                    <div v-for="item in yardData.items" :key="item.label" class="card card--urgent">
-                        <div class="card__badges" :class="`card__badges--${item.color}`"></div>
-                        <div class="card__labels">{{ item.label }}</div>
-                        <div class="card__values" :class="`card__values--${item.color}`">
-                            <span class="card__numbers">{{ formatNumber(item.value) }}</span>
-                            <span class="card__units">{{ item.unit }}</span>
-                        </div>
+            </div>
+            <div class="right_numbers">
+                <div v-for="item in loadingData.items" :key="item.label" class="card card--urgent">
+                    <div class="card__badges" :class="`card__badges--${item.color}`"></div>
+                    <div class="card__labels">{{ item.label }}</div>
+                    <div class="card__values" :class="`card__values--${item.color}`">
+                        <span class="card__numbers">{{ formatNumber(item.value) }}</span>
+                        <span class="card__units">{{ item.unit }}</span>
                     </div>
                 </div>
             </div>
+
+        </div> -->
+
+        <div class="title">
+            <img src="@/assets/title_bgs.png" alt="">
+            <div class="title_txet">堆场作业</div>
+            <div class="View_Details_tag" @click="changelist('type8')">查看详情</div>
+        </div>
+        <div class="allBoxs">
+            <div class="echartp changchart">
+                <div class="echart_pwidth" ref="chartDom4"></div>
+                <div class=" chart_sum">
+                    <div class="chart_snumber">{{ formatNumber(yardData.percentage) }}</div>
+                </div>
+            </div>
+            <div class="right_numbers yard-numbers">
+                <div v-for="item in yardData.items" :key="item.label" class="card card--urgent">
+                    <div class="card__badges" :class="`card__badges--${item.color}`"></div>
+                    <div class="card__labels">{{ item.label }}</div>
+                    <div class="card__values" :class="`card__values--${item.color}`">
+                        <span class="card__numbers">{{ formatNumber(item.value) }}</span>
+                        <span class="card__units">{{ item.unit }}</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -149,14 +194,16 @@ import {
     queryYardWarehouseRate,
     queryEnergyNumCount,
     queryMonitoringCount,
+    queryEnvironmentCount,
     querySecurityAlarmCount,
     getSignInRecordInfo,
+    getWorkOffNum
 } from '@/api/user';
 
 // --- Constants & Config ---
 const ROUTE_TYPE_MAP = {
-    type1: "hjjc", type2: "nyjc", type3: "afjc",
-    type5: "gjgl", type6: "ryjc", type8: "dczy"
+    type1: "hjjc", type2: "nyjc", type3: "afjc", type4: "xfjc",
+    type5: "gjgl", type6: "ryjc", type7: "zxzy", type8: "dczy"
 };
 
 const PIE_COLORS = ['#42FFF9', '#F0B716', '#16B4F0'];
@@ -171,14 +218,18 @@ const router = useRouter();
 // --- Template Refs ---
 const chartRef = ref(null);
 const chartDom = ref(null);
+const chartDom1 = ref(null);
 const chartDom2 = ref(null);
+const chartDom3 = ref(null);
 const chartDom4 = ref(null);
 
 // --- Chart Instances ---
 const instances = {
     energy: null,
     security: null,
+    fire: null,
     alert: null,
+    loading: null,
     yard: null
 };
 
@@ -193,6 +244,14 @@ const environmentData = reactive([
 ]);
 
 const securityData = reactive({
+    total: 0,
+    items: [
+        { label: '在线设备', value: 0, unit: '个', color: 'blue', key: 'online' },
+        { label: '离线设备', value: 0, unit: '个', color: 'yellow', key: 'offline' }
+    ]
+});
+
+const fireData = reactive({
     total: 0,
     items: [
         { label: '在线设备', value: 0, unit: '个', color: 'blue', key: 'online' },
@@ -215,6 +274,15 @@ const personnelData = reactive({
         { label: '今日累计入园人数', value: 0, key: 'todayTotal' },
         { label: '今日累计入园任务量', value: 0, key: 'todayTasks' },
         { label: '当前在园任务量', value: 0, key: 'currentTasks' }
+    ]
+});
+
+const loadingData = reactive({
+    percentage: '0',
+    items: [
+        { label: '已完成', value: 0, unit: '个', color: 'blue', key: 'completed' },
+        { label: '作业中', value: 0, unit: '个', color: 'yellow', key: 'inProgress' },
+        { label: '等待作业', value: 0, unit: '个', color: 'green', key: 'pending' }
     ]
 });
 
@@ -255,9 +323,9 @@ const getPieOption = (values, names = [], colors = PIE_COLORS) => ({
     },
     series: [{
         type: 'pie',
-        radius: ['75%', '95%'],
+        radius: ['75%', '90%'],
         avoidLabelOverlap: false,
-        itemStyle: { borderWidth: 2, borderColor: 'transparent' },
+        itemStyle: { borderWidth: 5, borderColor: 'transparent' },
         label: { show: false },
         emphasis: { label: { show: false } },
         labelLine: { show: false },
@@ -307,10 +375,20 @@ const renderAllCharts = () => {
         securityData.items.map(i => i.value),
         securityData.items.map(i => i.label)
     ));
+    // 消防监测
+    updateChart('fire', chartDom1.value, getPieOption(
+        fireData.items.map(i => i.value),
+        fireData.items.map(i => i.label)
+    ));
     // 告警管理
     updateChart('alert', chartDom2.value, getPieOption(
         alertData.items.map(i => i.value),
         alertData.items.map(i => i.label)
+    ));
+    // 装卸作业
+    updateChart('loading', chartDom3.value, getPieOption(
+        loadingData.items.map(i => i.value),
+        loadingData.items.map(i => i.label)
     ));
     // 堆场作业
     updateChart('yard', chartDom4.value, getPieOption(
@@ -328,7 +406,9 @@ const loadData = async () => {
             fetchMonitoring(),      // 安防监测
             fetchSecurityAlarm(),   // 告警管理
             fetchYardRate(),        // 堆场作业
+            fetchEnvironment(),     // 消防监测
             getSignInRecordInfos(), // 人员监测
+            getWorkOffNums(),       // 装卸作业
         ]);
     } catch (err) {
         console.error('Data refreshing failed, showing existing data.', err);
@@ -437,6 +517,20 @@ const fetchSecurityAlarm = async () => {
     ));
 };
 
+const fetchEnvironment = async () => {
+    try {
+        const res = await queryEnvironmentCount({});
+        if (res.code == 0 && res.data) {
+            fireData.total = res.data.total;
+            fireData.items[0].value = res.data.onNum;
+            fireData.items[1].value = res.data.offNum;
+        }
+    } catch (e) { console.warn('Environment API failed'); }
+    updateChart('fire', chartDom1.value, getPieOption(
+        fireData.items.map(i => i.value),
+        fireData.items.map(i => i.label)
+    ));
+};
 
 const fetchYardRate = async () => {
     try {
@@ -472,6 +566,33 @@ const getSignInRecordInfos = async () => {
 };
 
 
+const getWorkOffNums = async () => {
+    try {
+        const res = await getWorkOffNum({ "bureauCode": "0318" });
+        if (res.code == 0) {
+            const done = Number(res.data.doneNum) || 0;
+            const doing = Number(res.data.doingNum) || 0;
+            const wait = Number(res.data.waitNum) || 0;
+            const total = done + doing + wait;
+
+            loadingData.items[0].value = done;   // 已完成
+            loadingData.items[1].value = doing;  // 作业中
+            loadingData.items[2].value = wait;   // 等待作业
+
+            // 计算完成率
+            loadingData.percentage = total === 0 ? '0' : Math.round((done / total) * 100).toString();
+
+            // 更新图表
+            updateChart('loading', chartDom3.value, getPieOption(
+                loadingData.items.map(i => i.value),
+                loadingData.items.map(i => i.label)
+            ));
+        }
+
+    } catch (e) {
+        console.warn("WorkOff API failed")
+    }
+}
 
 // --- Lifecycle ---
 const handleResize = () => {
@@ -502,30 +623,44 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.left,
-.right {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 10px 10px !important;
+.left, .right {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: calc(100vh - 120px) !important;
+    padding: 20px 0 30px 0 !important;
+    overflow-y: hidden !important; /* 防止内部溢出 */
 }
 
 .side-module {
+    flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    width: 100%;
 }
 
 .parck_left {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    padding: 0 10px;
+}
+
+/* 针对右侧模块进行微调 */
+.right .side-module {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .parck_left .gjbox {
-    width: 140px;
+    width: 195px;
     height: 100px;
-    margin-top: 10px;
+    margin-top: 15px;
     position: relative;
+}
+
+.gjbox img {
+    width: 100%;
 }
 
 .gjbox .gjlalel {
@@ -536,8 +671,8 @@ onUnmounted(() => {
     line-height: 24px;
     text-shadow: 1px 2px 0px rgba(17, 20, 22, 0.22);
     position: absolute;
-    left: 75px;
-    top: 15px;
+    left: 95px; /* 调整坐标 */
+    top: 22px;
 }
 
 .gjbox .gjtext {
@@ -549,67 +684,39 @@ onUnmounted(() => {
     display: flex;
     align-items: flex-end;
     position: absolute;
-    left: 65px;
-    top: 50px;
+    left: 85px; /* 调整坐标 */
+    top: 52px;
 }
-
-.gjbox .gjtext {
-    background: linear-gradient(80deg, #1D80E0 0%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.View_Details_tag {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-60%);
-    background-color: #1A6892;
-    color: #78D0EF;
-    font-size: 14px;
-    padding: 2px 5px;
-    border-radius: 5px;
-    font-style: normal;
-    cursor: pointer;
-}
-
-
 
 .gjtexts {
     display: inline-block;
-    font-size: 12px;
+    font-size: 14px;
+    margin-left: 5px;
 }
 
 .nyjcPadding {
-    padding: 15px 0px;
-    height: 280px;
-    width: 442px;
-    flex-shrink: 0;
+    padding: 10px 0px;
+    height: 240px; 
+    width: 100%;
 }
 
 .nyjcchart {
-    width: 442px;
-    height: 280px;
-    flex-shrink: 0;
+    width: 100%;
+    height: 240px;
 }
 
-
 .allBoxs {
-    height: 260px;
-    padding: 15px 20px;
-    padding-bottom: 8px;
+    height: 220px;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: relative;
 }
 
-
-
 .allBoxs .echartp {
-    width: 180px;
-    height: 180px;
+    width: 175px;
+    height: 175px;
     border: 2px dashed #2DA9C0;
     border-radius: 50%;
     position: relative;
@@ -617,13 +724,11 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    /* 禁止 Flex 压缩 */
 }
 
-
 .changchart {
-    width: 180px;
-    height: 180px;
+    width: 170px;
+    height: 170px;
 }
 
 .echart_pwidth {
@@ -631,34 +736,9 @@ onUnmounted(() => {
     height: 100%;
 }
 
-
-
-.gjyellow {
-    background: linear-gradient(80deg, #E0A21D 0%, #FFFFFF 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    color: transparent !important;
-}
-
-.gjgreen {
-    background: linear-gradient(80deg, #00D4A8 0%, #FFFFFF 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    color: transparent !important;
-}
-
-.gjbox img {
-    width: 100%;
-}
-
-
-
-
 .chart_sum {
-    width: 120px;
-    height: 120px;
+    width: 110px;
+    height: 110px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -675,116 +755,8 @@ onUnmounted(() => {
 .chart_snumber {
     font-family: Microsoft YaHei;
     font-weight: bold;
-    font-size: 45px;
-    color: #FFFFFF;
+    font-size: 42px;
     background: linear-gradient(0deg, #F8AE49 0%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-}
-
-
-
-
-.jcrys {
-    padding: 10px;
-    padding-left: 20px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.jcry {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 70px;
-    margin-bottom: 5px;
-}
-
-.jcrys_left_box .jcrys_lalel {
-    position: absolute;
-    top: -10px;
-    left: 25px;
-    font-family: Microsoft YaHei;
-    font-weight: bold;
-    font-size: 18px;
-    color: #F8FFFF;
-}
-
-.jcrys_left .jcrys_left_box {
-    width: 220px;
-    height: 80px;
-    position: relative;
-    background: url('@/assets/icon-9.png') no-repeat 0 0;
-    background-size: 100% 100%;
-    margin-top: 30px;
-    margin-bottom: 5px;
-}
-
-.jcrys_left .jcrys_left_box img {
-    position: absolute;
-    left: -60px;
-    top: -30px;
-    width: 75px;
-}
-
-.jcrys__value {
-    position: absolute;
-    left: 50px;
-    top: 20px;
-    display: flex;
-    align-items: baseline;
-    gap: 2px;
-}
-
-.jcrys__value .jcrys__number {
-    font-family: Microsoft YaHei;
-    font-weight: bold;
-    font-size: 30px;
-    background: linear-gradient(0deg, #FAC611 0%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-}
-
-.jcrys__value .jcrys__unit {
-    font-family: Microsoft YaHei;
-    font-weight: bold;
-    font-size: 18px;
-    color: #F8FFFF;
-}
-
-.jcry .jcry_box {
-    background: url('@/assets/group-1449.png') no-repeat 0 0;
-    background-size: 100% 100%;
-    width: 140px;
-    height: 100px;
-    position: relative;
-}
-
-.jcry .jcry_box .jcry_box_lalel {
-    position: absolute;
-    left: 30px;
-    top: 15px;
-    font-size: 14px;
-    color: #75D1FB;
-}
-
-.jcry .jcry_box .jcry_box_num {
-    position: absolute;
-    left: 60px;
-    bottom: 12px;
-    font-family: Microsoft YaHei;
-    font-weight: bold;
-    font-size: 36px;
-    color: #E8FEFF;
-    background: linear-gradient(0deg, #F8A954 0%, #FFFFFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -795,33 +767,30 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    font-family: Microsoft YaHei;
-    font-weight: bold;
-    width: 250px;
-    height: 220px;
-    margin-right: 10px;
-    margin-top: 15px;
+    width: 240px;
+    height: 160px;
+    margin-right: 5px;
 }
 
 .jcard {
     display: flex;
     align-items: center;
     flex-direction: column;
-    height: 180px;
     justify-content: space-around;
+    height: 140px;
 }
 
 .jcard_box {
     background: url('@/assets/icon-10.png') no-repeat 0 0;
     background-size: 100% 100%;
-    width: 82px;
-    height: 72px;
+    width: 95px;
+    height: 85px;
     position: relative;
 }
 
 .jcard_box_text {
     position: absolute;
-    left: 18px;
+    left: 20px;
     top: -15px;
     display: flex;
     align-items: baseline;
@@ -831,72 +800,154 @@ onUnmounted(() => {
 .jcard__values {
     font-family: Microsoft YaHei;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
     color: #76CBFB;
+    margin-top: 5px;
 }
 
-
-
 .jcard__numbers {
-    font-size: 34px;
+    font-size: 38px;
+    font-weight: bold;
     background: linear-gradient(0deg, #42FFF9 0%, #FFFFFF 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
     color: transparent;
 }
 
 .leftColor {
-    font-size: 34px;
     background: linear-gradient(0deg, #FAC611 0%, #FFFFFF 100%) !important;
     -webkit-background-clip: text !important;
     background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
     color: transparent !important;
 }
 
 .jcard__units {
+    font-size: 18px;
+    color: #F8FFFF;
+    margin-right: 2px;
+}
+
+/* 人员监测扩展 */
+.jcrys {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.jcrys_left .jcrys_left_box {
+    width: 220px;
+    height: 75px;
+    position: relative;
+    background: url('@/assets/icon-9.png') no-repeat 0 0;
+    background-size: 100% 100%;
+}
+
+.jcrys_left .jcrys_left_box img {
+    position: absolute;
+    left: -70px;
+    top: -40px;
+    width: 100px;
+}
+
+.jcrys_lalel {
+    position: absolute;
+    top: -12px;
+    left: 30px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
     font-size: 20px;
     color: #F8FFFF;
 }
 
-.right_numbers {
+.jcrys__value {
+    position: absolute;
+    left: 65px;
+    top: 25px;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.jcrys__number {
     font-family: Microsoft YaHei;
     font-weight: bold;
-    color: #76CBFB;
+    font-size: 42px;
+    background: linear-gradient(0deg, #FAC611 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.jcrys__unit {
+    font-size: 20px;
+    color: #F8FFFF;
+    font-weight: bold;
+}
+
+.jcry {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+.jcry_box {
+    background: url('@/assets/group-1449.png') no-repeat 0 0;
+    background-size: 100% 100%;
+    width: 150px;
+    height: 85px;
+    position: relative;
+}
+
+.jcry_box_lalel {
+    position: absolute;
+    left: 30px;
+    top: 10px;
+    font-size: 14px;
+    color: #75D1FB;
+}
+
+.jcry_box_num {
+    position: absolute;
+    left: 65px;
+    bottom: 8px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    font-size: 36px;
+    background: linear-gradient(0deg, #F8A954 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* 告警与堆场右侧列表 */
+.right_numbers {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 230px;
-    height: 220px;
+    height: 190px;
     margin-right: 10px;
-    margin-top: 15px;
 }
 
-/* 堆场作业只有2项，居中显示 */
 .yard-numbers {
     justify-content: center;
-    gap: 28px;
+    gap: 30px;
 }
-
 
 .card {
     display: flex;
     align-items: center;
-    gap: 10px;
-    justify-content: space-around;
+    gap: 12px;
 }
 
 .card__badges {
-    width: 15px;
-    height: 15px;
-}
-
-
-.card__badges--blue {
-    background: #42FFF9;
 }
 
 .card__badges--yellow {
@@ -908,9 +959,9 @@ onUnmounted(() => {
 }
 
 .card__labels {
-    font-size: 20px;
+    font-size: 18px;
     color: #76CBFB;
-    min-width: 80px;
+    min-width: 60px;
 }
 
 .card__values {
@@ -919,7 +970,7 @@ onUnmounted(() => {
     align-items: baseline;
     gap: 3px;
     font-weight: bold;
-    width: 85px;
+    width: 65px;
 }
 
 .card__values--blue .card__numbers {
@@ -935,13 +986,13 @@ onUnmounted(() => {
 }
 
 .card__numbers {
-    font-size: 34px;
+    font-size: 30px;
     font-weight: bold;
 }
 
 .card__units {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 19px;
     color: #F8FFFF;
 }
 </style>

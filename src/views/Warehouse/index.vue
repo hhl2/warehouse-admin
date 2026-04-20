@@ -85,7 +85,7 @@
             </div>
         </div>
     </div>
-    <div class="menu_boxs" v-if='showgl'>
+    <!-- <div class="menu_boxs" v-if='showgl'>
         <div class="menu_box_uls">
             <div v-for="(item, index) in menuList3" :key="item.id" class="nav-button-item gl-button"
                 :class="{ active: changli3 === item.id }" @click.stop="changelist3(item)">
@@ -94,7 +94,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
     <!-- <div class="xm_texts">
@@ -195,14 +195,18 @@
                 <div class="op-item mt-30">
                     <div class="op-icon-group">
                         <svg class="mouse-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- 鼠标主体 -->
                             <path
                                 d="M12 3C8.68629 3 6 5.68629 6 9V15C6 18.3137 8.68629 21 12 21C15.3137 21 18 18.3137 18 15V9C18 5.68629 15.3137 3 12 3Z"
                                 stroke="#E2E8F0" stroke-width="1.2" />
-                            <path d="M12 7V10" stroke="#E2E8F0" stroke-width="1.2" stroke-linecap="round" />
+                            <!-- 滚轮线 -->
+                            <path d="M12 3V11" stroke="#E2E8F0" stroke-width="1.2" stroke-linecap="round" />
+                            <!-- 左键高亮 -->
+                            <path d="M12 3C8.68629 3 6 5.68629 6 9H12V3Z" fill="#E2E8F0" fill-opacity="0.6" />
                         </svg>
                     </div>
                     <div class="op-text">
-                        <p>鼠标控制视角</p>
+                        <p>鼠标左键按住控制视角</p>
                     </div>
                 </div>
                 <!-- Ctrl -->
@@ -1117,8 +1121,8 @@ const callParentMethod = (message) => {
 
 // --- 视角切换下拉 ---
 const viewList = ref([
-    { id: 'birdview', label: '鸟瞰视角', ueId: 'birdview' },
-    { id: 'frontview', label: '正视视角', ueId: 'frontview' },
+    { id: 'birdview', label: '鸟瞰视角', ueId: '1' },
+    { id: 'frontview', label: '室内视角', ueId: 'indoor' },
     // { id: 'insideview', label: '室内视角', ueId: 'insideview' },
     { id: 'followview', label: '漫游视角', ueId: 'followview', disabled: true },
 ]);
@@ -1231,7 +1235,32 @@ const changelist = (item) => {
 
     router.push({ name: item.routeName })
     ue5click(item.id)
-};
+
+    // 新增：点击“设备管理”(id:3)切换到室内视角并禁用切换，点击其他模块恢复可用并切回鸟瞰
+    if (item.id === 3) {
+        const indoorView = viewList.value.find(v => v.id === 'frontview');
+        if (indoorView) {
+            currentView.value = indoorView; // 直接修改值，不调用带通信逻辑的 selectView
+        }
+        // 禁用选择
+        viewList.value.forEach(v => {
+            if (v.id === 'birdview' || v.id === 'frontview') {
+                v.disabled = true;
+            }
+        });
+    } else {
+        // 恢复可用
+        viewList.value.forEach(v => {
+            if (v.id === 'birdview' || v.id === 'frontview') {
+                v.disabled = false;
+            }
+        });
+        const birdView = viewList.value.find(v => v.id === 'birdview');
+        if (birdView) {
+            currentView.value = birdView; // 直接修改值
+        }
+    }
+}
 const getImagePath = (id) => {
     return changli.value === id ? imageMap.active : imageMap.default;
 }
@@ -1246,10 +1275,20 @@ const imageMap2 = {
 const changelist2 = (item) => {
     changli2.value = item.id;
 
+    // 仓储侧边栏菜单（menuList2）点击时全部禁用鸟瞰和室内视角，并强制选中室内视角
+    viewList.value.forEach(v => {
+        if (v.id === 'birdview' || v.id === 'frontview') {
+            v.disabled = true;
+        }
+    });
+
+    // 强制选中并展示室内视角，但不向 UE 传值
+    const indoorView = viewList.value.find(v => v.id === 'frontview');
+    if (indoorView) {
+        currentView.value = indoorView;
+    }
 
     ue5click(item.id)
-
-
     router.push({ name: item.routeName })
 };
 const getImagePath2 = (id) => {

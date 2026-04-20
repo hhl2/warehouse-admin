@@ -73,7 +73,8 @@
 
         <div class="changleft"
             style="flex: 1; display: flex; flex-direction: column; margin-bottom: 10px; overflow: hidden;">
-            <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick" :row-class-name="tableRowClassName" height="100%">
+            <el-table class="my-spacing-table2" ref="tableRef" :data="data1" @row-click="handleRowClick"
+                :row-class-name="tableRowClassName" height="100%">
                 <el-table-column prop="cn" label="设备名称" show-overflow-tooltip />
                 <el-table-column prop="manufacturer" label="设备类型" />
                 <el-table-column prop="cn" label="监测点位置" show-overflow-tooltip />
@@ -543,7 +544,7 @@ const activeCategorys = (index) => {
         shelfItems.value = ['全部', '第一排', '第二排', '第三排', '第四排', '第五排', '第六排', '第七排', '第八排']
     }
     activeShelf.value = 0;
-    // queryDistributionInfoPaginations();
+    queryDistributionInfoPaginations();
     console.log('点击触发', { "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
     callParentMethod({ "code": 1, "type": "btn", "data": { "id": 26, "ckcode": ckcode } });
 }
@@ -717,7 +718,7 @@ const handleRowClick = async (row) => {
     const isSameRow = highlightId.value === row.id;
     highlightId.value = isSameRow ? '' : row.id;
     console.log('work5 handleRowClick highlightId:', highlightId.value, 'row id:', row.id);
-    
+
     // 强制刷新表格以应用高亮类名
     data1.value = [...data1.value];
 
@@ -829,7 +830,32 @@ const queryDistributionInfoPaginations = () => {
                 }
             })
             if (list.length > 0) {
-                queryDistributionPictures(list[0].id)
+                // queryDistributionPictures(list[0].id)
+                const mappedData = list.map(item => ({
+                    id: item.uniqueWarehouseCode,
+                    status: 1
+                }));
+
+                const ll = {
+                    code: 1,
+                    type: "status",
+                    data: mappedData
+                };
+
+                // 等待 playerMethods 就绪后再发送
+                const tryCall = (retries = 0) => {
+                    if (playerMethods?.sendMessage) {
+                        console.log(ll, '发送数据给 UE')
+                        callParentMethod(ll)
+                    } else if (retries < 10) {
+                        console.log(`playerMethods 未就绪，第${retries + 1}次重试...`)
+                        setTimeout(() => tryCall(retries + 1), 500)
+                    } else {
+                        console.error('playerMethods 始终未就绪，放弃发送')
+                    }
+                }
+                tryCall();
+
             }
         } else {
             console.warn('实时库存接口返回状态非 200:', res);
@@ -2095,7 +2121,7 @@ const fetchData2 = async () => {
 // 生命周期
 onMounted(() => {
     document.addEventListener("click", handleClickOutside);
-    // queryDistributionInfoPaginations();
+    queryDistributionInfoPaginations();
     fetchData2();
     const mappedData = workdata.value.map(item => ({
         id: item.uniqueWarehouseCode,

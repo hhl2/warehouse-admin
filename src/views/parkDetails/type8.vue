@@ -1,5 +1,5 @@
 ﻿<template>
-    <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
+    <!-- <div class="testmiansx" :class="{ 'panel-collapsed': !isPanelVisible }">
         <div class="testmianx">
             <div class="title">
                 <img src="@/assets/title_bgs.png" alt="">
@@ -18,30 +18,30 @@
 
             <div class="hwbox">
                 <div class="hwbox_list">
-                    <!-- <template v-for="value in hwbox">
+                   <template v-for="value in hwbox">
                         <div class="hwbox_tip" v-if="value.tip == 1"></div>
                         <div class="hwbox_tip2" v-if="value.tip == 2"></div>
 
-                    </template> -->
+                    </template>
 
 
-                    <template v-for="value in hwboxs">
+<template v-for="value in hwboxs">
                         <div class="hwbox_tip2" v-if="value.isUsed == 1"></div>
                         <div class="hwbox_tip" v-else></div>
 
 
                     </template>
 
-                </div>
+</div>
 
 
 
 
-            </div>
+</div>
 
 
-        </div>
-    </div>
+</div>
+</div> -->
 
 
 
@@ -181,11 +181,11 @@ onMounted(() => {
 
 const queryYardWarehouseInfos = () => {
     queryYardWarehouseInfo({
-            "warehouseCode": "0318080",
-            page:1,
-            pagesize:999,
-            // "warehouseId": "03180000020822"
-        }).then(res => {
+        "warehouseCode": "0318080",
+        page: 1,
+        pagesize: 999,
+        // "warehouseId": "03180000020822"
+    }).then(res => {
 
         if (res?.code == 0) {
             hwboxs.value = res.data?.list || []
