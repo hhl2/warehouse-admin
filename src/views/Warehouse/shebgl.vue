@@ -7,7 +7,7 @@
             <img src="@/assets/title_bgs.png" alt="">
             <div class="title_txet">{{ activeCategory || '重点设备' }}</div>
         </div>
-
+<!-- 
         <div class="sblf">
             <el-input v-model="input3" class="inputwidth" placeholder="请输入设备名称" :prefix-icon="Search" />
             <div class="sblf_search">
@@ -70,27 +70,10 @@
                 </div>
             </div>
             <div v-if="source.length === 0" class="empty-data">暂无设备数据</div>
-        </div>
+        </div> -->
 
 
-        <!-- <div class="sbglx">
-
-            <div class="sbglx_boxs">
-                <template v-for="value in sorces">
-                    <div class="sbglx_box" @click="changelist(value)">
-                        <img :src="value.icon" alt="" @click.stop="changelist(value)">
-                        <div class="sbglx_label">{{ value.text }}</div>
-                        <div class="sbglx_text">{{ value.num }}</div>
-                    </div>
-
-                </template>
-
-
-
-</div>
-
-</div> -->
-
+s
 
 
     </div>
@@ -506,10 +489,10 @@ const props = defineProps({
 });
 
 const input3 = ref('');
-const activeCategory = ref('');
+const activeCategory = ref('园区设备');
 
 const fetchCurrentCategoryList = () => {
-    const category = activeCategory.value;
+    const category = activeCategory.value ;
     let apiMethod = getDeviceList; // 默认查询园区设备
 
     if (category.includes('环境')) {
@@ -648,7 +631,7 @@ const sorces = ref([
 
 onMounted(() => {
     // fetchCountOnlinSums();
-    // fetchCurrentCategoryList(); // 默认加载列表，可以通过 activeCategory 指定初始展示的分类
+    fetchCurrentCategoryList(); // 默认加载列表，可以通过 activeCategory 指定初始展示的分类
 });
 watch(ueResponseData, (newVal) => {
     if (newVal && newVal.json) {

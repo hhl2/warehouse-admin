@@ -794,8 +794,8 @@ const handleResize = () => {
 // 生命周期
 onMounted(() => {
     initData();
-    // queryWarehouseStatusPaginations();
-    // queryParkReservationListPaginationsParams();
+    queryWarehouseStatusPaginations();
+    queryParkReservationListPaginationsParams();
     initWarehouseChart();
     window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', handleResize);

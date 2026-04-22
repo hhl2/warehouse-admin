@@ -128,12 +128,12 @@
     </div>
 
 
-    <div v-show="showball && isPaneClose">
+    <!-- <div v-show="showball && isPaneClose">
         <DragFloatBall v-model="isPanelsVisible" default-position="right" :size="70" :snap-distance="20"
             :edge-margin="30" :enable-snap="true" :enable-drag="true" @toggle="handleToggle"
             @drag-start="handleDragStart" @drag-end="handleDragEnd" @position-change="handlePositionChange"
             @close="handleClose">
-            <!-- 自定义内容 -->
+    
 
             <template #default="{ isVisible }">
                 <div class="custom-content">
@@ -150,7 +150,7 @@
             </template>
         </DragFloatBall>
 
-    </div>
+    </div> -->
 
     <!-- 操作说明面板，页面隐藏时显示 -->
     <transition name="fade">
@@ -210,14 +210,14 @@
                     </div>
                 </div>
                 <!-- Ctrl -->
-                <div class="op-item mt-30">
+                <!-- <div class="op-item mt-30">
                     <div class="op-icon-group">
                         <span class="key-box ctrl-box">Ctrl</span>
                     </div>
                     <div class="op-text">
                         <p>按住Ctrl 显示鼠标</p>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </transition>
@@ -1055,14 +1055,15 @@ const handleClose = () => {
 
 const handleToggle = (isVisible) => {
     console.log('面板状态:', isPanelsVisible, isVisible ? '显示' : '隐藏');
-    if (playerMethods?.setCursorHidden) {
-        playerMethods.setCursorHidden(!isVisible);
-    }
+        isPanelsVisible.value = !isPanelsVisible.value;
+    // if (playerMethods?.setCursorHidden) {
+    //     playerMethods.setCursorHidden(!isVisible);
+    // }
 };
 
 const handleStatusToggle = () => {
     isPanelsVisible.value = !isPanelsVisible.value;
-    handleToggle(isPanelsVisible.value);
+   // handleToggle(isPanelsVisible.value);
 };
 
 const handleDragStart = (position) => {
